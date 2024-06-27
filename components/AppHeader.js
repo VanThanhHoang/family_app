@@ -1,8 +1,13 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { Platform, StyleSheet, Text, View } from "react-native";
 
 const AppHeader = ({ ...props }) => {
+  // get device status bar height
+  const paddingTop = Platform.OS === "android" ? StatusBar.currentHeight : 0;
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,{
+      paddingTop:paddingTop
+    }]}>
       <Text style={styles.text}>{props.title}</Text>
     </View>
   );

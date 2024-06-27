@@ -7,26 +7,27 @@ import AxiosInstance from "../network/AxiosInstance";
 import { FlatList } from "react-native-gesture-handler";
 import BirthDayItem from "./components/BirthDayItem";
 const BirthDayScreen = () => {
-    const [birhdayData, setBirhdayData] = useState([]);
-    const { setIsLoading } = React.useContext(AppContext);
-    const getFamilyData = async () => {
-      try {
-        setIsLoading(true);
-        const data = await AxiosInstance().get("birthdays");
-        data && setBirhdayData(data);
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    useEffect(() => {
-      getFamilyData();
-    }, []);
+  const [birhdayData, setBirhdayData] = useState([]);
+  const { setIsLoading } = React.useContext(AppContext);
+  const getFamilyData = async () => {
+    try {
+      setIsLoading(true);
+      const data = await AxiosInstance().get("birthdays/");
+      data && setBirhdayData(data);
+    } catch (err) {
+      console.log('123',err);
+      console.log({...err});
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    getFamilyData();
+  }, []);
   return (
     <View style={styles.container}>
       <AppHeader title="Sinh nhật của thành viên" />
-      <SearchBar/>
+      <SearchBar />
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
         style={{ width: "100%" }}

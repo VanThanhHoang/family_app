@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Platform } from 'react-native';
 
 const AxiosInstance = (contentType = 'application/json') => {
     const axiosInstance = axios.create({
@@ -8,10 +9,11 @@ const AxiosInstance = (contentType = 'application/json') => {
     axiosInstance.interceptors.request.use(
         async (config) => {
             // const token = await AsyncStorage.getItem('token');
-            config.headers = {
+            config.headers = Platform.OS === 'ios' ? {
                 'Authorization': `Bearer ${''}`,
                 'Accept': 'application/json',
                 'Content-Type': contentType
+            } : {
             }
             return config;
         },

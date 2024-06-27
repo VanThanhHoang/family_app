@@ -40,10 +40,10 @@ function HomeTab() {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerShown: true,
+        headerShown: false,
         headerStatusBarHeight: 0,
         tabBarStyle: {
-          height: 100,
+          height: 80,
         },
       }}
     >
