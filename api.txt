@@ -1,0 +1,35 @@
+
+SA
+LE SA
+Đây là website frontend của mình . Xem giao diện mobile nhé
+ 
+https://minh.lehungba.com/
+
+
+Và đây là backend get api
+
+https://api.lehungba.com
+
+
+Việc app chỉ show dữ liệu từ api ra mà thôi 
+
+Bạn báo giá và thời gian làm nhé
+
+
+#Endpoint1
+
+https://api.lehungba.com/wedding/
+
+#Endpoint2
+https://api.lehungba.com/relationships/
+
+
+#Endpoint3
+https://api.lehungba.com/death/
+
+#Endpoint4
+https://api.lehungba.com/birthdays/
+
+#Endpoint5
+
+https://api.lehungba.com/api/myfamily/

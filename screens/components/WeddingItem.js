@@ -1,0 +1,196 @@
+import { Image, StyleSheet, Text, View } from "react-native";
+import { dateFormater } from "../../helper/string_format";
+
+const WeddingItem = ({ family }) => {
+  const ItemInfo = ({ isHusband, image, age }) => {
+    const getImage = () => {
+      if (image === null) {
+        return isHusband ? require("../../assets/father.png") : require("../../assets/mother.png");
+      }
+      return { uri: image };
+    };
+
+    return (
+      <View style={styles.itemInfoContainer}>
+        <View style={[styles.imageRow, isHusband ? styles.rowReverse : styles.row]}>
+          <Image style={styles.image} source={getImage()} />
+          <View style={styles.ageContainer}>
+            <Image source={require("../../assets/age.png")} style={styles.ageIcon} />
+            <Text style={styles.ageText}>{age ?? "Chưa rõ"}</Text>
+          </View>
+        </View>
+        <View style={styles.line} />
+        <Text style={styles.nameText}>{isHusband ? family.husband_name : family.wife_name}</Text>
+        <Text style={styles.textInfo}>
+          {isHusband ? dateFormater(family.husband_birth_date) : dateFormater(family.wife_birth_date)}
+        </Text>
+      </View>
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.container2}>
+        <ItemInfo
+          age={family.husband_age}
+          isHusband
+          image={family.husband_profile_picture}
+        />
+        <View style={styles.centerContainer}>
+          <View style={styles.childrenRow}>
+            {family.male_children_count > 0 && <Children isBoy total={family.male_children_count} />}
+            {family.female_children_count > 0 && <Children total={family.female_children_count} />}
+          </View>
+          <Text>{dateFormater(family.marriage_date)}</Text>
+          <Image style={styles.marriedIcon} source={require("../../assets/married.png")} />
+          <View>
+            <Text style={styles.marriageDurationText}>{family.marriage_duration}</Text>
+          </View>
+        </View>
+        <ItemInfo
+          age={family.wife_age}
+          isHusband={false}
+          image={family.wife_profile_picture}
+        />
+      </View>
+    </View>
+  );
+};
+
+const Children = ({ isBoy, total }) => (
+  <View style={styles.totalContainer}>
+    <Image
+      style={styles.totalImage}
+      source={isBoy ? require("../../assets/son.png") : require("../../assets/dauther.png")}
+    />
+    <View style={styles.total}>
+      <Text style={styles.totalText}>{total}</Text>
+    </View>
+  </View>
+);
+
+const styles = StyleSheet.create({
+  itemInfoContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: 5,
+  },
+  imageRow: {
+    alignItems: "flex-end",
+    flexDirection: "row",
+  },
+  rowReverse: {
+    flexDirection: "row-reverse",
+  },
+  row: {
+    flexDirection: "row",
+  },
+  image: {
+    width: 70,
+    height: 70,
+    borderRadius: 50,
+  },
+  ageContainer: {
+    flexDirection: "row",
+    gap: 5,
+    alignItems: "center",
+  },
+  ageIcon: {
+    width: 15,
+    height: 15,
+    borderRadius: 25,
+  },
+  ageText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  line: {
+    width: "80%",
+    height: 0.5,
+    marginVertical: 5,
+    backgroundColor: "#969696",
+  },
+  nameText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "black",
+  },
+  textInfo: {
+    fontSize: 16,
+    fontWeight: "400",
+    color: "black",
+  },
+  container: {
+    flex: 1,
+    padding: 10,
+    justifyContent: "center",
+    backgroundColor: "white",
+    marginVertical: 10,
+    gap: 10,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  container2: {
+    flex: 1,
+    justifyContent: "center",
+    backgroundColor: "white",
+    flexDirection: "row",
+    shadowColor: "#000",
+  },
+  centerContainer: {
+    gap: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  childrenRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
+  },
+  marriedIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 50,
+  },
+  marriageDurationText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  totalContainer: {
+    gap: 5,
+    alignItems: "center",
+    alignSelf: "flex-start",
+    marginTop: 20,
+  },
+  totalImage: {
+    width: 30,
+    height: 30,
+    borderRadius: 50,
+  },
+  totalText: {
+    fontSize: 14,
+    color: "black",
+    fontStyle: "italic",
+    fontWeight: "500",
+  },
+  total: {
+    position: "absolute",
+    width: 15,
+    height: 15,
+    backgroundColor: "white",
+    borderRadius: 7.5,
+    justifyContent: "center",
+    alignItems: "center",
+    bottom: -5,
+  },
+});
+
+export default WeddingItem;
