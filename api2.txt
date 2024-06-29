@@ -1,0 +1,93 @@
+#LeHungBa
+
+#create_new_user
+ curl -X POST http://127.0.0.1:9090/register/ -H 
+ "Content-Type: application/json" -d 
+ '{"email": "baodauvisa@gmail.com", 
+ "password": "Dequa@123!"}'
+
+
+
+#Register_by_phone 
+
+
+curl -X POST http://127.0.0.1:9090/register/ \
+-H "Content-Type: application/json" \
+-d '{
+  "password": "Dequa@123!",
+  "phone_number": "+84397973603"
+}'
+
+#Activation_code
+
+curl -X POST https://api.lehungba.com/activate/ \
+-H "Content-Type: application/json" \
+-d '{
+  "phone_number": "+84968538583",
+  "activation_code": "268319"
+}'
+
+
+#Register_by_mail
+curl -X POST http://127.0.0.1:9090/register/ \
+-H "Content-Type: application/json" \
+-d '{
+  "email": "lesa77040@gmail.com",
+  "password": "Dequa@123!"
+}'
+
+
+
+#active_code
+
+curl -X POST https://api.lehungba.com/activate/ \
+-H "Content-Type: application/json" \
+-d '{
+  "email": "lesa77040@gmail.com",
+  "activation_code": "816179"
+}'
+
+
+
+#check_account_info
+login_response=$(curl -s -X POST https://api.lehungba.com/login/ \
+-H "Content-Type: application/json" \
+-d '{
+      "email": "sale77040@gmail.com",
+      "password": "Dequa@123!"
+    }')
+
+# In ra phản hồi để kiểm tra
+echo "Phản hồi từ đăng nhập: $login_response"
+
+
+# Lấy token từ phản hồi
+token=$(echo $login_response | jq -r '.access')
+echo "Token nhận được: $token"
+
+# Dùng token để lấy thông tin người dùng
+curl -X GET https://api.lehungba.com/user/ \
+-H "Authorization: Bearer $token"
+
+
+
+#change_password
+curl -X POST https://api.lehungba.com/change-password/ \
+-H "Authorization: Bearer $token" \
+-H "Content-Type: application/json" \
+-d '{
+      "old_password": "Dequa@123!",
+      "new_password": "NewPassword@123"
+    }'
+
+
+#change_old_pass_back 
+
+curl -X POST https://api.lehungba.com/change-password/ \
+-H "Authorization: Bearer $token" \
+-H "Content-Type: application/json" \
+-d '{
+      "old_password": "NewPassword@123",
+      "new_password": "Dequa@123!"
+    }'
+127.0.0.1

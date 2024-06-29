@@ -5,6 +5,7 @@ import BirthDayScreen from "./BirthDayScreen";
 import DeathScreen from "./DeathScreen";
 import WeddingScreen from "./WeddingScreen";
 import Login from "./Login";
+import AuthNavigation from "./AuthStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -31,7 +32,7 @@ const screens = [
   },
   {
     name: "Tài khoản",
-    component:Login,
+    component:AuthNavigation,
     icon: require("../assets/user.png"),
   },
 ];

@@ -5,10 +5,10 @@ import {
 } from "@react-navigation/stack";
 import { SafeAreaView, View } from "react-native";
 import LoadingDialog from "./components/LoadingDialog";
-const AppStack = createStackNavigator();
 import { AppContext } from "./AppContext";
-import HomeTab from './screens/BottomTab'
+import HomeTab from "./screens/BottomTab";
 const AppNavigation = () => {
+  const AppStack = createStackNavigator();
   const { isLoading } = useContext(AppContext);
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -20,7 +20,7 @@ const AppNavigation = () => {
         <AppStack.Screen name="HomeTab" component={HomeTab} />
       </AppStack.Navigator>
       <LoadingDialog open={isLoading} />
-    </SafeAreaView >
+    </SafeAreaView>
   );
 };
 export default AppNavigation;
