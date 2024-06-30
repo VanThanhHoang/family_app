@@ -1,5 +1,5 @@
 import { useRoute } from "@react-navigation/native";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
 import { CountryPicker } from "react-native-country-codes-picker";
 import Button from "../components/Button";
@@ -7,6 +7,7 @@ import React, { useContext, useState } from "react";
 import AxiosInstance from "../network/AxiosInstance";
 import { AppContext } from "../AppContext";
 import axios from "axios";
+import AppHeader from "../components/AppHeader";
 const OTPScreen = ({ navigation }) => {
   const { dataReg, type } = useRoute()?.params ?? {
     dataReg: "Test@gmail.com",
@@ -38,15 +39,14 @@ const OTPScreen = ({ navigation }) => {
   const validateEmailOrPhone = async (emailOrPhone) => {
     try {
       setIsLoading(true);
-      const link = `https://api.lehungba.com/activate/${type == 'email' ? 'email/' : 'phone/'}`
+      const link = `https://api.lehungba.com/activate/${
+        type == "email" ? "email/" : "phone/"
+      }`;
       console.log(link);
-      const response = await axios.post(
-        link,
-        {
-          [type ?? "email"]: emailOrPhone,
-          activation_code: otp,
-        }
-      );
+      const response = await axios.post(link, {
+        [type ?? "email"]: emailOrPhone,
+        activation_code: otp,
+      });
 
       // const response = await AxiosInstance().post(`activate/${type}`, {
       //   [type??'email']: emailOrPhone,
@@ -66,24 +66,50 @@ const OTPScreen = ({ navigation }) => {
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Xác thực Email/SĐT</Text>
-      <Text style={styles.infoText}>
-        {`Chúng tôi đã gửi mã xác thực về ${makeHiddenInfo(dataReg)}  `}
-      </Text>
-      <Text style={styles.otpPromptText}>Vui lòng điền mã OTP</Text>
-      <OtpInput
-        theme={styles.otpInputTheme}
-        numberOfDigits={6}
-        onTextChange={(text) => setOtp(text)}
-      />
-      <Button
-        onPress={() => {
-          validate() && validateEmailOrPhone(dataReg);
+      <View
+        style={{
+          width: "100%",
         }}
-        title="Xác thực"
-        filled
-        style={styles.buttonStyle}
-      />
+      >
+        <AppHeader back title="Xác minh OTP" />
+      </View>
+      <TouchableWithoutFeedback
+        style={{
+          flex: 1,
+        }}
+        onPress={() => {
+          Keyboard.dismiss();
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            padding: 25,
+            ...styles.container,
+          }}
+        >
+          <Text style={styles.headerText}>Xác thực Email/SĐT</Text>
+          <Text style={styles.infoText}>
+            {`Chúng tôi đã gửi mã xác thực về ${makeHiddenInfo(dataReg)}  `}
+          </Text>
+          <Text style={styles.otpPromptText}>Vui lòng điền mã OTP</Text>
+          <OtpInput
+            theme={styles.otpInputTheme}
+            numberOfDigits={6}
+            onTextChange={(text) => setOtp(text)}
+          />
+          <Button
+            onPress={() => {
+              validate() && validateEmailOrPhone(dataReg);
+            }}
+            title="Xác thực"
+            filled
+            style={{
+              width: 300,
+            }}
+          />
+        </View>
+      </TouchableWithoutFeedback>
     </View>
   );
 };
@@ -91,7 +117,6 @@ const OTPScreen = ({ navigation }) => {
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 25,
     backgroundColor: "white",
     gap: 20,
     alignItems: "center",

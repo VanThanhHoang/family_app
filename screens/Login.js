@@ -6,6 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -41,17 +43,20 @@ const Login = () => {
     const isEmail = email.includes("@");
     try {
       setIsLoading(true);
-      const data = await AxiosInstance().post(`login/${isEmail?'email/':'phone/'}`, {
-        [isEmail ? "email" : "phone_number"]: email,
-        password: password,
-      });
-      console.log(data);  
+      const data = await AxiosInstance().post(
+        `login/${isEmail ? "email/" : "phone/"}`,
+        {
+          [isEmail ? "email" : "phone_number"]: email,
+          password: password,
+        }
+      );
+      console.log(data);
       await AsyncStorage.setItem("access", data.access);
       await AsyncStorage.setItem("refresh", data.refresh);
       navigation.reset({
         index: 0,
         routes: [{ name: "Profile" }],
-      })
+      });
     } catch (error) {
       Alert.alert(
         "Đăng nhập không thành công\n Tài khoản hoặc mật khẩu không đúng"
@@ -63,284 +68,293 @@ const Login = () => {
   };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
-      <View style={{ flex: 1, marginHorizontal: 22 }}>
-        <View style={{ marginVertical: 22 }}>
-          <Text
-            style={{
-              fontSize: 22,
-              fontWeight: "bold",
-              marginVertical: 12,
-              color: COLORS.black,
-            }}
-          >
-            {` Đăng nhập \n vào tài khoản của bạn`}
-          </Text>
-        </View>
-
-        <View style={{ marginBottom: 12 }}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: 400,
-              marginVertical: 8,
-            }}
-          >
-            Email hoặc số điện thoại
-          </Text>
-
-          <View
-            style={{
-              width: "100%",
-              height: 48,
-              borderColor: COLORS.black,
-              borderWidth: 1,
-              borderRadius: 8,
-              alignItems: "center",
-              justifyContent: "center",
-              paddingLeft: 22,
-            }}
-          >
-            <TextInput
-              value={email}
-              onChangeText={setEmail}
-              placeholder="Nhập email hoặc số điện thoại của bạn"
-              placeholderTextColor={COLORS.black}
-              keyboardType="email-address"
+      <TouchableWithoutFeedback
+        style={{
+          flex: 1,
+        }}
+        onPress={() => {
+          Keyboard.dismiss();
+        }}
+      >
+        <View style={{ flex: 1, marginHorizontal: 22 }}>
+          <View style={{ marginVertical: 22 }}>
+            <Text
               style={{
-                width: "100%",
-              }}
-            />
-          </View>
-        </View>
-
-        <View style={{ marginBottom: 12 }}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: 400,
-              marginVertical: 8,
-            }}
-          >
-            Mật khẩu
-          </Text>
-
-          <View
-            style={{
-              width: "100%",
-              height: 48,
-              borderColor: COLORS.black,
-              borderWidth: 1,
-              borderRadius: 8,
-              alignItems: "center",
-              justifyContent: "center",
-              paddingLeft: 22,
-            }}
-          >
-            <TextInput
-              onChangeText={setPassword}
-              value={password}
-              placeholder="Nhập mật khẩu của bạn"
-              placeholderTextColor={COLORS.black}
-              secureTextEntry={!isPasswordShown}
-              style={{
-                width: "100%",
-              }}
-            />
-
-            <TouchableOpacity
-              onPress={() => setIsPasswordShown(!isPasswordShown)}
-              style={{
-                position: "absolute",
-                right: 12,
+                fontSize: 22,
+                fontWeight: "bold",
+                marginVertical: 12,
+                color: COLORS.black,
               }}
             >
-              {isPasswordShown == true ? (
-                <Ionicons name="eye-off" size={24} color={COLORS.black} />
-              ) : (
-                <Ionicons name="eye" size={24} color={COLORS.black} />
-              )}
-            </TouchableOpacity>
+              {` Đăng nhập \n vào tài khoản của bạn`}
+            </Text>
           </View>
-        </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            marginVertical: 6,
-          }}
-        >
-          <Checkbox
-            style={{ marginRight: 8 }}
-            value={isChecked}
-            onValueChange={setIsChecked}
-            color={isChecked ? "#198754`" : undefined}
-          />
-
-          <Text>Ghi nhớ đăng nhập</Text>
-        </View>
-
-        <Button
-          title="Đăng nhập"
-          filled
-          style={{
-            marginTop: 18,
-            marginBottom: 4,
-          }}
-          onPress={() => {
-            validate() && login(email, password);
-          }}
-        />
-
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginVertical: 20,
-          }}
-        >
-          <View
-            style={{
-              flex: 1,
-              height: 1,
-              backgroundColor: COLORS.grey,
-              marginHorizontal: 10,
-            }}
-          />
-          <Text style={{ fontSize: 14 }}>Hoặc đăng nhập với</Text>
-          <View
-            style={{
-              flex: 1,
-              height: 1,
-              backgroundColor: COLORS.grey,
-              marginHorizontal: 10,
-            }}
-          />
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => console.log("Pressed")}
-            style={{
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "row",
-              height: 52,
-              borderWidth: 1,
-              borderColor: COLORS.grey,
-              marginRight: 4,
-              borderRadius: 10,
-            }}
-          >
-            <Image
-              source={require("../assets/facebook.png")}
-              style={{
-                height: 36,
-                width: 36,
-                marginRight: 8,
-              }}
-              resizeMode="contain"
-            />
-
-            <Text>Facebook</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => console.log("Pressed")}
-            style={{
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "row",
-              height: 52,
-              borderWidth: 1,
-              borderColor: COLORS.grey,
-              marginRight: 4,
-              borderRadius: 10,
-            }}
-          >
-            <Image
-              source={require("../assets/google.png")}
-              style={{
-                height: 36,
-                width: 36,
-                marginRight: 8,
-              }}
-              resizeMode="contain"
-            />
-
-            <Text>Google</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            marginVertical: 22,
-          }}
-        >
-          <Text style={{ fontSize: 16, color: COLORS.black }}>
-            Bạn không có tài khoản ?{" "}
-          </Text>
-          <Pressable onPress={() => navigation.navigate("Register")}>
+          <View style={{ marginBottom: 12 }}>
             <Text
               style={{
                 fontSize: 16,
-                color: "#198754",
-                fontWeight: "bold",
-                marginLeft: 6,
+                fontWeight: 400,
+                marginVertical: 8,
               }}
             >
-              Đăng ký ngay
+              Email hoặc số điện thoại
             </Text>
-          </Pressable>
-        </View>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "flex-end",
-            alignItems: "center",
-          }}
-        >
-          <Image
+
+            <View
+              style={{
+                width: "100%",
+                height: 48,
+                borderColor: COLORS.black,
+                borderWidth: 1,
+                borderRadius: 8,
+                alignItems: "center",
+                justifyContent: "center",
+                paddingLeft: 22,
+              }}
+            >
+              <TextInput
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Nhập email hoặc số điện thoại của bạn"
+                placeholderTextColor={COLORS.black}
+                keyboardType="email-address"
+                style={{
+                  width: "100%",
+                }}
+              />
+            </View>
+          </View>
+
+          <View style={{ marginBottom: 12 }}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 400,
+                marginVertical: 8,
+              }}
+            >
+              Mật khẩu
+            </Text>
+
+            <View
+              style={{
+                width: "100%",
+                height: 48,
+                borderColor: COLORS.black,
+                borderWidth: 1,
+                borderRadius: 8,
+                alignItems: "center",
+                justifyContent: "center",
+                paddingLeft: 22,
+              }}
+            >
+              <TextInput
+                onChangeText={setPassword}
+                value={password}
+                placeholder="Nhập mật khẩu của bạn"
+                placeholderTextColor={COLORS.black}
+                secureTextEntry={!isPasswordShown}
+                style={{
+                  width: "100%",
+                }}
+              />
+
+              <TouchableOpacity
+                onPress={() => setIsPasswordShown(!isPasswordShown)}
+                style={{
+                  position: "absolute",
+                  right: 12,
+                }}
+              >
+                {isPasswordShown == true ? (
+                  <Ionicons name="eye-off" size={24} color={COLORS.black} />
+                ) : (
+                  <Ionicons name="eye" size={24} color={COLORS.black} />
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View
             style={{
-              width: 60,
-              height: 60,
-              borderRadius: 50,
+              flexDirection: "row",
+              marginVertical: 6,
             }}
-            source={require("../assets/father.png")}
+          >
+            <Checkbox
+              style={{ marginRight: 8 }}
+              value={isChecked}
+              onValueChange={setIsChecked}
+              color={isChecked ? "#198754`" : undefined}
+            />
+
+            <Text>Ghi nhớ đăng nhập</Text>
+          </View>
+
+          <Button
+            title="Đăng nhập"
+            filled
+            style={{
+              marginTop: 18,
+              marginBottom: 4,
+            }}
+            onPress={() => {
+              validate() && login(email, password);
+            }}
           />
-          <Text
+
+          <View
             style={{
-              fontStyle: "italic",
-              fontSize: 16,
-              fontWeight: "bold",
+              flexDirection: "row",
+              alignItems: "center",
+              marginVertical: 20,
             }}
           >
-            Nguyễn Thế Bích
-          </Text>
-          <Text
+            <View
+              style={{
+                flex: 1,
+                height: 1,
+                backgroundColor: COLORS.grey,
+                marginHorizontal: 10,
+              }}
+            />
+            <Text style={{ fontSize: 14 }}>Hoặc đăng nhập với</Text>
+            <View
+              style={{
+                flex: 1,
+                height: 1,
+                backgroundColor: COLORS.grey,
+                marginHorizontal: 10,
+              }}
+            />
+          </View>
+
+          <View
             style={{
-              fontWeight: "500",
+              flexDirection: "row",
+              justifyContent: "center",
             }}
           >
-            Nhà phát triển
-          </Text>
-          <Text
+            <TouchableOpacity
+              onPress={() => console.log("Pressed")}
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "row",
+                height: 52,
+                borderWidth: 1,
+                borderColor: COLORS.grey,
+                marginRight: 4,
+                borderRadius: 10,
+              }}
+            >
+              <Image
+                source={require("../assets/facebook.png")}
+                style={{
+                  height: 36,
+                  width: 36,
+                  marginRight: 8,
+                }}
+                resizeMode="contain"
+              />
+
+              <Text>Facebook</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => console.log("Pressed")}
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "row",
+                height: 52,
+                borderWidth: 1,
+                borderColor: COLORS.grey,
+                marginRight: 4,
+                borderRadius: 10,
+              }}
+            >
+              <Image
+                source={require("../assets/google.png")}
+                style={{
+                  height: 36,
+                  width: 36,
+                  marginRight: 8,
+                }}
+                resizeMode="contain"
+              />
+
+              <Text>Google</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View
             style={{
-              fontStyle: "italic",
+              flexDirection: "row",
+              justifyContent: "center",
+              marginVertical: 22,
             }}
           >
-            Copyright@2024
-          </Text>
+            <Text style={{ fontSize: 16, color: COLORS.black }}>
+              Bạn không có tài khoản ?{" "}
+            </Text>
+            <Pressable onPress={() => navigation.navigate("Register")}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: "#198754",
+                  fontWeight: "bold",
+                  marginLeft: 6,
+                }}
+              >
+                Đăng ký ngay
+              </Text>
+            </Pressable>
+          </View>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
+          >
+            <Image
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: 50,
+              }}
+              source={require("../assets/father.png")}
+            />
+            <Text
+              style={{
+                fontStyle: "italic",
+                fontSize: 16,
+                fontWeight: "bold",
+              }}
+            >
+              Nguyễn Thế Bích
+            </Text>
+            <Text
+              style={{
+                fontWeight: "500",
+              }}
+            >
+              Nhà phát triển
+            </Text>
+            <Text
+              style={{
+                fontStyle: "italic",
+              }}
+            >
+              Copyright@2024
+            </Text>
+          </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };

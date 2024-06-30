@@ -13,7 +13,7 @@ const FamilyScreen = () => {
   const getFamilyData = async () => {
     try {
       setIsLoading(true);
-      const data = await AxiosInstance().get("api/myfamily");
+      const data = await AxiosInstance().get("families/");
       data.results && setFamilyData(data.results);
     } catch (err) {
       console.log(err);

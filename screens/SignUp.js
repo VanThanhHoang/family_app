@@ -6,6 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,6 +18,7 @@ import Button from "../components/Button";
 import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
 import { CountryPicker } from "react-native-country-codes-picker";
+import AppHeader from "../components/AppHeader";
 const Signup = ({ navigation }) => {
   const [isPasswordShown, setIsPasswordShown] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -56,8 +59,11 @@ const Signup = ({ navigation }) => {
       return false;
     }
     // pass include 1 letter and 1 special character
-    if(!/(?=.*[a-zA-Z])(?=.*[!@#$%^&*])/.test(password)){
-      Alert.alert("Lỗi", "Mật khẩu phải chứa ít nhất 1 chữ cái và 1 ký tự đặc biệt");
+    if (!/(?=.*[a-zA-Z])(?=.*[!@#$%^&*])/.test(password)) {
+      Alert.alert(
+        "Lỗi",
+        "Mật khẩu phải chứa ít nhất 1 chữ cái và 1 ký tự đặc biệt"
+      );
       return false;
     }
     if (confirmNewPassword !== password) {
@@ -68,7 +74,7 @@ const Signup = ({ navigation }) => {
       Alert.alert("Lỗi", "Vui lòng đồng ý với điều khoản và điều kiện");
       return false;
     }
-  
+
     return true;
   };
   const checkEmail = (email) => {
@@ -84,9 +90,11 @@ const Signup = ({ navigation }) => {
         [isUsePhone ? "phone_number" : "email"]: regInfo,
         password: password,
         confirm_password: confirmNewPassword,
-        
       };
-      await AxiosInstance().post(`register/${isUsePhone? 'phone/' : 'email/'}`, data);
+      await AxiosInstance().post(
+        `register/${isUsePhone ? "phone/" : "email/"}`,
+        data
+      );
       Alert.alert("Thành công", "Vui lòng kiểm tra OTP đã được gửi đến bạn");
       navigation.navigate("OTP", {
         dataReg: regInfo,
@@ -106,49 +114,155 @@ const Signup = ({ navigation }) => {
   };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
-      <CountryPicker
+      <AppHeader back title="Đăng ký" />
+      <TouchableWithoutFeedback
         style={{
-          modal: {
-            height: 500,
-          },
+          flex: 1,
         }}
-        enableModalAvoiding
-        show={showModal}
-        // when picker button press you will get the country object with dial code
-        pickerButtonOnPress={(item) => {
-          setCountryCode(item.dial_code);
-          setShowModal(false);
+        onPress={() => {
+          Keyboard.dismiss();
         }}
-      />
-      <View style={{ flex: 1, marginHorizontal: 22 }}>
-        <View style={{ marginVertical: 22 }}>
-          <Text
+      >
+        
+        <View style={{ flex: 1, marginHorizontal: 22 }}>
+          <CountryPicker
             style={{
-              fontSize: 22,
-              fontWeight: "bold",
-              marginVertical: 12,
-              color: COLORS.black,
+              modal: {
+                height: 500,
+              },
             }}
-          >
-            Create Account
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              setIsUsePhone(!isUsePhone);
+            enableModalAvoiding
+            show={showModal}
+            // when picker button press you will get the country object with dial code
+            pickerButtonOnPress={(item) => {
+              setCountryCode(item.dial_code);
+              setShowModal(false);
             }}
-          >
+          />
+          <View style={{ marginVertical: 22 }}>
             <Text
               style={{
-                fontSize: 14,
+                fontSize: 22,
                 fontWeight: "bold",
-                color: "#198755",
+                marginVertical: 12,
+                color: COLORS.black,
               }}
             >
-              {!isUsePhone ? "Sử dụng số điện thoại" : "Sử dụng email"}
+              Create Account
             </Text>
-          </TouchableOpacity>
-        </View>
-        {!isUsePhone && (
+            <TouchableOpacity
+              onPress={() => {
+                setIsUsePhone(!isUsePhone);
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: "bold",
+                  color: "#198755",
+                }}
+              >
+                {!isUsePhone ? "Sử dụng số điện thoại" : "Sử dụng email"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {!isUsePhone && (
+            <View style={{ marginBottom: 12 }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: 400,
+                  marginVertical: 8,
+                }}
+              >
+                Email
+              </Text>
+
+              <View
+                style={{
+                  width: "100%",
+                  height: 48,
+                  borderColor: COLORS.black,
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingLeft: 22,
+                }}
+              >
+                <TextInput
+                  onChangeText={(text) => setEmail(text)}
+                  value={email}
+                  placeholder="Nhập email của bạn"
+                  placeholderTextColor={COLORS.black}
+                  keyboardType="email-address"
+                  style={{
+                    width: "100%",
+                  }}
+                />
+              </View>
+            </View>
+          )}
+
+          {isUsePhone && (
+            <View style={{ marginBottom: 12 }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: 400,
+                  marginVertical: 8,
+                }}
+              >
+                Mobile Number
+              </Text>
+
+              <View
+                style={{
+                  width: "100%",
+                  height: 48,
+                  borderColor: COLORS.black,
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  alignItems: "center",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => setShowModal(true)}
+                  style={{
+                    width: "15%",
+                    height: "100%",
+                    borderRightColor: COLORS.black,
+                    borderRightWidth: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {countryCode}
+                  </Text>
+                </TouchableOpacity>
+
+                <TextInput
+                  onChangeText={(text) => setPhone(text)}
+                  value={phone}
+                  placeholder="Vui lòng nhập số điện thoại của bạn"
+                  placeholderTextColor={COLORS.black}
+                  keyboardType="numeric"
+                  style={{
+                    width: "80%",
+                  }}
+                />
+              </View>
+            </View>
+          )}
+
           <View style={{ marginBottom: 12 }}>
             <Text
               style={{
@@ -157,7 +271,7 @@ const Signup = ({ navigation }) => {
                 marginVertical: 8,
               }}
             >
-              Email
+              Mật khẩu
             </Text>
 
             <View
@@ -173,20 +287,32 @@ const Signup = ({ navigation }) => {
               }}
             >
               <TextInput
-                onChangeText={(text) => setEmail(text)}
-                value={email}
-                placeholder="Nhập email của bạn"
+                onChangeText={(text) => setPassword(text)}
+                value={password}
+                placeholder="Vui lòng nhập mật khẩu của bạn"
                 placeholderTextColor={COLORS.black}
-                keyboardType="email-address"
+                secureTextEntry={isPasswordShown}
                 style={{
                   width: "100%",
                 }}
               />
+
+              <TouchableOpacity
+                onPress={() => setIsPasswordShown(!isPasswordShown)}
+                style={{
+                  position: "absolute",
+                  right: 12,
+                }}
+              >
+                {isPasswordShown == true ? (
+                  <Ionicons name="eye-off" size={24} color={COLORS.black} />
+                ) : (
+                  <Ionicons name="eye" size={24} color={COLORS.black} />
+                )}
+              </TouchableOpacity>
             </View>
           </View>
-        )}
 
-        {isUsePhone && (
           <View style={{ marginBottom: 12 }}>
             <Text
               style={{
@@ -195,9 +321,8 @@ const Signup = ({ navigation }) => {
                 marginVertical: 8,
               }}
             >
-              Mobile Number
+              Xác nhận mật khẩu
             </Text>
-
             <View
               style={{
                 width: "100%",
@@ -206,283 +331,177 @@ const Signup = ({ navigation }) => {
                 borderWidth: 1,
                 borderRadius: 8,
                 alignItems: "center",
-                flexDirection: "row",
-                justifyContent: "space-between",
+                justifyContent: "center",
+                paddingLeft: 22,
               }}
             >
-              <TouchableOpacity
-                onPress={() => setShowModal(true)}
-                style={{
-                  width: "15%",
-                  height: "100%",
-                  borderRightColor: COLORS.black,
-                  borderRightWidth: 1,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: "bold",
-                  }}
-                >
-                  {countryCode}
-                </Text>
-              </TouchableOpacity>
-
               <TextInput
-                onChangeText={(text) => setPhone(text)}
-                value={phone}
-                placeholder="Vui lòng nhập số điện thoại của bạn"
+                onChangeText={setConfirmNewPassword}
+                value={confirmNewPassword}
+                placeholder="Xác nhận mật khẩu mới của bạn"
                 placeholderTextColor={COLORS.black}
-                keyboardType="numeric"
+                secureTextEntry={isPasswordShown}
                 style={{
-                  width: "80%",
+                  width: "100%",
                 }}
               />
+              <TouchableOpacity
+                onPress={() => setIsPasswordShown(!isPasswordShown)}
+                style={{
+                  position: "absolute",
+                  right: 12,
+                }}
+              >
+                {isPasswordShown == true ? (
+                  <Ionicons name="eye-off" size={24} color={COLORS.black} />
+                ) : (
+                  <Ionicons name="eye" size={24} color={COLORS.black} />
+                )}
+              </TouchableOpacity>
             </View>
           </View>
-        )}
-
-        <View style={{ marginBottom: 12 }}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: 400,
-              marginVertical: 8,
-            }}
-          >
-            Mật khẩu
-          </Text>
 
           <View
             style={{
-              width: "100%",
-              height: 48,
-              borderColor: COLORS.black,
-              borderWidth: 1,
-              borderRadius: 8,
-              alignItems: "center",
-              justifyContent: "center",
-              paddingLeft: 22,
+              flexDirection: "row",
+              marginVertical: 6,
             }}
           >
-            <TextInput
-              onChangeText={(text) => setPassword(text)}
-              value={password}
-              placeholder="Vui lòng nhập mật khẩu của bạn"
-              placeholderTextColor={COLORS.black}
-              secureTextEntry={isPasswordShown}
+            <Checkbox
+              style={{ marginRight: 8 }}
+              value={isChecked}
+              onValueChange={setIsChecked}
+              color={isChecked ? "#198755" : undefined}
+            />
+            <Text>Tôi chấp nhận điều khoản và ràng buộc với ứng dụng</Text>
+          </View>
+
+          <Button
+            onPress={() => {
+              if (validate()) {
+                register();
+              }
+            }}
+            title="Đăng ký"
+            filled
+            style={{
+              marginTop: 18,
+              marginBottom: 4,
+            }}
+          />
+
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginVertical: 20,
+            }}
+          >
+            <View
               style={{
-                width: "100%",
+                flex: 1,
+                height: 1,
+                backgroundColor: COLORS.grey,
+                marginHorizontal: 10,
               }}
             />
+            <Text style={{ fontSize: 14 }}>Hoặc đăng ký với</Text>
+            <View
+              style={{
+                flex: 1,
+                height: 1,
+                backgroundColor: COLORS.grey,
+                marginHorizontal: 10,
+              }}
+            />
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => console.log("Pressed")}
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "row",
+                height: 52,
+                borderWidth: 1,
+                borderColor: COLORS.grey,
+                marginRight: 4,
+                borderRadius: 10,
+              }}
+            >
+              <Image
+                source={require("../assets/facebook.png")}
+                style={{
+                  height: 36,
+                  width: 36,
+                  marginRight: 8,
+                }}
+                resizeMode="contain"
+              />
+
+              <Text>Facebook</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => setIsPasswordShown(!isPasswordShown)}
+              onPress={() => console.log("Pressed")}
               style={{
-                position: "absolute",
-                right: 12,
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "row",
+                height: 52,
+                borderWidth: 1,
+                borderColor: COLORS.grey,
+                marginRight: 4,
+                borderRadius: 10,
               }}
             >
-              {isPasswordShown == true ? (
-                <Ionicons name="eye-off" size={24} color={COLORS.black} />
-              ) : (
-                <Ionicons name="eye" size={24} color={COLORS.black} />
-              )}
+              <Image
+                source={require("../assets/google.png")}
+                style={{
+                  height: 36,
+                  width: 36,
+                  marginRight: 8,
+                }}
+                resizeMode="contain"
+              />
+
+              <Text>Google</Text>
             </TouchableOpacity>
           </View>
-        </View>
 
-        <View style={{ marginBottom: 12 }}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: 400,
-              marginVertical: 8,
-            }}
-          >
-            Xác nhận mật khẩu 
-          </Text>
           <View
             style={{
-              width: "100%",
-              height: 48,
-              borderColor: COLORS.black,
-              borderWidth: 1,
-              borderRadius: 8,
-              alignItems: "center",
-              justifyContent: "center",
-              paddingLeft: 22,
-            }}
-          >
-            <TextInput
-              onChangeText={setConfirmNewPassword}
-              value={confirmNewPassword}
-              placeholder="Xác nhận mật khẩu mới của bạn"
-              placeholderTextColor={COLORS.black}
-              secureTextEntry={isPasswordShown}
-              style={{
-                width: "100%",
-              }}
-            />
-            <TouchableOpacity
-              onPress={() => setIsPasswordShown(!isPasswordShown)}
-              style={{
-                position: "absolute",
-                right: 12,
-              }}
-            >
-              {isPasswordShown == true ? (
-                <Ionicons name="eye-off" size={24} color={COLORS.black} />
-              ) : (
-                <Ionicons name="eye" size={24} color={COLORS.black} />
-              )}
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            marginVertical: 6,
-          }}
-        >
-          <Checkbox
-            style={{ marginRight: 8 }}
-            value={isChecked}
-            onValueChange={setIsChecked}
-            color={isChecked ? "#198755" : undefined}
-          />
-          <Text>Tôi chấp nhận điều khoản và ràng buộc với ứng dụng</Text>
-        </View>
-
-        <Button
-          onPress={() => {
-            if (validate()) {
-              register();
-            }
-          }}
-          title="Đăng ký"
-          filled
-          style={{
-            marginTop: 18,
-            marginBottom: 4,
-          }}
-        />
-
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginVertical: 20,
-          }}
-        >
-          <View
-            style={{
-              flex: 1,
-              height: 1,
-              backgroundColor: COLORS.grey,
-              marginHorizontal: 10,
-            }}
-          />
-          <Text style={{ fontSize: 14 }}>Hoặc đăng ký với</Text>
-          <View
-            style={{
-              flex: 1,
-              height: 1,
-              backgroundColor: COLORS.grey,
-              marginHorizontal: 10,
-            }}
-          />
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => console.log("Pressed")}
-            style={{
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
               flexDirection: "row",
-              height: 52,
-              borderWidth: 1,
-              borderColor: COLORS.grey,
-              marginRight: 4,
-              borderRadius: 10,
-            }}
-          >
-            <Image
-              source={require("../assets/facebook.png")}
-              style={{
-                height: 36,
-                width: 36,
-                marginRight: 8,
-              }}
-              resizeMode="contain"
-            />
-
-            <Text>Facebook</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => console.log("Pressed")}
-            style={{
-              flex: 1,
-              alignItems: "center",
               justifyContent: "center",
-              flexDirection: "row",
-              height: 52,
-              borderWidth: 1,
-              borderColor: COLORS.grey,
-              marginRight: 4,
-              borderRadius: 10,
+              marginVertical: 22,
             }}
           >
-            <Image
-              source={require("../assets/google.png")}
-              style={{
-                height: 36,
-                width: 36,
-                marginRight: 8,
-              }}
-              resizeMode="contain"
-            />
-
-            <Text>Google</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            marginVertical: 22,
-          }}
-        >
-          <Text style={{ fontSize: 16, color: COLORS.black }}>
-            Bạn đã có tài khoản?
-          </Text>
-          <Pressable onPress={() => navigation.navigate("Login")}>
-            <Text
-              style={{
-                fontSize: 16,
-                color: "#198755",
-                fontWeight: "bold",
-                marginLeft: 6,
-              }}
-            >
-              Đăng nhập
+            <Text style={{ fontSize: 16, color: COLORS.black }}>
+              Bạn đã có tài khoản?
             </Text>
-          </Pressable>
+            <Pressable onPress={() => navigation.navigate("Login")}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: "#198755",
+                  fontWeight: "bold",
+                  marginLeft: 6,
+                }}
+              >
+                Đăng nhập
+              </Text>
+            </Pressable>
+          </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };
