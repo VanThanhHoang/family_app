@@ -41,7 +41,7 @@ const Login = () => {
     const isEmail = email.includes("@");
     try {
       setIsLoading(true);
-      const data = await AxiosInstance().post(`login/${isEmail?'email/':'phone'}`, {
+      const data = await AxiosInstance().post(`login/${isEmail?'email/':'phone/'}`, {
         [isEmail ? "email" : "phone_number"]: email,
         password: password,
       });
