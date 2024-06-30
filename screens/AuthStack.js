@@ -1,13 +1,37 @@
+import React, { useState, useEffect } from 'react';
 import { createStackNavigator } from "@react-navigation/stack";
 import Login from "./Login";
 import Signup from "./SignUp";
 import OTPScreen from "./OTPScreen";
 import ChangePassword from "./ChangePass";
+import ProfileScreen from "./ProfileScreen";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AuthStack = createStackNavigator();
+
 const AuthNavigation = () => {
+  const [initialRoute, setInitialRoute] = useState(null); // Initial state is null
+  const [isLoading, setIsLoading] = useState(true); // Loading state
+
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await AsyncStorage.getItem("access");
+      if (token) {
+        setInitialRoute("Profile"); // If token exists, set initial route to Profile
+      } else {
+        setInitialRoute("Login"); // If no token, set initial route to Login
+      }
+      setIsLoading(false); // Set loading to false once the check is done
+    };
+    checkToken();
+  }, []);
+
+  if (isLoading) {
+    return null; // Render nothing while checking token
+  }
   return (
     <AuthStack.Navigator
+      initialRouteName={initialRoute}
       screenOptions={{
         headerShown: false,
       }}
@@ -16,8 +40,9 @@ const AuthNavigation = () => {
       <AuthStack.Screen name="Register" component={Signup} />
       <AuthStack.Screen name="OTP" component={OTPScreen} />
       <AuthStack.Screen name="ChangePass" component={ChangePassword} />
-
+      <AuthStack.Screen name="Profile" component={ProfileScreen} />
     </AuthStack.Navigator>
   );
 };
+
 export default AuthNavigation;

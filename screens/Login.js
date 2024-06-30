@@ -16,11 +16,13 @@ import Button from "../components/Button";
 import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
-const Login = ({ navigation }) => {
+const Login = () => {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [email, setEmail] = useState("");
+  const navigation = useNavigation();
   const [password, setPassword] = useState("");
   const { setIsLoading } = React.useContext(AppContext);
   const validate = () => {
@@ -35,15 +37,21 @@ const Login = ({ navigation }) => {
     return true;
   };
   const login = async (email, password) => {
+    // check email or phone number
+    const isEmail = email.includes("@");
     try {
       setIsLoading(true);
-      const data = await AxiosInstance().post("login/", {
-        email: email,
+      const data = await AxiosInstance().post(`login/${isEmail?'email/':'phone'}`, {
+        [isEmail ? "email" : "phone_number"]: email,
         password: password,
       });
+      console.log(data);  
       await AsyncStorage.setItem("access", data.access);
       await AsyncStorage.setItem("refresh", data.refresh);
-      
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Profile" }],
+      })
     } catch (error) {
       Alert.alert(
         "Đăng nhập không thành công\n Tài khoản hoặc mật khẩu không đúng"

@@ -1,10 +1,12 @@
 import { useRoute } from "@react-navigation/native";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
+import { CountryPicker } from "react-native-country-codes-picker";
 import Button from "../components/Button";
 import React, { useContext, useState } from "react";
 import AxiosInstance from "../network/AxiosInstance";
 import { AppContext } from "../AppContext";
+import axios from "axios";
 const OTPScreen = ({ navigation }) => {
   const { dataReg, type } = useRoute()?.params ?? {
     dataReg: "Test@gmail.com",
@@ -36,10 +38,20 @@ const OTPScreen = ({ navigation }) => {
   const validateEmailOrPhone = async (emailOrPhone) => {
     try {
       setIsLoading(true);
-      const response = await AxiosInstance().post("activate/", {
-        [type??'email']: emailOrPhone,
-        activation_code: otp,
-      });
+      const link = `https://api.lehungba.com/activate/${type == 'email' ? 'email/' : 'phone/'}`
+      console.log(link);
+      const response = await axios.post(
+        link,
+        {
+          [type ?? "email"]: emailOrPhone,
+          activation_code: otp,
+        }
+      );
+
+      // const response = await AxiosInstance().post(`activate/${type}`, {
+      //   [type??'email']: emailOrPhone,
+      //   activation_code: otp,
+      // });
       Alert.alert("Xác thực thành công");
       setTimeout(() => {
         navigation.navigate("Login");

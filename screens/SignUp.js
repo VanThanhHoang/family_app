@@ -15,11 +15,14 @@ import Checkbox from "expo-checkbox";
 import Button from "../components/Button";
 import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
+import { CountryPicker } from "react-native-country-codes-picker";
 const Signup = ({ navigation }) => {
   const [isPasswordShown, setIsPasswordShown] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [isUsePhone, setIsUsePhone] = useState(true);
-  const [countryCode, setCountryCode] = useState("");
+  const [countryCode, setCountryCode] = useState("+1");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -52,10 +55,20 @@ const Signup = ({ navigation }) => {
       Alert.alert("Lỗi", "Mật khẩu phải có ít nhất 6 ký tự");
       return false;
     }
+    // pass include 1 letter and 1 special character
+    if(!/(?=.*[a-zA-Z])(?=.*[!@#$%^&*])/.test(password)){
+      Alert.alert("Lỗi", "Mật khẩu phải chứa ít nhất 1 chữ cái và 1 ký tự đặc biệt");
+      return false;
+    }
+    if (confirmNewPassword !== password) {
+      Alert.alert("Lỗi", "Mật khẩu xác nhận không khớp");
+      return false;
+    }
     if (!isChecked) {
       Alert.alert("Lỗi", "Vui lòng đồng ý với điều khoản và điều kiện");
       return false;
     }
+  
     return true;
   };
   const checkEmail = (email) => {
@@ -70,12 +83,14 @@ const Signup = ({ navigation }) => {
       const data = {
         [isUsePhone ? "phone_number" : "email"]: regInfo,
         password: password,
+        confirm_password: confirmNewPassword,
+        
       };
-      await AxiosInstance().post("register/", data);
+      await AxiosInstance().post(`register/${isUsePhone? 'phone/' : 'email/'}`, data);
       Alert.alert("Thành công", "Vui lòng kiểm tra OTP đã được gửi đến bạn");
-      navigation.navigate("OTP",{
-        dataReg:regInfo,
-        type:isUsePhone ? "phone_number" : "email",
+      navigation.navigate("OTP", {
+        dataReg: regInfo,
+        type: isUsePhone ? "phone_number" : "email",
       });
     } catch (err) {
       //check code 400
@@ -91,6 +106,20 @@ const Signup = ({ navigation }) => {
   };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
+      <CountryPicker
+        style={{
+          modal: {
+            height: 500,
+          },
+        }}
+        enableModalAvoiding
+        show={showModal}
+        // when picker button press you will get the country object with dial code
+        pickerButtonOnPress={(item) => {
+          setCountryCode(item.dial_code);
+          setShowModal(false);
+        }}
+      />
       <View style={{ flex: 1, marginHorizontal: 22 }}>
         <View style={{ marginVertical: 22 }}>
           <Text
@@ -179,23 +208,28 @@ const Signup = ({ navigation }) => {
                 alignItems: "center",
                 flexDirection: "row",
                 justifyContent: "space-between",
-                paddingLeft: 22,
               }}
             >
-              <TextInput
-                onChangeText={(text) => setCountryCode(text)}
-                value={countryCode}
-                maxLength={3}
-                placeholder="+84"
-                placeholderTextColor={COLORS.black}
-                keyboardType="numeric"
+              <TouchableOpacity
+                onPress={() => setShowModal(true)}
                 style={{
-                  width: "12%",
-                  borderRightWidth: 1,
-                  borderLeftColor: COLORS.grey,
+                  width: "15%",
                   height: "100%",
+                  borderRightColor: COLORS.black,
+                  borderRightWidth: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
-              />
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {countryCode}
+                </Text>
+              </TouchableOpacity>
 
               <TextInput
                 onChangeText={(text) => setPhone(text)}
@@ -245,6 +279,54 @@ const Signup = ({ navigation }) => {
               }}
             />
 
+            <TouchableOpacity
+              onPress={() => setIsPasswordShown(!isPasswordShown)}
+              style={{
+                position: "absolute",
+                right: 12,
+              }}
+            >
+              {isPasswordShown == true ? (
+                <Ionicons name="eye-off" size={24} color={COLORS.black} />
+              ) : (
+                <Ionicons name="eye" size={24} color={COLORS.black} />
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={{ marginBottom: 12 }}>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: 400,
+              marginVertical: 8,
+            }}
+          >
+            Xác nhận mật khẩu 
+          </Text>
+          <View
+            style={{
+              width: "100%",
+              height: 48,
+              borderColor: COLORS.black,
+              borderWidth: 1,
+              borderRadius: 8,
+              alignItems: "center",
+              justifyContent: "center",
+              paddingLeft: 22,
+            }}
+          >
+            <TextInput
+              onChangeText={setConfirmNewPassword}
+              value={confirmNewPassword}
+              placeholder="Xác nhận mật khẩu mới của bạn"
+              placeholderTextColor={COLORS.black}
+              secureTextEntry={isPasswordShown}
+              style={{
+                width: "100%",
+              }}
+            />
             <TouchableOpacity
               onPress={() => setIsPasswordShown(!isPasswordShown)}
               style={{
@@ -385,7 +467,7 @@ const Signup = ({ navigation }) => {
           }}
         >
           <Text style={{ fontSize: 16, color: COLORS.black }}>
-           Bạn đã có tài khoản?
+            Bạn đã có tài khoản?
           </Text>
           <Pressable onPress={() => navigation.navigate("Login")}>
             <Text

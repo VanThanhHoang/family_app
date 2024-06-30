@@ -20,6 +20,7 @@
     "react": "18.2.0",
     "react-native": "0.74.2",
     "react-native-animated-spinkit": "^1.5.2",
+    "react-native-country-codes-picker": "^2.3.5",
     "react-native-gesture-handler": "^2.17.1",
     "react-native-mmkv": "^2.12.2",
     "react-native-otp-entry": "^1.7.0",
