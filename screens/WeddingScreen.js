@@ -15,7 +15,7 @@ const WeddingScreen = () => {
     const getFamilyData = async () => {
       try {
         setIsLoading(true);
-        const data = await AxiosInstance().get("wedding");
+        const data = await AxiosInstance().get("weddingdays/");
         data?.data && setWeddingData(data.data);
       } catch (err) {
         console.log(err);
@@ -26,10 +26,22 @@ const WeddingScreen = () => {
     useEffect(() => {
       getFamilyData();
     }, []);
+    const [filteredList, setFilteredList] = useState(weddingData);
+    const [searchText, setSearchText] = useState("");
+    const searchFilter = (text) => {
+      text = text.trim(); 
+      setSearchText(text);
+      const filteredData = weddingData.filter((item) => {
+        const isMatchHusband = item?.husband?.full_name_vn.toLowerCase().includes(text.toLowerCase());
+        const isMatchWife = item?.wife?.full_name_vn.toLowerCase().includes(text.toLowerCase());
+        return isMatchHusband || isMatchWife; 
+      });
+      setFilteredList(filteredData);
+    };
   return (
     <View style={styles.container}>
       <AppHeader title="Danh sách ngày cưới" />
-      <SearchBar/>
+      <SearchBar onChangeText={searchFilter} value={searchText}/>
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
         style={{ width: "100%" }}
@@ -39,7 +51,7 @@ const WeddingScreen = () => {
         renderItem={({ item }) => {
           return <WeddingItem family={item}/>;
         }}
-        data={weddingData}
+        data={filteredList}
       />
     </View>
   );

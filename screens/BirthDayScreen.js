@@ -7,11 +7,21 @@ import AxiosInstance from "../network/AxiosInstance";
 import { FlatList } from "react-native-gesture-handler";
 import BirthDayItem from "./components/BirthDayItem";
 const BirthDayScreen = () => {
- const { birhdayData} = React.useContext(AppContext);
+  const { birhdayData } = React.useContext(AppContext);
+  const [filteredList, setFilteredList] = useState(birhdayData.data);
+  const [searchText, setSearchText] = useState("");
+  const searchFilter = (text) => {
+    text = text.trim();
+    setSearchText(text);
+    const filteredData = birhdayData.data.filter((item) => {
+      return item?.full_name_vn.toLowerCase().includes(text.toLowerCase());
+    });
+    setFilteredList(filteredData);
+  };
   return (
     <View style={styles.container}>
       <AppHeader title="Sinh nhật của thành viên" />
-      <SearchBar />
+      <SearchBar onChangeText={searchFilter} />
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
         style={{ width: "100%" }}
@@ -21,7 +31,7 @@ const BirthDayScreen = () => {
         renderItem={({ item }) => {
           return <BirthDayItem data={item} />;
         }}
-        data={birhdayData.data}
+        data={filteredList}
       />
     </View>
   );

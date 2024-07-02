@@ -1,11 +1,7 @@
 import { Image, StyleSheet, Text, View } from "react-native";
+import { dateFormater } from "../../helper/string_format";
 
 const BirthDayItem = ({ ...props }) => {
-  const dateFormater = (date) => {
-    if (!date) return "Chưa rõ";
-    const [year, month, day] = date.split("-");
-    return `${day}/${month}/${year}`;
-  };
   const familyInfo = props.data?.parent_relationships[0];
   return (
     <View
@@ -129,7 +125,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
 });
-const ItemParent = ({ ...props }) => {
+export const ItemParent = ({ ...props }) => {
   return (
     <View
       style={{

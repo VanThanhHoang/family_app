@@ -11,11 +11,16 @@ import SearchBar from "../components/SearchBar";
 const FamilyScreen = () => {
   const [familyData, setFamilyData] = useState([]);
   const { setIsLoading } = React.useContext(AppContext);
+  const [filteredList, setFilteredList] = useState(familyData);
+  const [searchText, setSearchText] = useState("");
   const getFamilyData = async () => {
     try {
       setIsLoading(true);
       const data = await AxiosInstance().get("families/");
-      data && setFamilyData(data);
+      if (data) {
+        setFamilyData(data);
+        setFilteredList(data);
+      }
     } catch (err) {
       console.log(err);
     } finally {
@@ -26,10 +31,24 @@ const FamilyScreen = () => {
     getFamilyData();
   }, []);
 
+  const searchFilter = (text) => {
+    text = text.trim();
+    setSearchText(text);
+    const filteredData = familyData.filter((item) => {
+      const isMatchHusband = item?.husband?.full_name_vn
+        .toLowerCase()
+        .includes(text.toLowerCase());
+      const isMatchWife = item?.wife?.full_name_vn
+        .toLowerCase()
+        .includes(text.toLowerCase());
+      return isMatchHusband || isMatchWife;
+    });
+    setFilteredList(filteredData);
+  };
   return (
     <View style={styles.container}>
       <AppHeader title="Danh sách gia đình" />
-      <SearchBar/>
+      <SearchBar onChangeText={searchFilter} value={searchText} />
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
         style={{ width: "100%" }}
@@ -37,7 +56,7 @@ const FamilyScreen = () => {
         renderItem={({ item }) => {
           return <FamilyItem family={item} />;
         }}
-        data={familyData}
+        data={filteredList}
       />
     </View>
   );

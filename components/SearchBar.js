@@ -1,9 +1,14 @@
 import { Image, StyleSheet, TextInput, View } from "react-native";
 
-const SearchBar = ({ search, setSearch }) => {
+const SearchBar = ({ onChangeText, value }) => {
   return (
     <View>
-      <TextInput style={styles.container} placeholder="Tìm kiếm..." />
+      <TextInput
+        onChangeText={onChangeText}
+        value={value}
+        style={styles.container}
+        placeholder="Tìm kiếm..."
+      />
       <Image style={styles.image} source={require("../assets/search.png")} />
     </View>
   );

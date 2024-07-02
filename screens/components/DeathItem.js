@@ -1,12 +1,7 @@
 import { Image, StyleSheet, Text, View } from "react-native";
+import { dateFormater } from "../../helper/string_format";
 
 const DeathItem = ({ ...props }) => {
-  const dateFormater = (date) => {
-    if (!date) return "Chưa rõ";
-    const [year, month, day] = date.split("-");
-    return `${day}/${month}/${year}`;
-  };
-  console.log(props.data.death_date);
   return (
     <View style={styles.container}>
       <View

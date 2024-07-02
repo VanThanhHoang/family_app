@@ -44,7 +44,7 @@ const OTPScreen = ({ navigation }) => {
       }`;
       console.log(link);
       const response = await axios.post(link, {
-        [type ?? "email"]: emailOrPhone,
+        [type ?? "email"]: emailOrPhone.toLowerCase(),
         activation_code: otp,
       });
       Alert.alert("Xác thực thành công");

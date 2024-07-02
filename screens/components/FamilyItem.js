@@ -1,10 +1,6 @@
 import { Image, StyleSheet, Text, View } from "react-native";
+import { dateFormater } from "../../helper/string_format";
 const FamilyItem = ({ family }) => {
-  const dateFormater = (date) => {
-    if (!date) return "Chưa rõ";
-    const [year, month, day] = date.split("-");
-    return `${day}/${month}/${year}`;
-  };
   const ItemInfo = ({ ...props }) => {
     const getImage = () => {
       if (props.info.profile_picture === null) {
@@ -45,13 +41,19 @@ const FamilyItem = ({ family }) => {
     const LifeSpan = () => {
       if (props.info.death_info) {
         return (
-          <Text style={styles.textInfo}>{props.info.death_info.life_span}</Text>
+          <Text style={styles.life}>{props.info.death_info.life_span}</Text>
         );
       }
       return (
-        <Text style={styles.textInfo}>{`${
-          props.info.current_age ?? "Chưa rõ"
-        } tuổi`}</Text>
+        <View style={styles.ageContainer}>
+          <Image
+            source={require("../../assets/age.png")}
+            style={styles.ageIcon}
+          />
+          <Text style={styles.ageText}>
+            {props.info.current_age ?? "Chưa rõ"}
+          </Text>
+        </View>
       );
     };
     return (
@@ -64,11 +66,6 @@ const FamilyItem = ({ family }) => {
         }}
       >
         <Image style={styles.image} source={getImage()} />
-        <View style={{
-          height:0.5,
-          width:'80%',
-          backgroundColor:"#969696",
-        }}/>
         <Text
           style={{
             fontSize: 14,
@@ -78,7 +75,7 @@ const FamilyItem = ({ family }) => {
         >
           {props.info.full_name_vn}
         </Text>
-          <View style={styles.line} />
+        <View style={styles.line} />
         <View
           style={{
             flexDirection: "row",
@@ -104,6 +101,7 @@ const FamilyItem = ({ family }) => {
               fontSize: 14,
               color: "black",
               fontStyle: "italic",
+              fontWeight: "500",
             }}
           >
             {`${props.info.death_info.is_alive}: ${props.info.death_info.years_since_death}`}
@@ -143,11 +141,22 @@ const Children = ({ ...props }) => {
   );
 };
 const styles = StyleSheet.create({
+  ageIcon: {
+    width: 15,
+    height: 15,
+    borderRadius: 25,
+  },
+  ageText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  ageContainer: {
+    flexDirection: "row",
+    gap: 5,
+    alignItems: "center",
+  },
   line: {
-    width: "80%",
-    height: 0.5,
     marginVertical: 5,
-    backgroundColor: "#969696",
   },
   totalContainer: {
     gap: 5,
@@ -198,6 +207,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "400",
     color: "black",
+  },
+  life:{
+    fontSize: 14,
+    color: "black",
+    fontStyle: "italic",
+    fontWeight: "700"
   },
   total: {
     position: "absolute",
