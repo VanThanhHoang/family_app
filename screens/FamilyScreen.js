@@ -6,7 +6,8 @@ import FamilyItem from "./components/FamilyItem";
 import { AppContext } from "../AppContext";
 import AppHeader from "../components/AppHeader";
 import SearchBar from "../components/SearchBar";
-
+// "total_sons": 1,
+// "total_daughters": 3
 const FamilyScreen = () => {
   const [familyData, setFamilyData] = useState([]);
   const { setIsLoading } = React.useContext(AppContext);
@@ -14,7 +15,7 @@ const FamilyScreen = () => {
     try {
       setIsLoading(true);
       const data = await AxiosInstance().get("families/");
-      data.results && setFamilyData(data.results);
+      data && setFamilyData(data);
     } catch (err) {
       console.log(err);
     } finally {
@@ -32,7 +33,7 @@ const FamilyScreen = () => {
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
         style={{ width: "100%" }}
-        keyExtractor={(item) => item.family_id.toString()}
+        keyExtractor={(item) => item.relationship_id.toString()}
         renderItem={({ item }) => {
           return <FamilyItem family={item} />;
         }}

@@ -13,8 +13,8 @@ const DeathScreen = () => {
     const getFamilyData = async () => {
       try {
         setIsLoading(true);
-        const data = await AxiosInstance().get("death");
-        data && setBirhdayData(data);
+        const data = await AxiosInstance().get("deathday/");
+        data?.data && setBirhdayData(data.data);
       } catch (err) {
         console.log(err);
       } finally {

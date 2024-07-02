@@ -6,6 +6,8 @@ import DeathScreen from "./DeathScreen";
 import WeddingScreen from "./WeddingScreen";
 import Login from "./Login";
 import AuthNavigation from "./AuthStack";
+import React from "react";
+import { AppContext } from "../AppContext";
 
 const Tab = createBottomTabNavigator();
 
@@ -32,12 +34,16 @@ const screens = [
   },
   {
     name: "Tài khoản",
-    component:AuthNavigation,
+    component: AuthNavigation,
     icon: require("../assets/user.png"),
   },
 ];
 
 function HomeTab() {
+  const { birhdayData } = React.useContext(AppContext);
+  const customOptions = {
+    tabBarBadge: birhdayData.notification?.count,
+  };
   return (
     <Tab.Navigator
       screenOptions={{
@@ -55,6 +61,7 @@ function HomeTab() {
           component={component}
           options={{
             tabBarShowLabel: true,
+            tabBarBadge:name=="Sinh nhật"?birhdayData.notification?.count:null,
             tabBarLabel: ({ focused }) => (
               <Text
                 style={{

@@ -69,12 +69,12 @@ const DeathItem = ({ ...props }) => {
           <View>
             <ItemParent
               isMarried={props.data.marital_status}
-              name={props.data.spouse_name}
+              name={props.data.spouse_relationships[0]}
               isFather={!props.data.gender}
             />
             <View style={{ flexDirection: "row", gap: 5, flexWrap: "wrap" }}>
-              <Children isBoy total={3} />
-              <Children total={3} />
+              <Children isBoy total={props.data.spouse_relationships[0].total_sons} />
+              <Children total={props.data.spouse_relationships[0].total_daughters} />
             </View>
           </View>
         )}
@@ -166,9 +166,9 @@ const ItemParent = ({ ...props }) => {
           fontSize: 14,
         }}
       >
-        {props.isFather
-          ? `${props.name ?? "Chưa rõ"}`
-          : `${props.name ?? "Chưa rõ"}`}
+        {!props.isFather
+          ? `${props.name?.wife.full_name_vn ?? "Chưa rõ"}`
+          : `${props.name?.husband.full_name_vn ?? "Chưa rõ"}`}
       </Text>
     </View>
   );

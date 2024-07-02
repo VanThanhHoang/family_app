@@ -7,16 +7,14 @@ const FamilyItem = ({ family }) => {
   };
   const ItemInfo = ({ ...props }) => {
     const getImage = () => {
-      if (props.image === null) {
+      if (props.info.profile_picture === null) {
         if (props.isHusband) return require("../../assets/father.png");
         else return require("../../assets/mother.png");
       }
       return { uri: props.image };
     };
     const DeadInfo = () => {
-      if (
-        !family?.[props.isHusband ? "husband_death_info" : "wife_death_info"]
-      ) {
+      if (!props.info.death_info) {
         return null;
       }
       return (
@@ -39,27 +37,21 @@ const FamilyItem = ({ family }) => {
               color: "black",
             }}
           >
-            {props.isHusband
-              ? dateFormater(family.husband_death_info?.death_date)
-              : dateFormater(family.wife_death_info?.death_date)}
+            {dateFormater(props.info.death_info.death_date)}
           </Text>
         </View>
       );
     };
     const LifeSpan = () => {
-      if (
-        family?.[props.isHusband ? "husband_death_info" : "wife_death_info"]
-      ) {
+      if (props.info.death_info) {
         return (
-          <Text style={styles.textInfo}>
-            {props.isHusband
-              ? family.husband_death_info?.life_span
-              : family.wife_death_info?.life_span}
-          </Text>
+          <Text style={styles.textInfo}>{props.info.death_info.life_span}</Text>
         );
       }
       return (
-        <Text style={styles.textInfo}>{`${props.age ?? "Chưa rõ"} tuổi`}</Text>
+        <Text style={styles.textInfo}>{`${
+          props.info.current_age ?? "Chưa rõ"
+        } tuổi`}</Text>
       );
     };
     return (
@@ -80,7 +72,7 @@ const FamilyItem = ({ family }) => {
             color: "black",
           }}
         >
-          {props.isHusband ? family.husband_name : family.wife_name}
+          {props.info.full_name_vn}
         </Text>
         <View
           style={{
@@ -96,14 +88,12 @@ const FamilyItem = ({ family }) => {
             source={require("../../assets/born.png")}
           />
           <Text style={styles.textInfo}>
-            {props.isHusband
-              ? dateFormater(family.husband_birth_date)
-              : dateFormater(family.wife_birth_date)}
+            {dateFormater(props.info.birth_date)}
           </Text>
         </View>
         <DeadInfo />
         <LifeSpan />
-        {props.deadInfo && (
+        {props.info.death_info && (
           <Text
             style={{
               fontSize: 14,
@@ -111,7 +101,7 @@ const FamilyItem = ({ family }) => {
               fontStyle: "italic",
             }}
           >
-            {`${props.deadInfo.is_alive}: ${props.deadInfo.years_since_death}`}
+            {`${props.info.death_info.is_alive}: ${props.info.death_info.years_since_death}`}
           </Text>
         )}
       </View>
@@ -120,37 +110,17 @@ const FamilyItem = ({ family }) => {
   return (
     <View style={styles.container}>
       <View style={styles.container2}>
-        <ItemInfo
-          deadInfo={family.husband_death_info}
-          age={family.husband_age}
-          isHusband
-          image={family.husband_profile_picture}
-        />
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 10,
-          }}
-        >
-          <Children isBoy total={family.male_children_count} />
-          <Children total={family.female_children_count} />
+        <ItemInfo isHusband info={family.husband} />
+        <View style={styles.line}>
+          <Children isBoy total={family.total_sons} />
+          <Children total={family.total_daughters} />
         </View>
-        <ItemInfo
-          deadInfo={family.wife_death_info}
-          age={family.wife_age}
-          isHusband={false}
-          image={family.wife_profile_picture}
-        />
+        <ItemInfo info={family.wife} />
       </View>
     </View>
   );
 };
 const Children = ({ ...props }) => {
-  // get total from '2 trai'
-  const total = props.total.split(" ");
-
   return (
     <View style={styles.totalContainer}>
       <Image
@@ -162,7 +132,7 @@ const Children = ({ ...props }) => {
         }
       />
       <View style={styles.total}>
-        <Text style={styles.totalText}>{`${total[0]}`}</Text>
+        <Text style={styles.totalText}>{`${props.total}`}</Text>
       </View>
     </View>
   );
@@ -233,6 +203,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     bottom: -5,
+  },
+  line: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 10,
   },
 });
 export default FamilyItem;

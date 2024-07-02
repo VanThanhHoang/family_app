@@ -7,23 +7,7 @@ import AxiosInstance from "../network/AxiosInstance";
 import { FlatList } from "react-native-gesture-handler";
 import BirthDayItem from "./components/BirthDayItem";
 const BirthDayScreen = () => {
-  const [birhdayData, setBirhdayData] = useState([]);
-  const { setIsLoading } = React.useContext(AppContext);
-  const getFamilyData = async () => {
-    try {
-      setIsLoading(true);
-      const data = await AxiosInstance().get("birthdays/");
-      data && setBirhdayData(data);
-    } catch (err) {
-      console.log('123',err);
-      console.log({...err});
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    getFamilyData();
-  }, []);
+ const { birhdayData} = React.useContext(AppContext);
   return (
     <View style={styles.container}>
       <AppHeader title="Sinh nhật của thành viên" />
@@ -37,7 +21,7 @@ const BirthDayScreen = () => {
         renderItem={({ item }) => {
           return <BirthDayItem data={item} />;
         }}
-        data={birhdayData}
+        data={birhdayData.data}
       />
     </View>
   );

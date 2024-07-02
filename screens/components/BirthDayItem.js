@@ -6,8 +6,22 @@ const BirthDayItem = ({ ...props }) => {
     const [year, month, day] = date.split("-");
     return `${day}/${month}/${year}`;
   };
+  const familyInfo = props.data.spouse_relationships[0];
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        props.data?.notification && {
+          shadowColor: "red",
+          shadowOffset: {
+            width: 2,
+            height: 5,
+          },
+          borderWidth:0.2,
+          borderColor:"red",
+        },
+      ]}
+    >
       <View
         style={{
           justifyContent: "center",
@@ -51,10 +65,9 @@ const BirthDayItem = ({ ...props }) => {
               style={{
                 fontSize: 22,
                 fontWeight: "bold",
-                
               }}
             >
-              {props.data.age ?? "Chưa rõ"}
+              {props.data.current_age ?? "Chưa rõ"}
             </Text>
           </View>
           <Text style={styles.birthDate}>
@@ -63,23 +76,17 @@ const BirthDayItem = ({ ...props }) => {
         </View>
         <ItemParent
           isMarried={props.data.marital_status}
-          name={props.data.father_name}
+          name={familyInfo?.husband.full_name_vn}
           isFather
         />
         <ItemParent
           isMarried={props.data.marital_status}
-          name={props.data.mother_name}
+          name={familyInfo?.wife.full_name_vn}
         />
       </View>
       {props.data.marital_status && (
         <Image
-          style={{
-            width: 30,
-            height: 30,
-            borderRadius: 25,
-            position: "absolute",
-            right: 10,
-          }}
+          style={styles.marri_image}
           source={require("../../assets/ring2.png")}
         />
       )}
@@ -87,6 +94,13 @@ const BirthDayItem = ({ ...props }) => {
   );
 };
 const styles = StyleSheet.create({
+  marri_image: {
+    width: 30,
+    height: 30,
+    borderRadius: 25,
+    position: "absolute",
+    right: 10,
+  },
   container: {
     flexDirection: "row",
     alignItems: "center",

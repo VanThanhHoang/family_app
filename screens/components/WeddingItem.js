@@ -5,69 +5,91 @@ const WeddingItem = ({ family }) => {
   const ItemInfo = ({ isHusband, image, age }) => {
     const getImage = () => {
       if (image === null) {
-        return isHusband ? require("../../assets/father.png") : require("../../assets/mother.png");
+        return isHusband
+          ? require("../../assets/father.png")
+          : require("../../assets/mother.png");
       }
       return { uri: image };
     };
-
     return (
       <View style={styles.itemInfoContainer}>
-        <View style={[styles.imageRow, isHusband ? styles.rowReverse : styles.row]}>
+        <View
+          style={[styles.imageRow, isHusband ? styles.rowReverse : styles.row]}
+        >
           <Image style={styles.image} source={getImage()} />
           <View style={styles.ageContainer}>
-            <Image source={require("../../assets/age.png")} style={styles.ageIcon} />
+            <Image
+              source={require("../../assets/age.png")}
+              style={styles.ageIcon}
+            />
             <Text style={styles.ageText}>{age ?? "Chưa rõ"}</Text>
           </View>
         </View>
         <View style={styles.line} />
-        <Text style={styles.nameText}>{isHusband ? family.husband_name : family.wife_name}</Text>
+        <Text style={styles.nameText}>
+          {isHusband ? family.husband.full_name_vn : family.wife.full_name_vn}
+        </Text>
         <Text style={styles.textInfo}>
-          {isHusband ? dateFormater(family.husband_birth_date) : dateFormater(family.wife_birth_date)}
+          {isHusband
+            ? dateFormater(family.husband.birth_date)
+            : dateFormater(family.wife.birth_date)}
         </Text>
       </View>
     );
   };
-
   return (
     <View style={styles.container}>
       <View style={styles.container2}>
         <ItemInfo
-          age={family.husband_age}
+          age={family.husband.current_age}
           isHusband
-          image={family.husband_profile_picture}
+          image={family.husband.profile_picture}
         />
         <View style={styles.centerContainer}>
           <View style={styles.childrenRow}>
-            {family.male_children_count > 0 && <Children isBoy total={family.male_children_count} />}
-            {family.female_children_count > 0 && <Children total={family.female_children_count} />}
+            {family.total_sons > 0 && (
+              <Children isBoy total={family.total_sons} />
+            )}
+            {family.total_daughters > 0 && (
+              <Children total={family.total_daughters} />
+            )}
           </View>
           <Text>{dateFormater(family.marriage_date)}</Text>
-          <Image style={styles.marriedIcon} source={require("../../assets/married.png")} />
+          <Image
+            style={styles.marriedIcon}
+            source={require("../../assets/married.png")}
+          />
           <View>
-            <Text style={styles.marriageDurationText}>{family.marriage_duration}</Text>
+            <Text style={styles.marriageDurationText}>
+              {family.marriage_duration}
+            </Text>
           </View>
         </View>
         <ItemInfo
-          age={family.wife_age}
+          age={family.wife.current_age}
           isHusband={false}
-          image={family.wife_profile_picture}
+          image={family.wife.profile_picture}
         />
       </View>
     </View>
   );
 };
 
-const Children = ({ isBoy, total }) => (
-  <View style={styles.totalContainer}>
-    <Image
-      style={styles.totalImage}
-      source={isBoy ? require("../../assets/son.png") : require("../../assets/dauther.png")}
-    />
-    <View style={styles.total}>
-      <Text style={styles.totalText}>{total}</Text>
-    </View>
+const Children = ({ isBoy, total }) => {
+  return  <View style={styles.totalContainer}>
+  <Image
+    style={styles.totalImage}
+    source={
+      isBoy
+        ? require("../../assets/son.png")
+        : require("../../assets/dauther.png")
+    }
+  />
+  <View style={styles.total}>
+    <Text style={styles.totalText}>{total}</Text>
   </View>
-);
+</View>
+}
 
 const styles = StyleSheet.create({
   itemInfoContainer: {
@@ -162,7 +184,9 @@ const styles = StyleSheet.create({
   },
   marriageDurationText: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "600",
+    color: "black",
+    fontStyle: "italic",
   },
   totalContainer: {
     gap: 5,
