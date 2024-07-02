@@ -109,8 +109,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   image: {
-    width: 70,
-    height: 70,
+    width: 80,
+    height: 80,
     borderRadius: 50,
   },
   ageContainer: {
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#969696",
   },
   nameText: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: "bold",
     color: "black",
   },
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   marriageDurationText: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: "600",
     color: "black",
     fontStyle: "italic",
@@ -195,8 +195,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   totalImage: {
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 40,
     borderRadius: 50,
   },
   totalText: {

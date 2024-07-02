@@ -6,12 +6,14 @@ const DeathItem = ({ ...props }) => {
     const [year, month, day] = date.split("-");
     return `${day}/${month}/${year}`;
   };
+  console.log(props.data.death_date);
   return (
     <View style={styles.container}>
       <View
         style={{
           justifyContent: "center",
           alignItems: "center",
+          gap: 3,
         }}
       >
         <Image
@@ -20,11 +22,11 @@ const DeathItem = ({ ...props }) => {
               ? require("../../assets/father.png")
               : require("../../assets/mother.png")
           }
-          style={{ width: 62, height: 62, borderRadius: 25 }}
+          style={{ width: 80, height: 80, borderRadius: 40 }}
         />
         <Text style={{
           fontStyle: "italic",
-          fontSize: 14,
+          fontSize: 12,
           fontWeight: "500",
         }}>Hưởng dương</Text>
         <View
@@ -40,13 +42,14 @@ const DeathItem = ({ ...props }) => {
           />
           <Text
             style={{
-              fontSize: 20,
+              fontSize: 19,
               fontWeight: "bold",
             }}
           >
             {props.data.death_info.age_at_death ?? "Chưa rõ"}
           </Text>
         </View>
+        <Text style={styles.totalText}>{props.data.death_info.years_since_death}</Text>
       </View>
       <View
         style={{
@@ -62,7 +65,7 @@ const DeathItem = ({ ...props }) => {
           }}
         >
           <Text style={styles.birthDate}>
-            {dateFormater(props.data.death_info.death_date)}
+           {`${dateFormater(props.data.birth_date)} - ${dateFormater(props.data.death_date)}`}
           </Text>
         </View>
         {props.data.marital_status && (
@@ -79,7 +82,7 @@ const DeathItem = ({ ...props }) => {
           </View>
         )}
       </View>
-          <Text style={styles.totalText}>{props.data.death_info.years_since_death}</Text>
+         
     </View>
   );
 };
@@ -89,7 +92,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "white",
     borderRadius: 10,
-    justifyContent: "space-between",
+    gap:10,
     alignItems: "flex-start",
     marginVertical: 5,
     shadowColor: "#000",
@@ -124,8 +127,7 @@ const styles = StyleSheet.create({
   totalText: {
     fontSize: 14,
     color: "black",
-    fontStyle: "italic",
-    fontWeight: "500",
+    fontWeight: "700",
   },
   total: {
     position: "absolute",
@@ -189,42 +191,3 @@ const Children = ({ isBoy, total }) => (
   </View>
 );
 export default DeathItem;
-
-// {
-//   "people_id": 139,
-//   "full_name_vn": "Lưu Phương Dung",
-//   "birth_date": "1986-05-20",
-//   "death_date": "2021-10-14",
-//   "gender": false,
-//   "marital_status": true,
-//   "profile_picture": null,
-//   "father_name": "Lưu Quang Diệm",
-//   "father_profile_picture": null,
-//   "father_status": {
-//     "death_date": "2023-04-16",
-//     "is_alive": "Đã Mất",
-//     "years_since_death": "1 năm 2 tháng",
-//     "age_at_death": 83,
-//     "life_span": "Hưởng Thọ: 83"
-//   },
-//   "mother_name": "Lê Minh Cầm",
-//   "mother_profile_picture": null,
-//   "mother_status": null,
-//   "spouse_name": "Bùi Viết Trình",
-//   "spouse_profile_picture": null,
-//   "spouse_status": null,
-//   "male_children_count": 2,
-//   "female_children_count": 0,
-//   "total_children_count": 2,
-//   "deceased_children_count": 0,
-//   "is_alive": false,
-//   "years_since_death": "2 năm 8 tháng",
-//   "age_at_death": 35,
-//   "death_info": {
-//     "death_date": "2021-10-14",
-//     "is_alive": "Đã Mất",
-//     "years_since_death": "2 năm 8 tháng",
-//     "age_at_death": 35,
-//     "life_span": "Hưởng Dương: 35"
-//   }
-// }

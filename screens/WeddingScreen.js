@@ -15,7 +15,7 @@ const WeddingScreen = () => {
     const getFamilyData = async () => {
       try {
         setIsLoading(true);
-        const data = await AxiosInstance().get("weddingdays/");
+        const data = await AxiosInstance().get("wedding");
         data?.data && setWeddingData(data.data);
       } catch (err) {
         console.log(err);

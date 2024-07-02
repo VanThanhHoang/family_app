@@ -6,7 +6,7 @@ const BirthDayItem = ({ ...props }) => {
     const [year, month, day] = date.split("-");
     return `${day}/${month}/${year}`;
   };
-  const familyInfo = props.data.spouse_relationships[0];
+  const familyInfo = props.data?.parent_relationships[0];
   return (
     <View
       style={[
@@ -76,12 +76,12 @@ const BirthDayItem = ({ ...props }) => {
         </View>
         <ItemParent
           isMarried={props.data.marital_status}
-          name={familyInfo?.husband.full_name_vn}
+          name={familyInfo?.parent.full_name_vn}
           isFather
         />
         <ItemParent
           isMarried={props.data.marital_status}
-          name={familyInfo?.wife.full_name_vn}
+          name={familyInfo?.mother?.full_name_vn}
         />
       </View>
       {props.data.marital_status && (

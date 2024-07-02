@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   Alert,
   SafeAreaView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import React, { useState } from "react";
 import COLORS from "../constants/colors";
@@ -13,6 +15,7 @@ import Button from "../components/Button";
 import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import AppHeader from "../components/AppHeader";
 
 const ChangePassword = ({ navigation }) => {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
@@ -65,20 +68,15 @@ const ChangePassword = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
-      <View style={{ flex: 1, marginHorizontal: 22 }}>
-        <View style={{ marginVertical: 22 }}>
-          <Text
-            style={{
-              fontSize: 22,
-              fontWeight: "bold",
-              marginVertical: 12,
-              color: COLORS.black,
-            }}
-          >
-            {` Đổi mật khẩu`}
-          </Text>
-        </View>
-
+      <AppHeader back title="Đổi mật khẩu" />
+     <TouchableWithoutFeedback style={{
+        flex: 1,
+     }}
+     onPress={() => {
+        Keyboard.dismiss();
+     }}
+     >
+     <View style={{ flex: 1, marginHorizontal: 22 }}>
         <View style={{ marginBottom: 12 }}>
           <Text
             style={{
@@ -209,6 +207,7 @@ const ChangePassword = ({ navigation }) => {
           }}
         />
       </View>
+     </TouchableWithoutFeedback>
     </SafeAreaView>
   );
 };

@@ -64,16 +64,21 @@ const FamilyItem = ({ family }) => {
         }}
       >
         <Image style={styles.image} source={getImage()} />
-        <View style={styles.line} />
+        <View style={{
+          height:0.5,
+          width:'80%',
+          backgroundColor:"#969696",
+        }}/>
         <Text
           style={{
-            fontSize: 20,
+            fontSize: 14,
             fontWeight: "bold",
             color: "black",
           }}
         >
           {props.info.full_name_vn}
         </Text>
+          <View style={styles.line} />
         <View
           style={{
             flexDirection: "row",
@@ -151,8 +156,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   totalImage: {
-    width: 30,
-    height: 30,
+    width: 40,
+    height: 40,
     borderRadius: 50,
   },
   totalText: {

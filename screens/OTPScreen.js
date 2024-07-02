@@ -47,18 +47,13 @@ const OTPScreen = ({ navigation }) => {
         [type ?? "email"]: emailOrPhone,
         activation_code: otp,
       });
-
-      // const response = await AxiosInstance().post(`activate/${type}`, {
-      //   [type??'email']: emailOrPhone,
-      //   activation_code: otp,
-      // });
       Alert.alert("Xác thực thành công");
       setTimeout(() => {
         navigation.navigate("Login");
       }, 1000);
     } catch (error) {
       Alert.alert("Mã OTP không chính xác");
-      console.log(error);
+      console.log({...error});
     } finally {
       setIsLoading(false);
       return false;
