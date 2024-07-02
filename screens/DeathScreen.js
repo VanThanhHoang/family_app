@@ -7,6 +7,7 @@ import AxiosInstance from "../network/AxiosInstance";
 import { FlatList } from "react-native-gesture-handler";
 import BirthDayItem from "./components/BirthDayItem";
 import DeathItem from "./components/DeathItem";
+import { removeDiacritics } from "../helper/string_format";
 const DeathScreen = () => {
     const [birhdayData, setBirhdayData] = useState([]);
     const { setIsLoading } = React.useContext(AppContext);
@@ -14,7 +15,10 @@ const DeathScreen = () => {
       try {
         setIsLoading(true);
         const data = await AxiosInstance().get("deathday/");
-        data?.data && setBirhdayData(data.data);
+        if(data?.data){
+          setBirhdayData(data.data);
+          setFilteredList(data.data);
+        }
       } catch (err) {
         console.log(err);
       } finally {
@@ -24,10 +28,23 @@ const DeathScreen = () => {
     useEffect(() => {
       getFamilyData();
     }, []);
+    const [filteredList, setFilteredList] = useState(birhdayData);
+    const [searchText, setSearchText] = useState("");
+    const searchFilter = (text) => {
+      const normalizedText = removeDiacritics(text);
+      setSearchText(text);
+      const filteredData = birhdayData.filter((item) => {
+        const husbandName = item?.full_name_vn || "";
+        const normalizedHusbandName = removeDiacritics(husbandName);
+        const isMatchHusband = normalizedHusbandName.includes(normalizedText);
+        return isMatchHusband 
+      });
+      setFilteredList(filteredData);
+    };
   return (
     <View style={styles.container}>
       <AppHeader title="Tưởng nhớ ngày mất" />
-      <SearchBar/>
+      <SearchBar onChangeText={searchFilter} value={searchText}/>
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
         style={{ width: "100%" }}
@@ -37,7 +54,7 @@ const DeathScreen = () => {
         renderItem={({ item }) => {
           return <DeathItem data={item} />;
         }}
-        data={birhdayData}
+        data={filteredList}
       />
     </View>
   );

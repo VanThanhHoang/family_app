@@ -6,15 +6,19 @@ import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
 import { FlatList } from "react-native-gesture-handler";
 import BirthDayItem from "./components/BirthDayItem";
+import { removeDiacritics } from "../helper/string_format";
 const BirthDayScreen = () => {
   const { birhdayData } = React.useContext(AppContext);
   const [filteredList, setFilteredList] = useState(birhdayData.data);
   const [searchText, setSearchText] = useState("");
   const searchFilter = (text) => {
-    text = text.trim();
+    const normalizedText = removeDiacritics(text);
     setSearchText(text);
     const filteredData = birhdayData.data.filter((item) => {
-      return item?.full_name_vn.toLowerCase().includes(text.toLowerCase());
+      const husbandName = item?.full_name_vn || "";
+      const normalizedHusbandName = removeDiacritics(husbandName);
+      const isMatchHusband = normalizedHusbandName.includes(normalizedText);
+      return isMatchHusband 
     });
     setFilteredList(filteredData);
   };

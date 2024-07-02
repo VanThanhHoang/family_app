@@ -29,7 +29,7 @@ const WeddingItem = ({ family }) => {
         <Text style={styles.nameText}>
           {isHusband ? family.husband.full_name_vn : family.wife.full_name_vn}
         </Text>
-        <Text style={styles.textInfo}>
+        <Text style={styles.birthDate}>
           {isHusband
             ? dateFormater(family.husband.birth_date)
             : dateFormater(family.wife.birth_date)}
@@ -54,7 +54,7 @@ const WeddingItem = ({ family }) => {
               <Children total={family.total_daughters} />
             )}
           </View>
-          <Text>{dateFormater(family.marriage_date)}</Text>
+          <Text style={styles.birthDate}>{dateFormater(family.marriage_date)}</Text>
           <Image
             style={styles.marriedIcon}
             source={require("../../assets/married.png")}
@@ -193,6 +193,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "flex-start",
     marginTop: 20,
+  },
+  birthDate: {
+    fontSize: 14,
+    fontWeight: "400",
+    fontStyle: "italic",
   },
   totalImage: {
     width: 40,

@@ -6,6 +6,7 @@ import FamilyItem from "./components/FamilyItem";
 import { AppContext } from "../AppContext";
 import AppHeader from "../components/AppHeader";
 import SearchBar from "../components/SearchBar";
+import { removeDiacritics } from "../helper/string_format";
 // "total_sons": 1,
 // "total_daughters": 3
 const FamilyScreen = () => {
@@ -32,15 +33,15 @@ const FamilyScreen = () => {
   }, []);
 
   const searchFilter = (text) => {
-    text = text.trim();
+    const normalizedText = removeDiacritics(text);
     setSearchText(text);
     const filteredData = familyData.filter((item) => {
-      const isMatchHusband = item?.husband?.full_name_vn
-        .toLowerCase()
-        .includes(text.toLowerCase());
-      const isMatchWife = item?.wife?.full_name_vn
-        .toLowerCase()
-        .includes(text.toLowerCase());
+      const husbandName = item?.husband?.full_name_vn || "";
+      const wifeName = item?.wife?.full_name_vn || "";
+      const normalizedHusbandName = removeDiacritics(husbandName);
+      const normalizedWifeName = removeDiacritics(wifeName);
+      const isMatchHusband = normalizedHusbandName.includes(normalizedText);
+      const isMatchWife = normalizedWifeName.includes(normalizedText);
       return isMatchHusband || isMatchWife;
     });
     setFilteredList(filteredData);

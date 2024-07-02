@@ -7,6 +7,7 @@ import AxiosInstance from "../network/AxiosInstance";
 import { FlatList } from "react-native-gesture-handler";
 import BirthDayItem from "./components/BirthDayItem";
 import WeddingItem from "./components/WeddingItem";
+import { removeDiacritics } from "../helper/string_format";
 // "male_children_count": 1,
 // "female_children_count": 1,
 const WeddingScreen = () => {
@@ -16,7 +17,11 @@ const WeddingScreen = () => {
       try {
         setIsLoading(true);
         const data = await AxiosInstance().get("weddingdays/");
-        data?.data && setWeddingData(data.data);
+        if(data?.data){
+          setWeddingData(data.data);
+          setFilteredList(data.data);
+        }
+    
       } catch (err) {
         console.log(err);
       } finally {
@@ -29,12 +34,16 @@ const WeddingScreen = () => {
     const [filteredList, setFilteredList] = useState(weddingData);
     const [searchText, setSearchText] = useState("");
     const searchFilter = (text) => {
-      text = text.trim(); 
+      const normalizedText = removeDiacritics(text);
       setSearchText(text);
       const filteredData = weddingData.filter((item) => {
-        const isMatchHusband = item?.husband?.full_name_vn.toLowerCase().includes(text.toLowerCase());
-        const isMatchWife = item?.wife?.full_name_vn.toLowerCase().includes(text.toLowerCase());
-        return isMatchHusband || isMatchWife; 
+        const husbandName = item?.husband?.full_name_vn || "";
+        const wifeName = item?.wife?.full_name_vn || "";
+        const normalizedHusbandName = removeDiacritics(husbandName);
+        const normalizedWifeName = removeDiacritics(wifeName);
+        const isMatchHusband = normalizedHusbandName.includes(normalizedText);
+        const isMatchWife = normalizedWifeName.includes(normalizedText);
+        return isMatchHusband || isMatchWife;
       });
       setFilteredList(filteredData);
     };

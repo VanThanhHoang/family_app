@@ -27,12 +27,7 @@ const FamilyItem = ({ family }) => {
             }}
             source={require("../../assets/grave.png")}
           />
-          <Text
-            style={{
-              fontSize: 16,
-              color: "black",
-            }}
-          >
+           <Text style={styles.birthDate}>
             {dateFormater(props.info.death_info.death_date)}
           </Text>
         </View>
@@ -89,7 +84,7 @@ const FamilyItem = ({ family }) => {
             }}
             source={require("../../assets/born.png")}
           />
-          <Text style={styles.textInfo}>
+          <Text style={styles.birthDate}>
             {dateFormater(props.info.birth_date)}
           </Text>
         </View>
@@ -98,7 +93,7 @@ const FamilyItem = ({ family }) => {
         {props.info.death_info && (
           <Text
             style={{
-              fontSize: 14,
+              fontSize: 12,
               color: "black",
               fontStyle: "italic",
               fontWeight: "500",
@@ -141,6 +136,11 @@ const Children = ({ ...props }) => {
   );
 };
 const styles = StyleSheet.create({
+  birthDate: {
+    fontSize: 14,
+    fontWeight: "400",
+    fontStyle: "italic",
+  },
   ageIcon: {
     width: 15,
     height: 15,
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     color: "black",
   },
   life:{
-    fontSize: 14,
+    fontSize: 12,
     color: "black",
     fontStyle: "italic",
     fontWeight: "700"
