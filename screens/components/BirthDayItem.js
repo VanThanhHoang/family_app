@@ -13,30 +13,56 @@ const BirthDayItem = ({ ...props }) => {
             width: 2,
             height: 5,
           },
-          borderWidth: 0.2,
-          borderColor: "red",
+          borderWidth:0.2,
+          borderColor:"red",
         },
       ]}
     >
-      <View style={styles.center}>
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <Image
           source={
             props.data.gender
               ? require("../../assets/father.png")
               : require("../../assets/mother.png")
           }
-          style={styles.profileImage}
+          style={{ width: 80, height: 80, borderRadius: 25 }}
         />
       </View>
-      <View style={styles.infoContainer}>
+      <View
+        style={{
+          gap: 5,
+        }}
+      >
         <Text style={styles.name}>{props.data.full_name_vn}</Text>
-        <View style={styles.row}>
-          <View style={styles.row}>
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 5,
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 5,
+              alignItems: "center",
+            }}
+          >
             <Image
               source={require("../../assets/age.png")}
-              style={styles.ageIcon}
+              style={{ width: 15, height: 15, borderRadius: 25 }}
             />
-            <Text style={styles.ageText}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "bold",
+              }}
+            >
               {props.data.current_age ?? "Chưa rõ"}
             </Text>
           </View>
@@ -63,7 +89,6 @@ const BirthDayItem = ({ ...props }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   marri_image: {
     width: 30,
@@ -95,61 +120,38 @@ const styles = StyleSheet.create({
   },
   birthDate: {
     fontSize: 12,
+
     fontWeight: "500",
   },
-  center: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 25,
-  },
-  infoContainer: {
-    gap: 5,
-  },
-  row: {
-    flexDirection: "row",
-    gap: 5,
-    alignItems: "center",
-  },
-  ageIcon: {
-    width: 15,
-    height: 15,
-    borderRadius: 25,
-  },
-  ageText: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  itemParentContainer: {
-    flexDirection: "row",
-    gap: 5,
-    flexWrap: "wrap",
-  },
-  parentIcon: {
-    width: 15, // Kích thước nhỏ hơn
-    height: 15, // Kích thước nhỏ hơn
-    borderRadius: 50,
-  },
-  parentText: {
-    fontSize: 11,
-  },
 });
-
 export const ItemParent = ({ ...props }) => {
   return (
-    <View style={styles.itemParentContainer}>
+    <View
+      style={{
+        flexDirection: "row",
+        gap: 5,
+        flexWrap: "wrap",
+      }}
+      marital_status
+    >
       <Image
-        style={styles.parentIcon}
+        style={{
+          width: 20,
+          height: 20,
+          borderRadius: 50,
+        }}
         source={
           props.isFather
             ? require("../../assets/father.png")
             : require("../../assets/mother.png")
         }
       />
-      <Text style={styles.parentText}>
+      <Text
+        style={{
+
+          fontSize: 11,
+        }}
+      >
         {props.isFather
           ? `Ba: ${props.name ?? "Chưa rõ"}`
           : `Mẹ: ${props.name ?? "Chưa rõ"}`}
@@ -157,5 +159,4 @@ export const ItemParent = ({ ...props }) => {
     </View>
   );
 };
-
 export default BirthDayItem;

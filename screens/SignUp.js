@@ -1,17 +1,5 @@
-import {
-  View,
-  Text,
-  Image,
-  Pressable,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  TouchableWithoutFeedback,
-  Keyboard,
-} from "react-native";
-import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import COLORS from "../constants/colors";
+import React, { useState, useEffect } from "react";
+import { View, Text, TextInput, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, SafeAreaView, Image, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
 import Button from "../components/Button";
@@ -19,17 +7,34 @@ import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
 import { CountryPicker } from "react-native-country-codes-picker";
 import AppHeader from "../components/AppHeader";
+import axios from "axios";
+import COLORS from "../constants/colors";
+
 const Signup = ({ navigation }) => {
   const [isPasswordShown, setIsPasswordShown] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [isUsePhone, setIsUsePhone] = useState(true);
-  const [countryCode, setCountryCode] = useState("+1");
+  const [countryCode, setCountryCode] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { setIsLoading } = React.useContext(AppContext);
+
+  useEffect(() => {
+    const fetchCountryCode = async () => {
+      try {
+        const response = await axios.get('https://pro.ip-api.com/json/?fields=callingCode&key=uNnF9kh96NppgHw');
+        setCountryCode(`+${response.data.callingCode}`);
+      } catch (error) {
+        console.error("Error fetching country code:", error);
+      }
+    };
+    
+    fetchCountryCode();
+  }, []);
+
   const validate = () => {
     if (isUsePhone) {
       if (countryCode.length < 2 || countryCode.length > 4) {
@@ -60,10 +65,7 @@ const Signup = ({ navigation }) => {
     }
     // pass include 1 letter and 1 special character
     if (!/(?=.*[a-zA-Z])(?=.*[!@#$%^&*])/.test(password)) {
-      Alert.alert(
-        "Lỗi",
-        "Mật khẩu phải chứa ít nhất 1 chữ cái và 1 ký tự đặc biệt"
-      );
+      Alert.alert("Lỗi", "Mật khẩu phải chứa ít nhất 1 chữ cái và 1 ký tự đặc biệt");
       return false;
     }
     if (confirmNewPassword !== password) {
@@ -77,10 +79,12 @@ const Signup = ({ navigation }) => {
 
     return true;
   };
+
   const checkEmail = (email) => {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
   };
+
   const register = async () => {
     try {
       setIsLoading(true);
@@ -112,6 +116,7 @@ const Signup = ({ navigation }) => {
       setIsLoading(false);
     }
   };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <AppHeader back title="Đăng ký" />
@@ -123,7 +128,6 @@ const Signup = ({ navigation }) => {
           Keyboard.dismiss();
         }}
       >
-        
         <View style={{ flex: 1, marginHorizontal: 22 }}>
           <CountryPicker
             style={{
@@ -177,7 +181,6 @@ const Signup = ({ navigation }) => {
               >
                 Email
               </Text>
-
               <View
                 style={{
                   width: "100%",

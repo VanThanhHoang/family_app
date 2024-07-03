@@ -20,7 +20,6 @@ const BirthDayScreen = () => {
   };
   return (
     <View style={styles.container}>
-      <AppHeader title="Sinh nhật của thành viên" />
       <SearchBar onChangeText={searchFilter} />
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
