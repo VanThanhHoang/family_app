@@ -23,7 +23,7 @@ const LoadingDialog = ({ open }) => {
                 justifyContent: "center",
               }}
             >
-              <Circle size={45} color={"black"} />
+              <Circle size={45} color={"white"} />
               <Text
                 style={{
                   textAlign: "center",
