@@ -1,8 +1,9 @@
+import React from 'react';
 import { Image, StyleSheet, Text, View } from "react-native";
 import { dateFormater } from "../../helper/string_format";
 
 const FamilyItem = ({ family }) => {
-  const ItemInfo = ({ isHusband, image, age, info }) => {
+  const ItemInfo = ({ isHusband, image, age, isAlive }) => {
     const getImage = () => {
       if (image === null) {
         return isHusband
@@ -24,17 +25,28 @@ const FamilyItem = ({ family }) => {
           numberOfLines={1}
           adjustsFontSizeToFit
         >
-          {info.full_name_vn}
+          {isHusband ? family.husband.full_name_vn : family.wife.full_name_vn}
         </Text>
         <Text style={styles.textInfo}>
-          {dateFormater(info.birth_date)}
+          {isHusband
+            ? dateFormater(family.husband.birth_date)
+            : dateFormater(family.wife.birth_date)}
         </Text>
-        <View style={[styles.ageContainer, isHusband ? styles.ageContainerLeft : styles.ageContainerRight]}>
-          <Image
-            source={require("../../assets/age.png")}
-            style={styles.ageIcon}
-          />
-          <Text style={styles.ageText}>{age ?? "Chưa rõ"}</Text>
+        <View
+          style={[
+            styles.ageContainer,
+            isHusband ? styles.ageContainerLeft : styles.ageContainerRight,
+          ]}
+        >
+          {isAlive ? (
+            <Image
+              source={require("../../assets/age.png")}
+              style={styles.ageIcon}
+            />
+          ) : null}
+          <Text style={styles.ageText}>
+            {isAlive ? age ?? "Chưa rõ" : `${age}`}
+          </Text>
         </View>
       </View>
     );
@@ -47,7 +59,7 @@ const FamilyItem = ({ family }) => {
           age={family.husband.current_age}
           isHusband
           image={family.husband.profile_picture}
-          info={family.husband}
+          isAlive={family.husband.is_alive}
         />
         <View style={styles.centerContainer}>
           <View style={styles.childrenRow}>
@@ -63,7 +75,7 @@ const FamilyItem = ({ family }) => {
           age={family.wife.current_age}
           isHusband={false}
           image={family.wife.profile_picture}
-          info={family.wife}
+          isAlive={family.wife.is_alive}
         />
       </View>
     </View>

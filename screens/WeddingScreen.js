@@ -49,7 +49,6 @@ const WeddingScreen = () => {
 
   return (
     <View style={styles.container}>
-      <AppHeader title="Danh sách ngày cưới" />
       <SearchBar onChangeText={searchFilter} value={searchText} />
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
