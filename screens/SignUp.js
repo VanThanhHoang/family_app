@@ -108,7 +108,6 @@ const Signup = ({ navigation }) => {
     try {
       setIsLoading(true);
       const regInfo = isUsePhone ? `${countryCode}${phone}` : email;
-      console.log(regInfo);
       const data = {
         [isUsePhone ? "phone_number" : "email"]: regInfo,
         password: password,
@@ -128,7 +127,6 @@ const Signup = ({ navigation }) => {
         Alert.alert("Lỗi", "Số điện thoại hoặc email đã được sử dụng");
       } else {
         Alert.alert("Lỗi", "Đã có lỗi xảy ra, vui lòng thử lại sau");
-        console.log(err);
       }
     } finally {
       setIsLoading(false);
