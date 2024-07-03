@@ -160,16 +160,9 @@ const Signup = ({ navigation }) => {
               setShowModal(false);
             }}
           />
-          <View style={{ marginVertical: 22 }}>
+          <View style={{ marginVertical: 5 }}>
             <Text
-              style={{
-                fontSize: 22,
-                fontWeight: "bold",
-                marginVertical: 12,
-                color: COLORS.black,
-              }}
             >
-              Create Account
             </Text>
             <TouchableOpacity
               onPress={() => {
