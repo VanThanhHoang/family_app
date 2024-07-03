@@ -59,7 +59,7 @@ const BirthDayItem = ({ ...props }) => {
             />
             <Text
               style={{
-                fontSize: 22,
+                fontSize: 16,
                 fontWeight: "bold",
               }}
             >
@@ -115,14 +115,13 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   name: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "bold",
   },
   birthDate: {
-    fontSize: 13,
+    fontSize: 12,
 
     fontWeight: "500",
-    fontStyle: "italic",
   },
 });
 export const ItemParent = ({ ...props }) => {
@@ -149,8 +148,8 @@ export const ItemParent = ({ ...props }) => {
       />
       <Text
         style={{
-          fontWeight: "bold",
-          fontSize: 14,
+
+          fontSize: 11,
         }}
       >
         {props.isFather

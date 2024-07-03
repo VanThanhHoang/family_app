@@ -2,7 +2,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { dateFormater } from "../../helper/string_format";
 
 const WeddingItem = ({ family }) => {
-  const ItemInfo = ({ isHusband, image, age }) => {
+  const ItemInfo = ({ isHusband, image, age, isAlive }) => {
     const getImage = () => {
       if (image === null) {
         return isHusband
@@ -11,22 +11,15 @@ const WeddingItem = ({ family }) => {
       }
       return { uri: image };
     };
+
     return (
       <View style={styles.itemInfoContainer}>
         <View
           style={[styles.imageRow, isHusband ? styles.rowReverse : styles.row]}
         >
           <Image style={styles.image} source={getImage()} />
-          <View style={styles.ageContainer}>
-            <Image
-              source={require("../../assets/age.png")}
-              style={styles.ageIcon}
-            />
-            <Text style={styles.ageText}>{age ?? "Chưa rõ"}</Text>
-          </View>
         </View>
-        <View style={styles.line} />
-        <Text style={styles.nameText}>
+        <Text style={styles.nameText} numberOfLines={1} adjustsFontSizeToFit>
           {isHusband ? family.husband.full_name_vn : family.wife.full_name_vn}
         </Text>
         <Text style={styles.birthDate}>
@@ -34,9 +27,26 @@ const WeddingItem = ({ family }) => {
             ? dateFormater(family.husband.birth_date)
             : dateFormater(family.wife.birth_date)}
         </Text>
+        <View
+          style={[
+            styles.ageContainer,
+            isHusband ? styles.ageContainerLeft : styles.ageContainerRight,
+          ]}
+        >
+          {isAlive ? (
+            <Image
+              source={require("../../assets/age.png")}
+              style={styles.ageIcon}
+            />
+          ) : null}
+          <Text style={styles.ageText}>
+            {isAlive ? age ?? "Chưa rõ" : `${age}`}
+          </Text>
+        </View>
       </View>
     );
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.container2}>
@@ -44,17 +54,14 @@ const WeddingItem = ({ family }) => {
           age={family.husband.current_age}
           isHusband
           image={family.husband.profile_picture}
+          isAlive={family.husband.is_alive}
         />
         <View style={styles.centerContainer}>
           <View style={styles.childrenRow}>
-            {family.total_sons > 0 && (
-              <Children isBoy total={family.total_sons} />
-            )}
-            {family.total_daughters > 0 && (
-              <Children total={family.total_daughters} />
-            )}
+            {family.total_sons > 0 && <Children isBoy total={family.total_sons} />}
+            {family.total_daughters > 0 && <Children total={family.total_daughters} />}
           </View>
-          <Text style={styles.birthDate}>{dateFormater(family.marriage_date)}</Text>
+          <Text style={styles.anniversaryDateText}>{dateFormater(family.marriage_date)}</Text>
           <Image
             style={styles.marriedIcon}
             source={require("../../assets/married.png")}
@@ -69,6 +76,7 @@ const WeddingItem = ({ family }) => {
           age={family.wife.current_age}
           isHusband={false}
           image={family.wife.profile_picture}
+          isAlive={family.wife.is_alive}
         />
       </View>
     </View>
@@ -76,20 +84,22 @@ const WeddingItem = ({ family }) => {
 };
 
 const Children = ({ isBoy, total }) => {
-  return  <View style={styles.totalContainer}>
-  <Image
-    style={styles.totalImage}
-    source={
-      isBoy
-        ? require("../../assets/son.png")
-        : require("../../assets/dauther.png")
-    }
-  />
-  <View style={styles.total}>
-    <Text style={styles.totalText}>{total}</Text>
-  </View>
-</View>
-}
+  return (
+    <View style={styles.totalContainer}>
+      <Image
+        style={styles.totalImage}
+        source={
+          isBoy
+            ? require("../../assets/son.png")
+            : require("../../assets/dauther.png")
+        }
+      />
+      <View style={styles.total}>
+        <Text style={styles.totalText}>{total}</Text>
+      </View>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   itemInfoContainer: {
@@ -109,14 +119,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   image: {
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 60,
     borderRadius: 50,
   },
   ageContainer: {
+    position: "absolute",
     flexDirection: "row",
     gap: 5,
     alignItems: "center",
+  },
+  ageContainerLeft: {
+    left: 0,
+    top: 10,
+  },
+  ageContainerRight: {
+    right: 0,
+    top: 10,
   },
   ageIcon: {
     width: 15,
@@ -124,22 +143,16 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
   ageText: {
-    fontSize: 18,
+    fontSize: 13,
     fontWeight: "bold",
   },
-  line: {
-    width: "80%",
-    height: 0.5,
-    marginVertical: 5,
-    backgroundColor: "#969696",
-  },
   nameText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "bold",
     color: "black",
   },
   textInfo: {
-    fontSize: 16,
+    fontSize: 11,
     fontWeight: "400",
     color: "black",
   },
@@ -178,21 +191,21 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   marriedIcon: {
-    width: 30,
-    height: 30,
+    width: 20,
+    height: 20,
     borderRadius: 50,
   },
   marriageDurationText: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: "600",
     color: "black",
     fontStyle: "italic",
   },
   totalContainer: {
-    gap: 5,
+    gap: 3,
     alignItems: "center",
     alignSelf: "flex-start",
-    marginTop: 20,
+    marginTop: 10,
   },
   birthDate: {
     fontSize: 14,
@@ -200,14 +213,13 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
   totalImage: {
-    width: 40,
-    height: 40,
+    width: 30,
+    height: 30,
     borderRadius: 50,
   },
   totalText: {
-    fontSize: 14,
+    fontSize: 12,
     color: "black",
-    fontStyle: "italic",
     fontWeight: "500",
   },
   total: {
@@ -218,7 +230,12 @@ const styles = StyleSheet.create({
     borderRadius: 7.5,
     justifyContent: "center",
     alignItems: "center",
-    bottom: -5,
+    bottom: -8,
+  },
+  anniversaryDateText: {
+    fontSize: 10,
+    fontWeight: "400",
+    color: "black",
   },
 });
 

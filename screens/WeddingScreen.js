@@ -1,11 +1,9 @@
-import { View, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, FlatList } from "react-native";
 import AppHeader from "../components/AppHeader";
 import SearchBar from "../components/SearchBar";
-import React, { useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
-import { FlatList } from "react-native-gesture-handler";
-import BirthDayItem from "./components/BirthDayItem";
 import WeddingItem from "./components/WeddingItem";
 import { removeDiacritics } from "../helper/string_format";
 // "male_children_count": 1,
@@ -49,25 +47,22 @@ const WeddingScreen = () => {
     };
   return (
     <View style={styles.container}>
-      <AppHeader title="Danh sách ngày cưới" />
-      <SearchBar onChangeText={searchFilter} value={searchText}/>
+      <SearchBar onChangeText={searchFilter} value={searchText} />
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
         style={{ width: "100%" }}
-        keyExtractor={(item) => {
-          return item.relationship_id.toString();
-        }}
-        renderItem={({ item }) => {
-          return <WeddingItem family={item}/>;
-        }}
+        keyExtractor={(item) => item.relationship_id.toString()}
+        renderItem={({ item }) => <WeddingItem family={item} />}
         data={filteredList}
       />
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
 });
-export default WeddingScreen
+
+export default WeddingScreen;

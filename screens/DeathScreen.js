@@ -43,8 +43,7 @@ const DeathScreen = () => {
     };
   return (
     <View style={styles.container}>
-      <AppHeader title="Tưởng nhớ ngày mất" />
-      <SearchBar onChangeText={searchFilter} value={searchText}/>
+      <SearchBar/>
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
         style={{ width: "100%" }}

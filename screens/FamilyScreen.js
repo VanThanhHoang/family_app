@@ -48,7 +48,6 @@ const FamilyScreen = () => {
   };
   return (
     <View style={styles.container}>
-      <AppHeader title="Danh sách gia đình" />
       <SearchBar onChangeText={searchFilter} value={searchText} />
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}

@@ -1,17 +1,16 @@
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  Image,
-  Pressable,
   TextInput,
   TouchableOpacity,
   Alert,
   TouchableWithoutFeedback,
   Keyboard,
+  SafeAreaView,
+  Image,
+  Pressable,
 } from "react-native";
-import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import COLORS from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
 import Button from "../components/Button";
@@ -19,17 +18,40 @@ import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
 import { CountryPicker } from "react-native-country-codes-picker";
 import AppHeader from "../components/AppHeader";
+import axios from "axios";
+import COLORS from "../constants/colors";
+
 const Signup = ({ navigation }) => {
   const [isPasswordShown, setIsPasswordShown] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [isUsePhone, setIsUsePhone] = useState(true);
-  const [countryCode, setCountryCode] = useState("+1");
+  const [countryCode, setCountryCode] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
+  const [ip, setIp] = useState("");
   const { setIsLoading } = React.useContext(AppContext);
+
+  useEffect(() => {
+    const fetchLocationData = async () => {
+      try {
+        const response = await axios.get('https://pro.ip-api.com/json/?fields=city,country,query,callingCode&key=uNnF9kh96NppgHw');
+        setCountryCode(`+${response.data.callingCode}`);
+        setCity(response.data.city);
+        setCountry(response.data.country);
+        setIp(response.data.query);
+      } catch (error) {
+        console.error("Error fetching location data:", error);
+      }
+    };
+
+    fetchLocationData();
+  }, []);
+
   const validate = () => {
     if (isUsePhone) {
       if (countryCode.length < 2 || countryCode.length > 4) {
@@ -58,7 +80,6 @@ const Signup = ({ navigation }) => {
       Alert.alert("Lỗi", "Mật khẩu phải có ít nhất 6 ký tự");
       return false;
     }
-    // pass include 1 letter and 1 special character
     if (!/(?=.*[a-zA-Z])(?=.*[!@#$%^&*])/.test(password)) {
       Alert.alert(
         "Lỗi",
@@ -77,15 +98,16 @@ const Signup = ({ navigation }) => {
 
     return true;
   };
+
   const checkEmail = (email) => {
     const re = /\S+@\S+\.\S+/;
     return re.test(email);
   };
+
   const register = async () => {
     try {
       setIsLoading(true);
       const regInfo = isUsePhone ? `${countryCode}${phone}` : email;
-      console.log(regInfo);
       const data = {
         [isUsePhone ? "phone_number" : "email"]: regInfo,
         password: password,
@@ -101,17 +123,16 @@ const Signup = ({ navigation }) => {
         type: isUsePhone ? "phone_number" : "email",
       });
     } catch (err) {
-      //check code 400
       if (err.response.status == 400) {
         Alert.alert("Lỗi", "Số điện thoại hoặc email đã được sử dụng");
       } else {
         Alert.alert("Lỗi", "Đã có lỗi xảy ra, vui lòng thử lại sau");
-        console.log(err);
       }
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <AppHeader back title="Đăng ký" />
@@ -123,7 +144,6 @@ const Signup = ({ navigation }) => {
           Keyboard.dismiss();
         }}
       >
-        
         <View style={{ flex: 1, marginHorizontal: 22 }}>
           <CountryPicker
             style={{
@@ -133,38 +153,33 @@ const Signup = ({ navigation }) => {
             }}
             enableModalAvoiding
             show={showModal}
-            // when picker button press you will get the country object with dial code
             pickerButtonOnPress={(item) => {
               setCountryCode(item.dial_code);
               setShowModal(false);
             }}
           />
-          <View style={{ marginVertical: 22 }}>
+          <View style={{ marginVertical: 5 }}>
             <Text
-              style={{
-                fontSize: 22,
-                fontWeight: "bold",
-                marginVertical: 12,
-                color: COLORS.black,
-              }}
             >
-              Create Account
             </Text>
             <TouchableOpacity
               onPress={() => {
                 setIsUsePhone(!isUsePhone);
               }}
             >
-              <Text
+            </TouchableOpacity>
+            <Text style={{ fontSize: 14, marginTop: 10 }}>
+              {`IP: ${ip}\nCity: ${city}\nCountry: ${country}`}
+            </Text>
+            <Text
                 style={{
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: "bold",
                   color: "#198755",
                 }}
               >
                 {!isUsePhone ? "Sử dụng số điện thoại" : "Sử dụng email"}
-              </Text>
-            </TouchableOpacity>
+              </Text>            
           </View>
           {!isUsePhone && (
             <View style={{ marginBottom: 12 }}>
@@ -177,7 +192,6 @@ const Signup = ({ navigation }) => {
               >
                 Email
               </Text>
-
               <View
                 style={{
                   width: "100%",

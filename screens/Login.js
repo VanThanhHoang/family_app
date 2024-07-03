@@ -77,19 +77,8 @@ const Login = () => {
         }}
       >
         <View style={{ flex: 1, marginHorizontal: 22 }}>
-          <View style={{ marginVertical: 22 }}>
-            <Text
-              style={{
-                fontSize: 22,
-                fontWeight: "bold",
-                marginVertical: 12,
-                color: COLORS.black,
-              }}
-            >
-              {` Đăng nhập \n vào tài khoản của bạn`}
-            </Text>
+          <View style={{ marginVertical: 50}}>
           </View>
-
           <View style={{ marginBottom: 12 }}>
             <Text
               style={{
@@ -323,16 +312,15 @@ const Login = () => {
           >
             <Image
               style={{
-                width: 60,
-                height: 60,
+                width: 100,
+                height: 100,
                 borderRadius: 50,
               }}
-              source={require("../assets/father.png")}
+              source={require("../assets/images/profile/le-the-bich.jpg")}
             />
             <Text
               style={{
-                fontStyle: "italic",
-                fontSize: 16,
+                fontSize: 15,
                 fontWeight: "bold",
               }}
             >
@@ -340,14 +328,8 @@ const Login = () => {
             </Text>
             <Text
               style={{
+                fontSize: 10,
                 fontWeight: "500",
-              }}
-            >
-              Nhà phát triển
-            </Text>
-            <Text
-              style={{
-                fontStyle: "italic",
               }}
             >
               Copyright@2024

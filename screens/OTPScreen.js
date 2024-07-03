@@ -1,31 +1,37 @@
 import { useRoute } from "@react-navigation/native";
-import { Alert, Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import { Alert, Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View, TextInput, Modal, TouchableOpacity } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
-import { CountryPicker } from "react-native-country-codes-picker";
 import Button from "../components/Button";
 import React, { useContext, useState } from "react";
-import AxiosInstance from "../network/AxiosInstance";
-import { AppContext } from "../AppContext";
 import axios from "axios";
 import AppHeader from "../components/AppHeader";
+import { AppContext } from "../AppContext";
+
 const OTPScreen = ({ navigation }) => {
   const { dataReg, type } = useRoute()?.params ?? {
     dataReg: "Test@gmail.com",
     type: "email",
   };
-  const { setIsLoading } = React.useContext(AppContext);
+  const { setIsLoading } = useContext(AppContext);
 
   const [otp, setOtp] = useState("");
+  const [modalVisible, setModalVisible] = useState(true);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordModalVisible, setPasswordModalVisible] = useState(true);
+  const [otpModalVisible, setOtpModalVisible] = useState(false);
+
   const makeHiddenInfo = (string) => {
     if (string.length <= 5) {
-      return string; // If the string is too short to hide, return it as is
+      return string;
     }
-    const start = string.slice(0, 2); // First 2 characters
-    const end = string.slice(-3); // Last 3 characters
-    const hiddenPart = "*".repeat(string.length - 5); // Middle part replaced with *
+    const start = string.slice(0, 2);
+    const end = string.slice(-3);
+    const hiddenPart = "*".repeat(string.length - 5);
     return `${start}${hiddenPart}${end}`;
   };
-  const validate = () => {
+
+  const validateOtp = () => {
     if (otp.length < 6) {
       Alert.alert("Mã OTP phải có 6 ký tự");
       return false;
@@ -36,80 +42,113 @@ const OTPScreen = ({ navigation }) => {
     }
     return true;
   };
-  const validateEmailOrPhone = async (emailOrPhone) => {
+
+  const handlePasswordSubmit = () => {
+    if (newPassword !== confirmPassword) {
+      Alert.alert("Mật khẩu không khớp");
+      return;
+    }
+    setPasswordModalVisible(false);
+    setOtpModalVisible(true);
+  };
+
+  const handleOtpSubmit = async () => {
+    if (!validateOtp()) return;
+    
     try {
       setIsLoading(true);
-      const link = `https://api.lehungba.com/activate/${
-        type == "email" ? "email/" : "phone/"
-      }`;
-      console.log(link);
+      const link = `https://api.lehungba.com/activate/phone/`;
       const response = await axios.post(link, {
-        [type ?? "email"]: emailOrPhone.toLowerCase(),
+        phone_number: dataReg,
         activation_code: otp,
+        new_password: newPassword,
+        confirm_password: confirmPassword,
       });
-      Alert.alert("Xác thực thành công");
+      Alert.alert("Kích hoạt tài khoản thành công");
+      setOtpModalVisible(false);
       setTimeout(() => {
         navigation.navigate("Login");
       }, 1000);
     } catch (error) {
-      Alert.alert("Mã OTP không chính xác");
-      console.log({...error});
+      Alert.alert("Có lỗi xảy ra", "Vui lòng thử lại");
+      console.log({ ...error });
     } finally {
       setIsLoading(false);
-      return false;
     }
   };
+
   return (
     <View style={styles.container}>
-      <View
-        style={{
-          width: "100%",
-        }}
-      >
+      <View style={{ width: "100%" }}>
         <AppHeader back title="Xác minh OTP" />
       </View>
-      <TouchableWithoutFeedback
-        style={{
-          flex: 1,
-        }}
-        onPress={() => {
-          Keyboard.dismiss();
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={passwordModalVisible}
+        onRequestClose={() => {
+          setPasswordModalVisible(!passwordModalVisible);
         }}
       >
-        <View
-          style={{
-            flex: 1,
-            padding: 25,
-            ...styles.container,
-          }}
-        >
-          <Text style={styles.headerText}>Xác thực Email/SĐT</Text>
-          <Text style={styles.infoText}>
-            {`Chúng tôi đã gửi mã xác thực về ${makeHiddenInfo(dataReg)}  `}
-          </Text>
-          <Text style={styles.otpPromptText}>Vui lòng điền mã OTP</Text>
-          <OtpInput
-            theme={styles.otpInputTheme}
-            numberOfDigits={6}
-            onTextChange={(text) => setOtp(text)}
-          />
-          <Button
-            onPress={() => {
-              validate() && validateEmailOrPhone(dataReg);
-            }}
-            title="Xác thực"
-            filled
-            style={{
-              width: 300,
-            }}
-          />
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Nhập mật khẩu mới</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Mật khẩu mới"
+              secureTextEntry
+              value={newPassword}
+              onChangeText={setNewPassword}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Xác nhận mật khẩu"
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={handlePasswordSubmit}
+            >
+              <Text style={styles.submitButtonText}>Gửi</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </TouchableWithoutFeedback>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={otpModalVisible}
+        onRequestClose={() => {
+          setOtpModalVisible(!otpModalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Nhập mã OTP</Text>
+            <Text style={styles.infoText}>
+              {`Chúng tôi đã gửi mã xác thực về ${makeHiddenInfo(dataReg)}  `}
+            </Text>
+            <OtpInput
+              theme={styles.otpInputTheme}
+              numberOfDigits={6}
+              onTextChange={(text) => setOtp(text)}
+            />
+            <TouchableOpacity
+              style={styles.submitButton}
+              onPress={handleOtpSubmit}
+            >
+              <Text style={styles.submitButtonText}>Xác thực</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
@@ -141,10 +180,55 @@ export const styles = StyleSheet.create({
       width: 50,
     },
   },
-  buttonStyle: {
-    marginTop: 18,
-    marginBottom: 4,
-    width: "100%",
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    width: '100%',
+    borderRadius: 5,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    width: '90%',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "bold"
+  },
+  submitButton: {
+    backgroundColor: '#198754',
+    borderRadius: 5,
+    padding: 10,
+    marginTop: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
+  submitButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
+
 export default OTPScreen;
