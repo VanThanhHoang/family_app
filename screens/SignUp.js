@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, Alert, TouchableWithoutFeedback, Keyboard, SafeAreaView, Image, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  TouchableWithoutFeedback,
+  Keyboard,
+  SafeAreaView,
+  Image,
+  Pressable,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
 import Button from "../components/Button";
@@ -20,19 +31,25 @@ const Signup = ({ navigation }) => {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
+  const [ip, setIp] = useState("");
   const { setIsLoading } = React.useContext(AppContext);
 
   useEffect(() => {
-    const fetchCountryCode = async () => {
+    const fetchLocationData = async () => {
       try {
-        const response = await axios.get('https://pro.ip-api.com/json/?fields=callingCode&key=uNnF9kh96NppgHw');
+        const response = await axios.get('https://pro.ip-api.com/json/?fields=city,country,query,callingCode&key=uNnF9kh96NppgHw');
         setCountryCode(`+${response.data.callingCode}`);
+        setCity(response.data.city);
+        setCountry(response.data.country);
+        setIp(response.data.query);
       } catch (error) {
-        console.error("Error fetching country code:", error);
+        console.error("Error fetching location data:", error);
       }
     };
-    
-    fetchCountryCode();
+
+    fetchLocationData();
   }, []);
 
   const validate = () => {
@@ -63,9 +80,11 @@ const Signup = ({ navigation }) => {
       Alert.alert("Lỗi", "Mật khẩu phải có ít nhất 6 ký tự");
       return false;
     }
-    // pass include 1 letter and 1 special character
     if (!/(?=.*[a-zA-Z])(?=.*[!@#$%^&*])/.test(password)) {
-      Alert.alert("Lỗi", "Mật khẩu phải chứa ít nhất 1 chữ cái và 1 ký tự đặc biệt");
+      Alert.alert(
+        "Lỗi",
+        "Mật khẩu phải chứa ít nhất 1 chữ cái và 1 ký tự đặc biệt"
+      );
       return false;
     }
     if (confirmNewPassword !== password) {
@@ -105,7 +124,6 @@ const Signup = ({ navigation }) => {
         type: isUsePhone ? "phone_number" : "email",
       });
     } catch (err) {
-      //check code 400
       if (err.response.status == 400) {
         Alert.alert("Lỗi", "Số điện thoại hoặc email đã được sử dụng");
       } else {
@@ -137,7 +155,6 @@ const Signup = ({ navigation }) => {
             }}
             enableModalAvoiding
             show={showModal}
-            // when picker button press you will get the country object with dial code
             pickerButtonOnPress={(item) => {
               setCountryCode(item.dial_code);
               setShowModal(false);
@@ -159,16 +176,19 @@ const Signup = ({ navigation }) => {
                 setIsUsePhone(!isUsePhone);
               }}
             >
-              <Text
+            </TouchableOpacity>
+            <Text style={{ fontSize: 14, marginTop: 10 }}>
+              {`IP: ${ip}\nCity: ${city}\nCountry: ${country}`}
+            </Text>
+            <Text
                 style={{
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: "bold",
                   color: "#198755",
                 }}
               >
                 {!isUsePhone ? "Sử dụng số điện thoại" : "Sử dụng email"}
-              </Text>
-            </TouchableOpacity>
+              </Text>            
           </View>
           {!isUsePhone && (
             <View style={{ marginBottom: 12 }}>
