@@ -4,7 +4,6 @@ import FamilyScreen from "./FamilyScreen";
 import BirthDayScreen from "./BirthDayScreen";
 import DeathScreen from "./DeathScreen";
 import WeddingScreen from "./WeddingScreen";
-import Login from "./Login";
 import AuthNavigation from "./AuthStack";
 import React from "react";
 import { AppContext } from "../AppContext";
@@ -41,9 +40,12 @@ const screens = [
 
 function HomeTab() {
   const { birhdayData } = React.useContext(AppContext);
-  const customOptions = {
-    tabBarBadge: birhdayData.notification?.count,
-  };
+ const getBadge=()=>{
+    if(birhdayData.notification?.count>5){
+      return birhdayData.notification?.count
+    }
+    return undefined
+ }
   return (
     <Tab.Navigator
       screenOptions={{
@@ -61,7 +63,7 @@ function HomeTab() {
           component={component}
           options={{
             tabBarShowLabel: true,
-            tabBarBadge:name=="Sinh nhật"?birhdayData.notification?.count:null,
+            tabBarBadge:name=="Sinh nhật"?getBadge():undefined,
             tabBarLabel: ({ focused }) => (
               <Text
                 style={{

@@ -7,6 +7,7 @@ import { AppContext } from "../AppContext";
 import AppHeader from "../components/AppHeader";
 import SearchBar from "../components/SearchBar";
 import { removeDiacritics } from "../helper/string_format";
+
 // "total_sons": 1,
 // "total_daughters": 3
 const FamilyScreen = () => {

@@ -62,7 +62,9 @@ const ProfileScreen = () => {
           {userInfo.email}
         </Text>
         <Button
-          onPress={() => {}}
+          onPress={() => {
+            navigation.navigate("DetailInfo");
+          }}
           title="Cập nhật thông tin"
           filled
           style={{ width: "100%" }}

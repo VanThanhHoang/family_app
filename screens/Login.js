@@ -77,8 +77,7 @@ const Login = () => {
         }}
       >
         <View style={{ flex: 1, marginHorizontal: 22 }}>
-          <View style={{ marginVertical: 50}}>
-          </View>
+          <View style={{ marginVertical: 50 }}></View>
           <View style={{ marginBottom: 12 }}>
             <Text
               style={{

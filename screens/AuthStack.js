@@ -6,7 +6,10 @@ import OTPScreen from "./OTPScreen";
 import ChangePassword from "./ChangePass";
 import ProfileScreen from "./ProfileScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import DetailProfileScreen from './DetailnfoScreen';
+import UpdateProfileScreen from './UpdateInfoScreen';
+import UpdateProfileScreenBoolean from './UpdateInfoScreenBoolean';
+import UpdateProfileDate from './UpdateInfoDate';
 const AuthStack = createStackNavigator();
 
 const AuthNavigation = () => {
@@ -41,6 +44,10 @@ const AuthNavigation = () => {
       <AuthStack.Screen name="OTP" component={OTPScreen} />
       <AuthStack.Screen name="ChangePass" component={ChangePassword} />
       <AuthStack.Screen name="Profile" component={ProfileScreen} />
+      <AuthStack.Screen name="UpdateProfile" component={UpdateProfileScreen} />
+      <AuthStack.Screen name="DetailInfo" component={DetailProfileScreen} />
+      <AuthStack.Screen name="UpdateInfoScreenBoolean" component={UpdateProfileScreenBoolean} />
+      <AuthStack.Screen name="UpdateInfoDate" component={UpdateProfileDate} />
     </AuthStack.Navigator>
   );
 };
