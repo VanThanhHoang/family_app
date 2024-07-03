@@ -1,8 +1,12 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from "react-native";
 import { dateFormater } from "../../helper/string_format";
+import { TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const FamilyItem = ({ family }) => {
+  const navigation = useNavigation();
+
   const ItemInfo = ({ isHusband, image, age, isAlive }) => {
     const getImage = () => {
       if (image === null) {
@@ -12,9 +16,10 @@ const FamilyItem = ({ family }) => {
       }
       return { uri: image };
     };
-
     return (
-      <View style={styles.itemInfoContainer}>
+      <TouchableOpacity
+     
+       style={styles.itemInfoContainer}>
         <View
           style={[styles.imageRow, isHusband ? styles.rowReverse : styles.row]}
         >
@@ -48,12 +53,18 @@ const FamilyItem = ({ family }) => {
             {isAlive ? age ?? "Chưa rõ" : `${age}`}
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+    onPress={() => {
+      navigation.navigate("DetailFamily", {
+        id: family.relationship_id,
+      });
+    }}
+    style={styles.container}>
       <View style={styles.container2}>
         <ItemInfo
           age={family.husband.current_age}
@@ -78,7 +89,7 @@ const FamilyItem = ({ family }) => {
           isAlive={family.wife.is_alive}
         />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

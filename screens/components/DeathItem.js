@@ -1,9 +1,19 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import { dateFormater } from "../../helper/string_format";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
 
 const DeathItem = ({ ...props }) => {
+  const navigation = useNavigation();
+
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+    onPress={()=>{
+        navigation.navigate("DetailDeathDay",{
+            id: props.data.people_id,
+        })
+    }}
+    style={styles.container}>
       <View
         style={{
           justifyContent: "center",
@@ -78,7 +88,7 @@ const DeathItem = ({ ...props }) => {
         )}
       </View>
          
-    </View>
+    </TouchableOpacity>
   );
 };
 const styles = StyleSheet.create({

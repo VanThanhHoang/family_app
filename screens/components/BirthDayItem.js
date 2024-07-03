@@ -1,10 +1,18 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import { dateFormater } from "../../helper/string_format";
+import { useNavigation } from "@react-navigation/native";
+import { TouchableOpacity } from "react-native";
 
 const BirthDayItem = ({ ...props }) => {
+  const navigation = useNavigation();
   const familyInfo = props.data?.parent_relationships[0];
   return (
-    <View
+    <TouchableOpacity
+      onPress={() => {
+        navigation.navigate("DetailBirthDay", {
+          id: props.data.people_id,
+        });
+      }}
       style={[
         styles.container,
         props.data?.notification && {
@@ -13,8 +21,8 @@ const BirthDayItem = ({ ...props }) => {
             width: 2,
             height: 5,
           },
-          borderWidth:0.2,
-          borderColor:"red",
+          borderWidth: 0.2,
+          borderColor: "red",
         },
       ]}
     >
@@ -86,7 +94,7 @@ const BirthDayItem = ({ ...props }) => {
           source={require("../../assets/ring2.png")}
         />
       )}
-    </View>
+    </TouchableOpacity>
   );
 };
 const styles = StyleSheet.create({
@@ -148,7 +156,6 @@ export const ItemParent = ({ ...props }) => {
       />
       <Text
         style={{
-
           fontSize: 11,
         }}
       >

@@ -1,7 +1,10 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import { dateFormater } from "../../helper/string_format";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
 
 const WeddingItem = ({ family }) => {
+  const navigatetion = useNavigation();
   const ItemInfo = ({ isHusband, image, age, isAlive }) => {
     const getImage = () => {
       if (image === null) {
@@ -10,8 +13,7 @@ const WeddingItem = ({ family }) => {
           : require("../../assets/mother.png");
       }
       return { uri: image };
-    };
-
+    };  
     return (
       <View style={styles.itemInfoContainer}>
         <View
@@ -48,7 +50,13 @@ const WeddingItem = ({ family }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <TouchableOpacity
+    onPress={()=>{
+      navigatetion.navigate("DetailWedding",{
+        id: family.relationship_id,
+      })
+    }}
+     style={styles.container}>
       <View style={styles.container2}>
         <ItemInfo
           age={family.husband.current_age}
@@ -79,7 +87,7 @@ const WeddingItem = ({ family }) => {
           isAlive={family.wife.is_alive}
         />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
