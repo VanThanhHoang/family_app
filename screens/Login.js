@@ -89,15 +89,16 @@ const Login = () => {
         [isUsePhone ? "phone_number" : "email"]: regInfo,
         password,
       };
-      const endpoint = isUsePhone ? 'https://api.lehungba.com/api/login/phone/' : 'login/email/';
+      const endpoint = isUsePhone ? 'login/phone/' : 'login/email/';
       const response = await AxiosInstance().post(endpoint, data);
+      console.log(response);
       // Lưu các giá trị vào AsyncStorage
-      await AsyncStorage.setItem("access", response.data.access);
-      await AsyncStorage.setItem("refresh", response.data.refresh);
-      await AsyncStorage.setItem("email", response.data.email);
-      await AsyncStorage.setItem("id", response.data.id.toString());
-      await AsyncStorage.setItem("people_id", response.data.people_id.toString());
-
+      await AsyncStorage.setItem("access", response.access);
+      await AsyncStorage.setItem("refresh", response.refresh);
+      await AsyncStorage.setItem("email", response.email);
+      await AsyncStorage.setItem("id", response.id.toString());
+      await AsyncStorage.setItem("people_id", response.people_id.toString());
+      await AsyncStorage.setItem("profile_picture", response.profile_picture);
       navigation.reset({
         index: 0,
         routes: [{ name: "Profile" }],
