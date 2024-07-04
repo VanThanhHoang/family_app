@@ -93,7 +93,6 @@ const Login = () => {
       };
       const endpoint = isUsePhone ? "login/phone/" : "login/email/";
       const response = await AxiosInstance().post(endpoint, data);
-      console.log(response);
       // Lưu các giá trị vào AsyncStorage
       await AsyncStorage.setItem("access", response.access);
       await AsyncStorage.setItem("refresh", response.refresh);

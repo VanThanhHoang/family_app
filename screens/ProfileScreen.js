@@ -28,7 +28,6 @@ const ProfileScreen = () => {
       let profile_picture = await AsyncStorage.getItem("profile_picture");
       const full_name_vn = await AsyncStorage.getItem("full_name_vn");
       setProfileImage(profile_picture);
-      console.log({ profile_picture });
       // Thêm tiền tố nếu profile_picture có giá trị
       if (profile_picture) {
         profile_picture = `https://api.lehungba.com${profile_picture}`;
@@ -46,11 +45,11 @@ const ProfileScreen = () => {
       console.log(e);
     }
   };
-  const uploadImage = async () => {
+  const uploadImage = async (image) => {
     try {
       const fileData = {
-        uri: selectedImage.uri,
-        type: selectedImage.type,
+        uri: image.uri,
+        type: image.type,
         name: `${new Date().getTime()}.jpg`,
       };
       const formData = new FormData();
@@ -59,14 +58,14 @@ const ProfileScreen = () => {
         "profile/upload/",
         formData
       );
-      if (data) {
+      if (data.profile_picture) {
         await AsyncStorage.setItem("profile_picture", data.profile_picture);
-        Alert.alert("Success", "Upload image successfully");
+        Alert.alert("Thành công", "Ảnh đã được cập nhật");
       }else{
         Alert.alert("Error", "Upload image failed");
       }
     } catch (err) {
-      console.log({ ...err });
+      console.log({ err });
     } finally {
     }
   };
@@ -84,7 +83,7 @@ const ProfileScreen = () => {
     if (!result.canceled) {
       setSelectedImage(result.assets[0]);
       setProfileImage(result.assets[0].uri);
-      uploadImage();
+      uploadImage(result.assets[0]);
     }
   };
 
