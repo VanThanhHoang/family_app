@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
+import { APP_CONSTANTS } from "../helper/constant";
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({});
@@ -134,7 +135,7 @@ const ProfileScreen = () => {
             source={{
               uri:
                 profileImage ??
-                "https://i.pinimg.com/736x/2f/15/f2/2f15f2e8c688b3120d3d26467b06330c.jpg",
+                APP_CONSTANTS.defaultAvatar,
             }}
             style={{
               width: 80,

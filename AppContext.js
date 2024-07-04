@@ -24,7 +24,6 @@ const AppProvier = ({ children }) => {
           hobbies_interests: data.hobbies_interests,
           social_media_links: data.social_media_links,
         });
-      console.log(data);
     } catch (err) {
       console.log(err);
     }

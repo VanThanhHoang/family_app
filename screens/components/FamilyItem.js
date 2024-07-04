@@ -17,7 +17,7 @@ const FamilyItem = ({ family }) => {
       return { uri: image };
     };
     return (
-      <TouchableOpacity
+      <View
      
        style={styles.itemInfoContainer}>
         <View
@@ -53,7 +53,7 @@ const FamilyItem = ({ family }) => {
             {isAlive ? age ?? "Chưa rõ" : `${age}`}
           </Text>
         </View>
-      </TouchableOpacity>
+      </View>
     );
   };
 
