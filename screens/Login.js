@@ -9,7 +9,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
@@ -19,41 +19,84 @@ import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import { CountryPicker } from "react-native-country-codes-picker";
 
 const Login = () => {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [isUsePhone, setIsUsePhone] = useState(true);
+  const [countryCode, setCountryCode] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const navigation = useNavigation();
   const [password, setPassword] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
+  const [ip, setIp] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const navigation = useNavigation();
   const { setIsLoading } = React.useContext(AppContext);
 
+  useEffect(() => {
+    const fetchLocationData = async () => {
+      try {
+        const response = await axios.get('https://pro.ip-api.com/json/?fields=city,country,query,callingCode&key=uNnF9kh96NppgHw');
+        setCountryCode(`+${response.data.callingCode}`);
+        setCity(response.data.city);
+        setCountry(response.data.country);
+        setIp(response.data.query);
+      } catch (error) {
+        console.error("Error fetching location data:", error);
+      }
+    };
+
+    fetchLocationData();
+  }, []);
+
   const validate = () => {
-    if (email.length == 0) {
-      alert("Email không được để trống");
-      return false;
+    if (isUsePhone) {
+      if (!phone) {
+        Alert.alert("Lỗi", "Vui lòng nhập số điện thoại");
+        return false;
+      }
+    } else {
+      if (!email) {
+        Alert.alert("Lỗi", "Vui lòng nhập email");
+        return false;
+      }
+      if (!checkEmail(email)) {
+        Alert.alert("Lỗi", "Email không hợp lệ");
+        return false;
+      }
     }
-    if (password.length == 0) {
-      alert("Mật khẩu không được để trống");
+    if (!password) {
+      Alert.alert("Lỗi", "Vui lòng nhập mật khẩu");
       return false;
     }
     return true;
   };
 
-  const login = async (email, password) => {
+  const checkEmail = (email) => {
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
+
+  const login = async () => {
     try {
       setIsLoading(true);
-      const data = await AxiosInstance().post('login/email/', {
-        email: email,
-        password: password,
-      });
-      console.log(data);
+      const regInfo = isUsePhone ? `${countryCode}${phone}` : email;
+      const data = {
+        [isUsePhone ? "phone_number" : "email"]: regInfo,
+        password,
+      };
+      const endpoint = isUsePhone ? 'https://api.lehungba.com/api/login/phone/' : 'login/email/';
+      const response = await AxiosInstance().post(endpoint, data);
       // Lưu các giá trị vào AsyncStorage
-      await AsyncStorage.setItem("access", data.access);
-      await AsyncStorage.setItem("refresh", data.refresh);
-      await AsyncStorage.setItem("email", data.email);
-      await AsyncStorage.setItem("id", data.id.toString());
-      await AsyncStorage.setItem("people_id", data.people_id.toString());
+      await AsyncStorage.setItem("access", response.data.access);
+      await AsyncStorage.setItem("refresh", response.data.refresh);
+      await AsyncStorage.setItem("email", response.data.email);
+      await AsyncStorage.setItem("id", response.data.id.toString());
+      await AsyncStorage.setItem("people_id", response.data.people_id.toString());
 
       navigation.reset({
         index: 0,
@@ -79,55 +122,101 @@ const Login = () => {
           Keyboard.dismiss();
         }}
       >
-        <View style={{ flex: 1, marginHorizontal: 22 }}>
-          <View style={{ marginVertical: 50 }}></View>
-          <View style={{ marginBottom: 12 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: 400,
-                marginVertical: 8,
+        <View style={{ flex: 1, justifyContent: "center", marginHorizontal: 22 }}>
+          <CountryPicker
+            style={{ modal: { height: 500 } }}
+            enableModalAvoiding
+            show={showModal}
+            pickerButtonOnPress={(item) => {
+              setCountryCode(item.dial_code);
+              setShowModal(false);
+            }}
+          />
+          <View style={{ marginVertical: 56, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+            <TouchableOpacity
+              onPress={() => {
+                setIsUsePhone(!isUsePhone);
               }}
             >
-              Email
+              <Text style={{ fontSize: 16, fontWeight: "bold", color: "#198755" }}>
+                {isUsePhone ? "Sử dụng email" : "Sử dụng số điện thoại"}
+              </Text>
+            </TouchableOpacity>
+            <Text style={{ fontSize: 14, textAlign: "right" }}>
+              {`IP: ${ip}\nCity: ${city}\nCountry: ${country}`}
             </Text>
-
-            <View
-              style={{
-                width: "100%",
-                height: 48,
-                borderColor: COLORS.black,
-                borderWidth: 1,
-                borderRadius: 8,
-                alignItems: "center",
-                justifyContent: "center",
-                paddingLeft: 22,
-              }}
-            >
-              <TextInput
-                value={email}
-                onChangeText={setEmail}
-                placeholder="Nhập email của bạn"
-                placeholderTextColor={COLORS.black}
-                keyboardType="email-address"
+          </View>
+          {!isUsePhone && (
+            <View style={{ marginBottom: 12 }}>
+              <View
                 style={{
                   width: "100%",
+                  height: 48,
+                  borderColor: COLORS.black,
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  paddingLeft: 22,
                 }}
-              />
+              >
+                <TextInput
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="Nhập email của bạn"
+                  placeholderTextColor={COLORS.black}
+                  keyboardType="email-address"
+                  style={{
+                    width: "100%",
+                  }}
+                />
+              </View>
             </View>
-          </View>
+          )}
+
+          {isUsePhone && (
+            <View style={{ marginBottom: 12 }}>
+              <View
+                style={{
+                  width: "100%",
+                  height: 48,
+                  borderColor: COLORS.black,
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  alignItems: "center",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => setShowModal(true)}
+                  style={{
+                    width: "15%",
+                    height: "100%",
+                    borderRightColor: COLORS.black,
+                    borderRightWidth: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                    {countryCode}
+                  </Text>
+                </TouchableOpacity>
+
+                <TextInput
+                  onChangeText={setPhone}
+                  value={phone}
+                  placeholder="Vui lòng nhập số điện thoại của bạn"
+                  placeholderTextColor={COLORS.black}
+                  keyboardType="numeric"
+                  style={{ width: "80%" }}
+                />
+              </View>
+            </View>
+          )}
 
           <View style={{ marginBottom: 12 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: 400,
-                marginVertical: 8,
-              }}
-            >
-              Mật khẩu
-            </Text>
-
             <View
               style={{
                 width: "100%",
@@ -177,7 +266,7 @@ const Login = () => {
               style={{ marginRight: 8 }}
               value={isChecked}
               onValueChange={setIsChecked}
-              color={isChecked ? "#198754`" : undefined}
+              color={isChecked ? "#198754" : undefined}
             />
 
             <Text>Ghi nhớ đăng nhập</Text>
@@ -191,7 +280,7 @@ const Login = () => {
               marginBottom: 4,
             }}
             onPress={() => {
-              validate() && login(email, password);
+              validate() && login();
             }}
           />
 

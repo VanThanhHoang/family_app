@@ -158,8 +158,8 @@ const ProfileScreen = () => {
             <Ionicons name="camera" size={20} color="black" />
           </TouchableOpacity>
         </View>
-        <Text style={{ fontSize: 18, fontWeight: "bold", marginVertical: 10 }}>
-          {userInfo.full_name_vn || userInfo.email}
+        <Text style={{ fontSize: 18, fontWeight: 'bold', marginVertical: 10 }}>
+          {userInfo.email}
         </Text>
       </View>
       <View style={{ flex: 1, alignItems: "center", padding: 25 }}>
@@ -234,7 +234,7 @@ const SettingItem = ({ title, onPress, icon }) => {
 const styles = StyleSheet.create({
   crmButton: {
     marginTop: 20,
-    backgroundColor: "#3BC371", // Change to the green color you want
+    backgroundColor: '#3BC371',
     paddingVertical: 20,
     paddingHorizontal: 80,
     borderRadius: 10,
