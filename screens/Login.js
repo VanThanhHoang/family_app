@@ -20,6 +20,7 @@ import AxiosInstance from "../network/AxiosInstance";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import { CountryPicker } from "react-native-country-codes-picker";
 
 const Login = () => {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
@@ -32,6 +33,7 @@ const Login = () => {
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [ip, setIp] = useState("");
+  const [showModal, setShowModal] = useState(false);
   const navigation = useNavigation();
   const { setIsLoading } = React.useContext(AppContext);
 
@@ -120,8 +122,17 @@ const Login = () => {
           Keyboard.dismiss();
         }}
       >
-        <View style={{ flex: 1, marginHorizontal: 22 }}>
-          <View style={{ marginVertical: 60, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+        <View style={{ flex: 1, justifyContent: "center", marginHorizontal: 22 }}>
+          <CountryPicker
+            style={{ modal: { height: 500 } }}
+            enableModalAvoiding
+            show={showModal}
+            pickerButtonOnPress={(item) => {
+              setCountryCode(item.dial_code);
+              setShowModal(false);
+            }}
+          />
+          <View style={{ marginVertical: 56, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
             <TouchableOpacity
               onPress={() => {
                 setIsUsePhone(!isUsePhone);
@@ -255,7 +266,7 @@ const Login = () => {
               style={{ marginRight: 8 }}
               value={isChecked}
               onValueChange={setIsChecked}
-              color={isChecked ? "#198754`" : undefined}
+              color={isChecked ? "#198754" : undefined}
             />
 
             <Text>Ghi nhớ đăng nhập</Text>
@@ -394,7 +405,7 @@ const Login = () => {
               style={{
                 width: 100,
                 height: 100,
-                borderRadius:60,
+                borderRadius: 50,
               }}
               source={require("../assets/images/profile/le-the-bich.jpg")}
             />
