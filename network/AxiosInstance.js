@@ -18,7 +18,7 @@ const AxiosInstance = (contentType = "application/json") => {
   const axiosInstance = axios.create({
     baseURL: "https://api.lehungba.com/api/",
   });
-
+  console.log("AxiosInstance",contentType);
   axiosInstance.interceptors.request.use(
     async (config) => {
       const token = await AsyncStorage.getItem("access");

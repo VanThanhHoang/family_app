@@ -1,15 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import * as ImagePicker from 'expo-image-picker';
-
+import React, { useContext, useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
+import { AppContext } from "../AppContext";
+import AxiosInstance from "../network/AxiosInstance";
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
-
+  const { setIsLoading } = useContext(AppContext);
+  const [profileImage, setProfileImage] = useState(null);
   const getUserInfo = async () => {
     try {
       const access = await AsyncStorage.getItem("access");
@@ -18,7 +27,8 @@ const ProfileScreen = () => {
       const people_id = await AsyncStorage.getItem("people_id");
       let profile_picture = await AsyncStorage.getItem("profile_picture");
       const full_name_vn = await AsyncStorage.getItem("full_name_vn");
-
+      setProfileImage(profile_picture);
+      console.log({ profile_picture });
       // Thêm tiền tố nếu profile_picture có giá trị
       if (profile_picture) {
         profile_picture = `https://api.lehungba.com${profile_picture}`;
@@ -30,13 +40,33 @@ const ProfileScreen = () => {
         id,
         people_id,
         profile_picture,
-        full_name_vn
+        full_name_vn,
       });
     } catch (e) {
       console.log(e);
     }
   };
-
+  const uploadImage = async () => {
+    try {
+      const fileData = {
+        uri: selectedImage.uri,
+        type: selectedImage.type,
+        name: `${new Date().getTime()}.jpg`,
+      };
+      const formData = new FormData();
+      formData.append("profile_picture", fileData);
+      const data = await AxiosInstance("multipart/form-data").patch(
+        "profile/upload/",
+        formData
+      );
+      AsyncStorage.setItem("profile_picture", data.profile_picture);
+      Alert.alert("Success", "Upload image successfully");
+      console.log(data);
+    } catch (err) {
+      console.log({ ...err });
+    } finally {
+    }
+  };
   useEffect(() => {
     getUserInfo();
   }, []);
@@ -46,32 +76,32 @@ const ProfileScreen = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 1,
+      quality: 0,
     });
-
-    if (!result.cancelled) {
-      setSelectedImage(result.uri);
-      // Here you can also handle uploading the image to your server if needed
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0]);
+      setProfileImage(result.assets[0].uri);
+      uploadImage();
     }
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'white' }}>
+    <View style={{ flex: 1, backgroundColor: "white" }}>
       <View
         style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
           paddingHorizontal: 15,
           paddingVertical: 10,
           borderBottomWidth: 1,
-          borderBottomColor: 'lightgray',
+          borderBottomColor: "lightgray",
         }}
       >
-        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Tài khoản</Text>
-        <View style={{ flexDirection: 'row' }}>
+        <Text style={{ fontSize: 20, fontWeight: "bold" }}>Tài khoản</Text>
+        <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('ChangePass')}
+            onPress={() => navigation.navigate("ChangePass")}
             style={{ marginRight: 15 }}
           >
             <Ionicons name="key" size={30} color="black" />
@@ -81,7 +111,7 @@ const ProfileScreen = () => {
               AsyncStorage.clear();
               navigation.reset({
                 index: 0,
-                routes: [{ name: 'Login' }],
+                routes: [{ name: "Login" }],
               });
             }}
           >
@@ -91,34 +121,36 @@ const ProfileScreen = () => {
       </View>
       <View
         style={{
-          alignItems: 'center',
+          alignItems: "center",
           padding: 15,
           borderBottomWidth: 1,
-          borderBottomColor: 'lightgray',
+          borderBottomColor: "lightgray",
         }}
       >
-        <View style={{ position: 'relative', width: 80, height: 80 }}>
+        <View style={{ position: "relative", width: 80, height: 80 }}>
           <Image
             source={{
-              uri: selectedImage || userInfo.profile_picture || 'https://i.pinimg.com/736x/2f/15/f2/2f15f2e8c688b3120d3d26467b06330c.jpg',
+              uri:
+                profileImage ??
+                "https://i.pinimg.com/736x/2f/15/f2/2f15f2e8c688b3120d3d26467b06330c.jpg",
             }}
             style={{
               width: 80,
               height: 80,
               borderRadius: 40,
               borderWidth: 2,
-              borderColor: 'gray',
-              backgroundColor: 'gray',
-              resizeMode: 'cover',
+              borderColor: "gray",
+              backgroundColor: "gray",
+              resizeMode: "cover",
             }}
           />
           <TouchableOpacity
             onPress={pickImage}
             style={{
-              position: 'absolute',
+              position: "absolute",
               bottom: 1,
               right: -1,
-              backgroundColor: 'white',
+              backgroundColor: "white",
               borderRadius: 15,
               padding: 2,
             }}
@@ -126,42 +158,47 @@ const ProfileScreen = () => {
             <Ionicons name="camera" size={20} color="black" />
           </TouchableOpacity>
         </View>
-        <Text style={{ fontSize: 18, fontWeight: 'bold', marginVertical: 10 }}>
+        <Text style={{ fontSize: 18, fontWeight: "bold", marginVertical: 10 }}>
           {userInfo.full_name_vn || userInfo.email}
         </Text>
       </View>
-      <View style={{ flex: 1, alignItems: 'center', padding: 25 }}>
+      <View style={{ flex: 1, alignItems: "center", padding: 25 }}>
         <SettingItem
-          icon={'person'}
+          icon={"person"}
           title="My Profile"
-          onPress={() => navigation.navigate('DetailInfo')}
+          onPress={() => navigation.navigate("DetailInfo")}
         />
         <SettingItem
-          icon={'people'}
+          icon={"people"}
           title="My Family"
-          onPress={() => navigation.navigate('Family')}
+          onPress={() => navigation.navigate("Family")}
         />
         <SettingItem
-          icon={'home'}
+          icon={"home"}
           title="Gia Đình Nội"
-          onPress={() => navigation.navigate('GiaDinhNoi')}
+          onPress={() => navigation.navigate("GiaDinhNoi")}
         />
         <SettingItem
-          icon={'home'}
+          icon={"home"}
           title="Gia Ngoại"
-          onPress={() => navigation.navigate('GiaNgoai')}
+          onPress={() => navigation.navigate("GiaNgoai")}
         />
         <SettingItem
-          icon={'school'}
+          icon={"school"}
           title="My Teacher"
-          onPress={() => navigation.navigate('Teacher')}
+          onPress={() => navigation.navigate("Teacher")}
         />
         <SettingItem
-          icon={'person-add'}
+          icon={"person-add"}
           title="My Friend"
-          onPress={() => navigation.navigate('Friend')}
+          onPress={() => navigation.navigate("Friend")}
         />
-        <TouchableOpacity style={styles.crmButton} onPress={() => {/* Add your navigation or functionality here */}}>
+        <TouchableOpacity
+          style={styles.crmButton}
+          onPress={() => {
+            /* Add your navigation or functionality here */
+          }}
+        >
           <Text style={styles.crmButtonText}>BUSINESS CRM</Text>
         </TouchableOpacity>
       </View>
@@ -173,22 +210,22 @@ const SettingItem = ({ title, onPress, icon }) => {
   return (
     <TouchableOpacity
       style={{
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         paddingVertical: 15,
-        width: '100%',
+        width: "100%",
       }}
       onPress={onPress}
     >
       <Ionicons name={icon} size={20} color="black" />
-      <Text style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 15 }}>
+      <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}>
         {title}
       </Text>
       <Ionicons
         name="chevron-forward"
         size={20}
         color="gray"
-        style={{ marginLeft: 'auto' }}
+        style={{ marginLeft: "auto" }}
       />
     </TouchableOpacity>
   );
@@ -197,16 +234,16 @@ const SettingItem = ({ title, onPress, icon }) => {
 const styles = StyleSheet.create({
   crmButton: {
     marginTop: 20,
-    backgroundColor: '#3BC371', // Change to the green color you want
+    backgroundColor: "#3BC371", // Change to the green color you want
     paddingVertical: 20,
     paddingHorizontal: 80,
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
     bottom: -30,
   },
   crmButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 20,
   },
 });

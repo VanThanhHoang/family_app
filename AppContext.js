@@ -9,20 +9,6 @@ const AppProvier = ({ children }) => {
 
   const getUserInfo = async () => {
     try {
-      // {
-      //     "full_name_vn": "Hoang Van Thanh",
-      //     "birth_date": "2002-06-05",
-      //     "gender": null,
-      //     "phone_number": null,
-      //     "address": null,
-      //     "nationality": "Việt Nam",
-      //     "marital_status": false,
-      //     "occupation": null,
-      //     "education_level": "dai hoc",
-      //     "hobbies_interests": "q2a3",
-      //     "social_media_links": null,
-      //   }
-      // only get properti like above obj
       const data = await AxiosInstance().get("/user-detail/update/");
       data &&
         setUserData({
