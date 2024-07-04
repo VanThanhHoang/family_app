@@ -59,8 +59,12 @@ const ProfileScreen = () => {
         "profile/upload/",
         formData
       );
-     await AsyncStorage.setItem("profile_picture", data.profile_picture);
-      Alert.alert("Success", "Upload image successfully");
+      if (data) {
+        await AsyncStorage.setItem("profile_picture", data.profile_picture);
+        Alert.alert("Success", "Upload image successfully");
+      }else{
+        Alert.alert("Error", "Upload image failed");
+      }
     } catch (err) {
       console.log({ ...err });
     } finally {
@@ -157,7 +161,7 @@ const ProfileScreen = () => {
             <Ionicons name="camera" size={20} color="black" />
           </TouchableOpacity>
         </View>
-        <Text style={{ fontSize: 18, fontWeight: 'bold', marginVertical: 10 }}>
+        <Text style={{ fontSize: 18, fontWeight: "bold", marginVertical: 10 }}>
           {userInfo.email}
         </Text>
       </View>
@@ -233,7 +237,7 @@ const SettingItem = ({ title, onPress, icon }) => {
 const styles = StyleSheet.create({
   crmButton: {
     marginTop: 20,
-    backgroundColor: '#3BC371',
+    backgroundColor: "#3BC371",
     paddingVertical: 20,
     paddingHorizontal: 80,
     borderRadius: 10,
