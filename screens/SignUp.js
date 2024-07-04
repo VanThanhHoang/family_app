@@ -28,6 +28,8 @@ const Signup = ({ navigation }) => {
   const [countryCode, setCountryCode] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [ip, setIp] = useState("");
@@ -68,6 +70,14 @@ const Signup = ({ navigation }) => {
         Alert.alert("Lỗi", "Email không hợp lệ");
         return false;
       }
+      if (!password) {
+        Alert.alert("Lỗi", "Vui lòng nhập mật khẩu");
+        return false;
+      }
+      if (password !== confirmPassword) {
+        Alert.alert("Lỗi", "Mật khẩu và xác nhận mật khẩu không khớp");
+        return false;
+      }
     }
     if (!isChecked) {
       Alert.alert("Lỗi", "Vui lòng đồng ý với điều khoản và điều kiện");
@@ -87,6 +97,7 @@ const Signup = ({ navigation }) => {
       const regInfo = isUsePhone ? `${countryCode}${phone}` : email;
       const data = {
         [isUsePhone ? "phone_number" : "email"]: regInfo,
+        password,
       };
       await AxiosInstance().post(
         `register/${isUsePhone ? "phone/" : "email/"}`,
@@ -127,61 +138,96 @@ const Signup = ({ navigation }) => {
               setShowModal(false);
             }}
           />
-          <View style={{ marginVertical: 5 }}>
-            <Text />
+          <View style={{ marginVertical: 5, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
             <TouchableOpacity
               onPress={() => {
                 setIsUsePhone(!isUsePhone);
               }}
-            />
-            <Text style={{ fontSize: 14, marginTop: 10 }}>
-              {`IP: ${ip}\nCity: ${city}\nCountry: ${country}`}
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "bold",
-                color: "#198755",
-              }}
             >
-              {!isUsePhone ? "Sử dụng số điện thoại" : "Sử dụng email"}
+              <Text style={{ fontSize: 16, fontWeight: "bold", color: "#198755" }}>
+                {isUsePhone ? "Sử dụng email" : "Sử dụng số điện thoại"}
+              </Text>
+            </TouchableOpacity>
+            <Text style={{ fontSize: 14, textAlign: "right" }}>
+              {`IP: ${ip}\nCity: ${city}\nCountry: ${country}`}
             </Text>
           </View>
           {!isUsePhone && (
-            <View style={{ marginBottom: 12 }}>
-              <Text style={{ fontSize: 16, fontWeight: 400, marginVertical: 8 }}>
-                Email
-              </Text>
-              <View
-                style={{
-                  width: "100%",
-                  height: 48,
-                  borderColor: COLORS.black,
-                  borderWidth: 1,
-                  borderRadius: 8,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  paddingLeft: 22,
-                }}
-              >
-                <TextInput
-                  onChangeText={(text) => setEmail(text)}
-                  value={email}
-                  placeholder="Nhập email của bạn"
-                  placeholderTextColor={COLORS.black}
-                  keyboardType="email-address"
-                  style={{ width: "100%" }}
-                />
+            <View>
+              <View style={{ marginBottom: 12 }}>
+                <View
+                  style={{
+                    width: "100%",
+                    height: 48,
+                    borderColor: COLORS.black,
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingLeft: 22,
+                  }}
+                >
+                  <TextInput
+                    onChangeText={(text) => setEmail(text)}
+                    value={email}
+                    placeholder="Nhập email của bạn"
+                    placeholderTextColor={COLORS.black}
+                    keyboardType="email-address"
+                    style={{ width: "100%" }}
+                  />
+                </View>
+              </View>
+              <View style={{ marginBottom: 12 }}>
+                <View
+                  style={{
+                    width: "100%",
+                    height: 48,
+                    borderColor: COLORS.black,
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingLeft: 22,
+                  }}
+                >
+                  <TextInput
+                    onChangeText={(text) => setPassword(text)}
+                    value={password}
+                    placeholder="Nhập mật khẩu của bạn"
+                    placeholderTextColor={COLORS.black}
+                    secureTextEntry
+                    style={{ width: "100%" }}
+                  />
+                </View>
+              </View>
+              <View style={{ marginBottom: 12 }}>
+                <View
+                  style={{
+                    width: "100%",
+                    height: 48,
+                    borderColor: COLORS.black,
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    paddingLeft: 22,
+                  }}
+                >
+                  <TextInput
+                    onChangeText={(text) => setConfirmPassword(text)}
+                    value={confirmPassword}
+                    placeholder="Xác nhận mật khẩu của bạn"
+                    placeholderTextColor={COLORS.black}
+                    secureTextEntry
+                    style={{ width: "100%" }}
+                  />
+                </View>
               </View>
             </View>
           )}
 
           {isUsePhone && (
             <View style={{ marginBottom: 12 }}>
-              <Text style={{ fontSize: 16, fontWeight: 400, marginVertical: 8 }}>
-                Số điện thoại
-              </Text>
-
               <View
                 style={{
                   width: "100%",

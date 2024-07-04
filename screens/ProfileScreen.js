@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AxiosInstance from '../network/AxiosInstance';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -12,26 +14,10 @@ const ProfileScreen = () => {
 
   const getUserInfo = async () => {
     try {
-      const access = await AsyncStorage.getItem("access");
-      const email = await AsyncStorage.getItem("email");
-      const id = await AsyncStorage.getItem("id");
-      const people_id = await AsyncStorage.getItem("people_id");
-      let profile_picture = await AsyncStorage.getItem("profile_picture");
-      const full_name_vn = await AsyncStorage.getItem("full_name_vn");
-
-      // Thêm tiền tố nếu profile_picture có giá trị
-      if (profile_picture) {
-        profile_picture = `https://api.lehungba.com${profile_picture}`;
+      const data = await AxiosInstance().get('user/');
+      if (data?.email) {
+        setUserInfo(data);
       }
-
-      setUserInfo({
-        access,
-        email,
-        id,
-        people_id,
-        profile_picture,
-        full_name_vn
-      });
     } catch (e) {
       console.log(e);
     }
@@ -51,7 +37,38 @@ const ProfileScreen = () => {
 
     if (!result.cancelled) {
       setSelectedImage(result.uri);
-      // Here you can also handle uploading the image to your server if needed
+      await uploadImage(result.uri);
+    }
+  };
+
+  const uploadImage = async (uri) => {
+    try {
+      const token = await AsyncStorage.getItem('access_token');
+      const id = await AsyncStorage.getItem('id');
+      const peopleId = await AsyncStorage.getItem('people_id');
+
+      const formData = new FormData();
+      formData.append('profile_picture', {
+        uri,
+        type: 'image/jpeg', // Adjust the type according to your image type
+        name: 'profile.jpg', // Adjust the name according to your image name
+      });
+
+      const response = await AxiosInstance(token).put(`api/people/${peopleId}/upload_profile_picture/`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status === 200) {
+        Alert.alert('Success', 'Profile picture updated successfully.');
+        getUserInfo();
+      } else {
+        Alert.alert('Error', 'Failed to update profile picture.');
+      }
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Error', 'An error occurred while uploading the image.');
     }
   };
 
@@ -100,7 +117,7 @@ const ProfileScreen = () => {
         <View style={{ position: 'relative', width: 80, height: 80 }}>
           <Image
             source={{
-              uri: selectedImage || userInfo.profile_picture || 'https://i.pinimg.com/736x/2f/15/f2/2f15f2e8c688b3120d3d26467b06330c.jpg',
+              uri: selectedImage || userInfo.profile_picture || 'https://api.lehungba.com/media/images/people/profile/3/94/profile.webp',
             }}
             style={{
               width: 80,
@@ -127,7 +144,7 @@ const ProfileScreen = () => {
           </TouchableOpacity>
         </View>
         <Text style={{ fontSize: 18, fontWeight: 'bold', marginVertical: 10 }}>
-          {userInfo.full_name_vn || userInfo.email}
+          {userInfo.email}
         </Text>
       </View>
       <View style={{ flex: 1, alignItems: 'center', padding: 25 }}>
@@ -197,7 +214,7 @@ const SettingItem = ({ title, onPress, icon }) => {
 const styles = StyleSheet.create({
   crmButton: {
     marginTop: 20,
-    backgroundColor: '#3BC371', // Change to the green color you want
+    backgroundColor: '#3BC371',
     paddingVertical: 20,
     paddingHorizontal: 80,
     borderRadius: 10,
