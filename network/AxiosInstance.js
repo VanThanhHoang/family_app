@@ -9,7 +9,6 @@ const refreshToken = async () => {
     await AsyncStorage.setItem("access", newAccessToken );
     return newAccessToken;
   } catch (err) {
-    console.error("Error refreshing token:", err);
     return Promise.reject(err);
   }
 };
@@ -49,7 +48,7 @@ const AxiosInstance = (contentType = "application/json") => {
           return console.log(tokenRefreshError);
         }
       }
-      return Promise.reject(err);
+      console.log(err);
     }
   );
 

@@ -40,7 +40,9 @@ const Login = () => {
   useEffect(() => {
     const fetchLocationData = async () => {
       try {
-        const response = await axios.get('https://pro.ip-api.com/json/?fields=city,country,query,callingCode&key=uNnF9kh96NppgHw');
+        const response = await axios.get(
+          "https://pro.ip-api.com/json/?fields=city,country,query,callingCode&key=uNnF9kh96NppgHw"
+        );
         setCountryCode(`+${response.data.callingCode}`);
         setCity(response.data.city);
         setCountry(response.data.country);
@@ -89,7 +91,7 @@ const Login = () => {
         [isUsePhone ? "phone_number" : "email"]: regInfo,
         password,
       };
-      const endpoint = isUsePhone ? 'login/phone/' : 'login/email/';
+      const endpoint = isUsePhone ? "login/phone/" : "login/email/";
       const response = await AxiosInstance().post(endpoint, data);
       console.log(response);
       // Lưu các giá trị vào AsyncStorage
@@ -99,6 +101,11 @@ const Login = () => {
       await AsyncStorage.setItem("id", response.id.toString());
       await AsyncStorage.setItem("people_id", response.people_id.toString());
       await AsyncStorage.setItem("profile_picture", response.profile_picture);
+      if (response.profile_picture) {
+        await AsyncStorage.setItem("profile_picture", response.profile_picture);
+      }else{
+        await AsyncStorage.setItem("profile_picture", "");
+      }
       navigation.reset({
         index: 0,
         routes: [{ name: "Profile" }],
@@ -123,7 +130,9 @@ const Login = () => {
           Keyboard.dismiss();
         }}
       >
-        <View style={{ flex: 1, justifyContent: "center", marginHorizontal: 22 }}>
+        <View
+          style={{ flex: 1, justifyContent: "center", marginHorizontal: 22 }}
+        >
           <CountryPicker
             style={{ modal: { height: 500 } }}
             enableModalAvoiding
@@ -133,13 +142,22 @@ const Login = () => {
               setShowModal(false);
             }}
           />
-          <View style={{ marginVertical: 56, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+          <View
+            style={{
+              marginVertical: 56,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <TouchableOpacity
               onPress={() => {
                 setIsUsePhone(!isUsePhone);
               }}
             >
-              <Text style={{ fontSize: 16, fontWeight: "bold", color: "#198755" }}>
+              <Text
+                style={{ fontSize: 16, fontWeight: "bold", color: "#198755" }}
+              >
                 {isUsePhone ? "Sử dụng email" : "Sử dụng số điện thoại"}
               </Text>
             </TouchableOpacity>
@@ -396,18 +414,18 @@ const Login = () => {
             </Pressable>
           </View>
           <Pressable onPress={() => navigation.navigate("Register")}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: "#198754",
-                  fontWeight: "bold",
-                  marginLeft: 6,
-                  textAlign: "center",
-                }}
-              >
-                Quên mật khẩu ?
-              </Text>
-            </Pressable>
+            <Text
+              style={{
+                fontSize: 16,
+                color: "#198754",
+                fontWeight: "bold",
+                marginLeft: 6,
+                textAlign: "center",
+              }}
+            >
+              Quên mật khẩu ?
+            </Text>
+          </Pressable>
           <View
             style={{
               flex: 1,
