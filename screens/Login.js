@@ -100,7 +100,6 @@ const Login = () => {
       await AsyncStorage.setItem("email", response.email);
       await AsyncStorage.setItem("id", response.id.toString());
       await AsyncStorage.setItem("people_id", response.people_id.toString());
-      await AsyncStorage.setItem("profile_picture", response.profile_picture);
       if (response.profile_picture) {
         await AsyncStorage.setItem("profile_picture", response.profile_picture);
       }else{
