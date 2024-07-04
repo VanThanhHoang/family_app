@@ -61,7 +61,6 @@ const ProfileScreen = () => {
       );
      await AsyncStorage.setItem("profile_picture", data.profile_picture);
       Alert.alert("Success", "Upload image successfully");
-      console.log(data);
     } catch (err) {
       console.log({ ...err });
     } finally {
