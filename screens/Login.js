@@ -395,6 +395,19 @@ const Login = () => {
               </Text>
             </Pressable>
           </View>
+          <Pressable onPress={() => navigation.navigate("Register")}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: "#198754",
+                  fontWeight: "bold",
+                  marginLeft: 6,
+                  textAlign: "center",
+                }}
+              >
+                Quên mật khẩu ?
+              </Text>
+            </Pressable>
           <View
             style={{
               flex: 1,

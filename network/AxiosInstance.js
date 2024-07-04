@@ -4,13 +4,13 @@ import axios from "axios";
 const refreshToken = async () => {
   try {
     const refreshToken = await AsyncStorage.getItem("refresh");
-    const response = await axios.post("https://api.lehungba.com/api/token/refresh/", { refresh: refreshToken });
+    const response = await axios.post("https://api.lehungba.com/api/token/refresh/", { refresh: refreshToken??'rf' });
     const newAccessToken = response.data.access;
-    await AsyncStorage.setItem("access", newAccessToken);
+    await AsyncStorage.setItem("access", newAccessToken );
     return newAccessToken;
   } catch (err) {
     console.error("Error refreshing token:", err);
-    throw err;
+    return Promise.reject(err);
   }
 };
 
@@ -38,10 +38,10 @@ const AxiosInstance = (contentType = "application/json") => {
     (res) => res.data,
     async (err) => {
       const originalRequest = err.config;
-
       if (err.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
         try {
+          console.log("refreshToken");
           const newToken = await refreshToken();
           axios.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
           return axiosInstance(originalRequest);
