@@ -40,51 +40,61 @@ const screens = [
 
 function HomeTab() {
   const { birhdayData } = React.useContext(AppContext);
- const getBadge=()=>{
-    if(birhdayData.notification?.count>5){
-      return birhdayData.notification?.count
+
+  const getBadge = () => {
+    if (birhdayData.notification?.count > 5) {
+      return birhdayData.notification?.count;
     }
-    return undefined
- }
+    return undefined;
+  };
+
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({ route }) => ({
         headerShown: false,
         headerStatusBarHeight: 0,
         tabBarStyle: {
           height: 80,
         },
-      }}
+        tabBarActiveTintColor: "#005500", // Set the active color here
+        tabBarInactiveTintColor: "#444444", // Set the inactive color here
+        tabBarLabel: ({ focused }) => {
+          const screen = screens.find(screen => screen.name === route.name);
+          return (
+            <Text
+              style={{
+                color: focused ? "#005500" : "#444444", // Use the active and inactive colors here
+                fontSize: 13,
+                fontWeight: "bold",
+              }}
+            >
+              {screen.name}
+            </Text>
+          );
+        },
+        tabBarIcon: ({ focused }) => {
+          const screen = screens.find(screen => screen.name === route.name);
+          return (
+            <Image
+              style={{
+                width: 25,
+                height: 25,
+                tintColor: focused ? "#005500" : "#444444", // Use the active and inactive colors here
+              }}
+              source={screen.icon}
+            />
+          );
+        },
+      })}
     >
-      {screens.map(({ name, component, icon }) => (
+      {screens.map(({ name, component }) => (
         <Tab.Screen
           key={name}
           name={name}
           component={component}
           options={{
             tabBarShowLabel: true,
-            tabBarBadge:name=="Sinh nhật"?getBadge():undefined,
-            tabBarLabel: ({ focused }) => (
-              <Text
-                style={{
-                  color: focused ? "#ffb74d" : "gray",
-                  fontSize: 13,
-                  fontWeight: "bold",
-                }}
-              >
-                {name}
-              </Text>
-            ),
-            tabBarIcon: ({ focused }) => (
-              <Image
-                style={{
-                  width: 25,
-                  height: 25,
-                  tintColor: focused ? "#ffb74d" : "gray",
-                }}
-                source={icon}
-              />
-            ),
+            tabBarBadge: name === "Sinh nhật" ? getBadge() : undefined,
           }}
         />
       ))}

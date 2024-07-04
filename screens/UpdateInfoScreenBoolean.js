@@ -1,3 +1,4 @@
+//UpdateInfoScreenBoolean
 import { useRoute } from "@react-navigation/native";
 import { Text, View, TextInput, StyleSheet, Alert } from "react-native";
 import UpdateHeader from "../components/UpdateHeader";

@@ -27,9 +27,10 @@ const Login = () => {
   const navigation = useNavigation();
   const [password, setPassword] = useState("");
   const { setIsLoading } = React.useContext(AppContext);
+
   const validate = () => {
     if (email.length == 0) {
-      alert("Email hoặc số điện thoại không được để trống");
+      alert("Email không được để trống");
       return false;
     }
     if (password.length == 0) {
@@ -38,21 +39,22 @@ const Login = () => {
     }
     return true;
   };
+
   const login = async (email, password) => {
-    // check email or phone number
-    const isEmail = email.includes("@");
     try {
       setIsLoading(true);
-      const data = await AxiosInstance().post(
-        `login/${isEmail ? "email/" : "phone/"}`,
-        {
-          [isEmail ? "email" : "phone_number"]: email,
-          password: password,
-        }
-      );
+      const data = await AxiosInstance().post('login/email/', {
+        email: email,
+        password: password,
+      });
       console.log(data);
+      // Lưu các giá trị vào AsyncStorage
       await AsyncStorage.setItem("access", data.access);
       await AsyncStorage.setItem("refresh", data.refresh);
+      await AsyncStorage.setItem("email", data.email);
+      await AsyncStorage.setItem("id", data.id.toString());
+      await AsyncStorage.setItem("people_id", data.people_id.toString());
+
       navigation.reset({
         index: 0,
         routes: [{ name: "Profile" }],
@@ -66,6 +68,7 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <TouchableWithoutFeedback
@@ -86,7 +89,7 @@ const Login = () => {
                 marginVertical: 8,
               }}
             >
-              Email hoặc số điện thoại
+              Email
             </Text>
 
             <View
@@ -104,7 +107,7 @@ const Login = () => {
               <TextInput
                 value={email}
                 onChangeText={setEmail}
-                placeholder="Nhập email hoặc số điện thoại của bạn"
+                placeholder="Nhập email của bạn"
                 placeholderTextColor={COLORS.black}
                 keyboardType="email-address"
                 style={{

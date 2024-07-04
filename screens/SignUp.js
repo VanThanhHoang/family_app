@@ -22,15 +22,12 @@ import axios from "axios";
 import COLORS from "../constants/colors";
 
 const Signup = ({ navigation }) => {
-  const [isPasswordShown, setIsPasswordShown] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [isUsePhone, setIsUsePhone] = useState(true);
   const [countryCode, setCountryCode] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [ip, setIp] = useState("");
@@ -72,30 +69,10 @@ const Signup = ({ navigation }) => {
         return false;
       }
     }
-    if (!password) {
-      Alert.alert("Lỗi", "Vui lòng nhập mật khẩu");
-      return false;
-    }
-    if (password.length < 6) {
-      Alert.alert("Lỗi", "Mật khẩu phải có ít nhất 6 ký tự");
-      return false;
-    }
-    if (!/(?=.*[a-zA-Z])(?=.*[!@#$%^&*])/.test(password)) {
-      Alert.alert(
-        "Lỗi",
-        "Mật khẩu phải chứa ít nhất 1 chữ cái và 1 ký tự đặc biệt"
-      );
-      return false;
-    }
-    if (confirmNewPassword !== password) {
-      Alert.alert("Lỗi", "Mật khẩu xác nhận không khớp");
-      return false;
-    }
     if (!isChecked) {
       Alert.alert("Lỗi", "Vui lòng đồng ý với điều khoản và điều kiện");
       return false;
     }
-
     return true;
   };
 
@@ -110,8 +87,6 @@ const Signup = ({ navigation }) => {
       const regInfo = isUsePhone ? `${countryCode}${phone}` : email;
       const data = {
         [isUsePhone ? "phone_number" : "email"]: regInfo,
-        password: password,
-        confirm_password: confirmNewPassword,
       };
       await AxiosInstance().post(
         `register/${isUsePhone ? "phone/" : "email/"}`,
@@ -123,7 +98,7 @@ const Signup = ({ navigation }) => {
         type: isUsePhone ? "phone_number" : "email",
       });
     } catch (err) {
-      if (err.response.status == 400) {
+      if (err.response && err.response.status === 400) {
         Alert.alert("Lỗi", "Số điện thoại hoặc email đã được sử dụng");
       } else {
         Alert.alert("Lỗi", "Đã có lỗi xảy ra, vui lòng thử lại sau");
@@ -137,20 +112,14 @@ const Signup = ({ navigation }) => {
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
       <AppHeader back title="Đăng ký" />
       <TouchableWithoutFeedback
-        style={{
-          flex: 1,
-        }}
+        style={{ flex: 1 }}
         onPress={() => {
           Keyboard.dismiss();
         }}
       >
         <View style={{ flex: 1, marginHorizontal: 22 }}>
           <CountryPicker
-            style={{
-              modal: {
-                height: 500,
-              },
-            }}
+            style={{ modal: { height: 500 } }}
             enableModalAvoiding
             show={showModal}
             pickerButtonOnPress={(item) => {
@@ -159,37 +128,28 @@ const Signup = ({ navigation }) => {
             }}
           />
           <View style={{ marginVertical: 5 }}>
-            <Text
-            >
-            </Text>
+            <Text />
             <TouchableOpacity
               onPress={() => {
                 setIsUsePhone(!isUsePhone);
               }}
-            >
-            </TouchableOpacity>
+            />
             <Text style={{ fontSize: 14, marginTop: 10 }}>
               {`IP: ${ip}\nCity: ${city}\nCountry: ${country}`}
             </Text>
             <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "bold",
-                  color: "#198755",
-                }}
-              >
-                {!isUsePhone ? "Sử dụng số điện thoại" : "Sử dụng email"}
-              </Text>            
+              style={{
+                fontSize: 16,
+                fontWeight: "bold",
+                color: "#198755",
+              }}
+            >
+              {!isUsePhone ? "Sử dụng số điện thoại" : "Sử dụng email"}
+            </Text>
           </View>
           {!isUsePhone && (
             <View style={{ marginBottom: 12 }}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: 400,
-                  marginVertical: 8,
-                }}
-              >
+              <Text style={{ fontSize: 16, fontWeight: 400, marginVertical: 8 }}>
                 Email
               </Text>
               <View
@@ -210,9 +170,7 @@ const Signup = ({ navigation }) => {
                   placeholder="Nhập email của bạn"
                   placeholderTextColor={COLORS.black}
                   keyboardType="email-address"
-                  style={{
-                    width: "100%",
-                  }}
+                  style={{ width: "100%" }}
                 />
               </View>
             </View>
@@ -220,14 +178,8 @@ const Signup = ({ navigation }) => {
 
           {isUsePhone && (
             <View style={{ marginBottom: 12 }}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: 400,
-                  marginVertical: 8,
-                }}
-              >
-                Mobile Number
+              <Text style={{ fontSize: 16, fontWeight: 400, marginVertical: 8 }}>
+                Số điện thoại
               </Text>
 
               <View
@@ -253,12 +205,7 @@ const Signup = ({ navigation }) => {
                     justifyContent: "center",
                   }}
                 >
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      fontWeight: "bold",
-                    }}
-                  >
+                  <Text style={{ fontSize: 14, fontWeight: "bold" }}>
                     {countryCode}
                   </Text>
                 </TouchableOpacity>
@@ -269,111 +216,11 @@ const Signup = ({ navigation }) => {
                   placeholder="Vui lòng nhập số điện thoại của bạn"
                   placeholderTextColor={COLORS.black}
                   keyboardType="numeric"
-                  style={{
-                    width: "80%",
-                  }}
+                  style={{ width: "80%" }}
                 />
               </View>
             </View>
           )}
-
-          <View style={{ marginBottom: 12 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: 400,
-                marginVertical: 8,
-              }}
-            >
-              Mật khẩu
-            </Text>
-
-            <View
-              style={{
-                width: "100%",
-                height: 48,
-                borderColor: COLORS.black,
-                borderWidth: 1,
-                borderRadius: 8,
-                alignItems: "center",
-                justifyContent: "center",
-                paddingLeft: 22,
-              }}
-            >
-              <TextInput
-                onChangeText={(text) => setPassword(text)}
-                value={password}
-                placeholder="Vui lòng nhập mật khẩu của bạn"
-                placeholderTextColor={COLORS.black}
-                secureTextEntry={isPasswordShown}
-                style={{
-                  width: "100%",
-                }}
-              />
-
-              <TouchableOpacity
-                onPress={() => setIsPasswordShown(!isPasswordShown)}
-                style={{
-                  position: "absolute",
-                  right: 12,
-                }}
-              >
-                {isPasswordShown == true ? (
-                  <Ionicons name="eye-off" size={24} color={COLORS.black} />
-                ) : (
-                  <Ionicons name="eye" size={24} color={COLORS.black} />
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={{ marginBottom: 12 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: 400,
-                marginVertical: 8,
-              }}
-            >
-              Xác nhận mật khẩu
-            </Text>
-            <View
-              style={{
-                width: "100%",
-                height: 48,
-                borderColor: COLORS.black,
-                borderWidth: 1,
-                borderRadius: 8,
-                alignItems: "center",
-                justifyContent: "center",
-                paddingLeft: 22,
-              }}
-            >
-              <TextInput
-                onChangeText={setConfirmNewPassword}
-                value={confirmNewPassword}
-                placeholder="Xác nhận mật khẩu mới của bạn"
-                placeholderTextColor={COLORS.black}
-                secureTextEntry={isPasswordShown}
-                style={{
-                  width: "100%",
-                }}
-              />
-              <TouchableOpacity
-                onPress={() => setIsPasswordShown(!isPasswordShown)}
-                style={{
-                  position: "absolute",
-                  right: 12,
-                }}
-              >
-                {isPasswordShown == true ? (
-                  <Ionicons name="eye-off" size={24} color={COLORS.black} />
-                ) : (
-                  <Ionicons name="eye" size={24} color={COLORS.black} />
-                )}
-              </TouchableOpacity>
-            </View>
-          </View>
 
           <View
             style={{
