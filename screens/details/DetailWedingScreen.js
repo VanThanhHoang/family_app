@@ -1,33 +1,46 @@
 import React, { useContext, useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { AppContext } from '../../AppContext';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import AxiosInstance from '../../network/AxiosInstance';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-const DetailScreen = ()=>{
+const DetailScreen = () => {
     const [data, setData] = React.useState([]);
-    const {setIsLoading}=useContext(AppContext);
-    const {id} =useRoute().params;
-    console.log(id);
-    const getData = async ()=>{
+    const { setIsLoading } = useContext(AppContext);
+    const { id } = useRoute().params;
+    const navigation = useNavigation();
+
+    const getData = async () => {
         setIsLoading(true);
         try {
-            const res = await AxiosInstance().get("families-detail/?family_id="+id);
+            const res = await AxiosInstance().get("people/" + id + "/");
             console.log(res);
             setData(res);
         } catch (error) {
             console.log(error);
-        }finally{
+        } finally {
             setIsLoading(false);
         }
     }
-    useEffect(()=>{
+
+    useEffect(() => {
         getData();
-    },[])
+    }, [])
+
     return (
-        <View>
-            <Text>Detail wedding</Text>
+        <View style={{ flex: 1 }}>
+            <TouchableOpacity 
+                onPress={() => navigation.goBack()} 
+                style={{ position: 'absolute', top: 10, left: 10, zIndex: 1 }}
+            >
+                <Icon name="arrow-back" size={24} color="black" />
+            </TouchableOpacity>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text>Detail birthday Screen</Text>
+            </View>
         </View>
     )
 }
+
 export default DetailScreen;
