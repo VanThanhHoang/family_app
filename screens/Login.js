@@ -411,7 +411,7 @@ const Login = () => {
               </Text>
             </Pressable>
           </View>
-          <Pressable onPress={() => navigation.navigate("Register")}>
+          <Pressable onPress={() => navigation.navigate("ForgotPass")}>
             <Text
               style={{
                 fontSize: 16,

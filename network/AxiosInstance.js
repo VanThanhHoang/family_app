@@ -47,7 +47,7 @@ const AxiosInstance = (contentType = "application/json") => {
           return console.log(tokenRefreshError);
         }
       }
-      console.log(err);
+      (err)=> Promise.reject(err);
     }
   );
 

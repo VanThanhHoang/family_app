@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import Login from "./Login";
 import Signup from "./SignUp";
@@ -6,10 +6,11 @@ import OTPScreen from "./OTPScreen";
 import ChangePassword from "./ChangePass";
 import ProfileScreen from "./ProfileScreen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import DetailProfileScreen from './DetailnfoScreen';
-import UpdateProfileScreen from './UpdateInfoScreen';
-import UpdateProfileScreenBoolean from './UpdateInfoScreenBoolean';
-import UpdateProfileDate from './UpdateInfoDate';
+import DetailProfileScreen from "./DetailnfoScreen";
+import UpdateProfileScreen from "./UpdateInfoScreen";
+import UpdateProfileScreenBoolean from "./UpdateInfoScreenBoolean";
+import UpdateProfileDate from "./UpdateInfoDate";
+import ForgotPass from "./ForgotPassword";
 const AuthStack = createStackNavigator();
 
 const AuthNavigation = () => {
@@ -46,8 +47,13 @@ const AuthNavigation = () => {
       <AuthStack.Screen name="Profile" component={ProfileScreen} />
       <AuthStack.Screen name="UpdateProfile" component={UpdateProfileScreen} />
       <AuthStack.Screen name="DetailInfo" component={DetailProfileScreen} />
-      <AuthStack.Screen name="UpdateInfoScreenBoolean" component={UpdateProfileScreenBoolean} />
+      <AuthStack.Screen
+        name="UpdateInfoScreenBoolean"
+        component={UpdateProfileScreenBoolean}
+      />
       <AuthStack.Screen name="UpdateInfoDate" component={UpdateProfileDate} />
+      <AuthStack.Screen name="ForgotPass" component={ForgotPass} />
+
     </AuthStack.Navigator>
   );
 };
