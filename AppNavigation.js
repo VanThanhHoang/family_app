@@ -59,7 +59,12 @@ const AppNavigation = () => {
         <AppStack.Screen name="DetailDeathDay" component={DetailEventScreen} />
       </AppStack.Navigator>
       <LoadingDialog open={isLoading} />
-      <View style={{ height: 20, backgroundColor: "#808080" }} />
+      <View
+        style={{
+          height: 20,
+          backgroundColor: theme.mode === "light" ? "#ffffff" : "#808080",
+        }}
+      />
     </SafeAreaProvider>
   );
 };
