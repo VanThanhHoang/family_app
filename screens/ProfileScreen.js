@@ -1,3 +1,5 @@
+// Users/macm1/Documents/mobile_app/screens/ProfileScreen.js
+
 import React, { useContext, useEffect, useState } from "react";
 import {
   View,
@@ -129,7 +131,7 @@ const ProfileScreen = () => {
           />
           <TouchableOpacity
             onPress={pickImage}
-            style={styles.cameraIcon}
+            style={[styles.cameraIcon, { backgroundColor: isDarkMode ? theme.colors.card : "white" }]}
           >
             <Ionicons name="camera" size={20} color={theme.colors.text} />
           </TouchableOpacity>
@@ -169,21 +171,11 @@ const ProfileScreen = () => {
           title="My Friend"
           onPress={() => navigation.navigate("Friend")}
         />
-        <TouchableOpacity
-          style={styles.crmButton}
-          onPress={() => {
-            /* Add your navigation or functionality here */
-          }}
-        >
-          <LinearGradient
-            colors={['#32CD32', '#3CB371']} // Adjust these colors as needed
-            start={[0, 0]}
-            end={[1, 1]}
-            style={styles.crmButtonGradient}
-          >
-            <Text style={styles.crmButtonText}>BUSINESS CRM</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+        <SettingItem
+          icon={"business"}
+          title="Business CRM"
+          onPress={() => navigation.navigate("Crm")}
+        />
       </View>
     </View>
   );
@@ -255,7 +247,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 1,
     right: -1,
-    backgroundColor: "white",
     borderRadius: 15,
     padding: 2,
   },
@@ -282,21 +273,6 @@ const styles = StyleSheet.create({
   },
   chevronIcon: {
     marginLeft: "auto",
-  },
-  crmButton: {
-    marginTop: 20,
-    borderRadius: 10,
-    overflow: 'hidden',
-  },
-  crmButtonGradient: {
-    paddingVertical: 20,
-    paddingHorizontal: 80,
-    alignItems: "center",
-  },
-  crmButtonText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 20,
   },
 });
 

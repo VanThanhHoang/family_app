@@ -79,11 +79,12 @@ function CustomBottomTabNavigator() {
         },
         tabBarIcon: ({ focused }) => {
           const screen = screens.find(screen => screen.name === route.name);
+          const iconSize = route.name === "Sinh nhật" ? 29 : 25; // Increase size by 4px for "Sinh nhật"
           return (
             <Image
               style={{
-                width: 25,
-                height: 25,
+                width: iconSize,
+                height: iconSize,
                 tintColor: focused ? '#005500' : (rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444'),
               }}
               source={screen.icon}
