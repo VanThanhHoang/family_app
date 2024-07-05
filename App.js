@@ -1,22 +1,29 @@
 import React from 'react';
 import { View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { ThemeProvider as RNEThemeProvider } from '@rneui/themed';
 import AppProvider from './AppContext';
 import AppNavigation from './AppNavigation';
-import { NavigationContainer } from '@react-navigation/native';
-import { ThemeProvider } from './screens/components/ThemeContext'; // Corrected import path
+import { ThemeProvider, useThemeContext } from './ThemeContext';
 
 const App = () => {
+  const { theme } = useThemeContext();
+
   return (
     <View style={{ flex: 1 }}>
       <AppProvider>
-        <ThemeProvider>
+        <RNEThemeProvider theme={theme}>
           <NavigationContainer>
             <AppNavigation />
           </NavigationContainer>
-        </ThemeProvider>
+        </RNEThemeProvider>
       </AppProvider>
     </View>
   );
 };
 
-export default App;
+export default () => (
+  <ThemeProvider>
+    <App />
+  </ThemeProvider>
+);
