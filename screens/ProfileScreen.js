@@ -133,15 +133,7 @@ const ProfileScreen = () => {
           />
           <TouchableOpacity
             onPress={pickImage}
-            style={{
-              ...styles.cameraIcon,
-              backgroundColor: isDarkMode ? "#333" : "#fff",
-              width: 30,
-              height: 30,
-              borderRadius: 15,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
+            style={[styles.cameraIcon, { backgroundColor: isDarkMode ? theme.colors.card : "white" }]}
           >
             <Ionicons name="camera" size={20} color={theme.colors.text} />
           </TouchableOpacity>
@@ -180,6 +172,11 @@ const ProfileScreen = () => {
           icon={"person-add"}
           title="My Friend"
           onPress={() => navigation.navigate("Friend")}
+        />
+        <SettingItem
+          icon={"business"}
+          title="Business CRM"
+          onPress={() => navigation.navigate("Crm")}
         />
         <TouchableOpacity style={styles.crmButton} onPress={() => {}}>
           <LinearGradient
@@ -258,7 +255,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 1,
     right: -1,
-    backgroundColor: "white",
     borderRadius: 15,
     padding: 2,
   },
