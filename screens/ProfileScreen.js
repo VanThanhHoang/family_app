@@ -1,5 +1,3 @@
-// Users/macm1/Documents/mobile_app/screens/ProfileScreen.js
-
 import React, { useContext, useEffect, useState } from "react";
 import {
   View,
@@ -175,13 +173,11 @@ const ProfileScreen = () => {
           title="My Friend"
           onPress={() => navigation.navigate("Friend")}
         />
-<<<<<<< HEAD
         <SettingItem
           icon={"business"}
           title="Business CRM"
           onPress={() => navigation.navigate("Crm")}
         />
-=======
         <TouchableOpacity style={styles.crmButton} onPress={() => {}}>
           <LinearGradient
             colors={["#32CD32", "#3CB371"]} // Adjust these colors as needed
@@ -192,7 +188,6 @@ const ProfileScreen = () => {
             <Text style={styles.crmButtonText}>BUSINESS CRM</Text>
           </LinearGradient>
         </TouchableOpacity>
->>>>>>> d43a70b902c025266b3630daff81320390587612
       </View>
     </View>
   );
@@ -287,8 +282,6 @@ const styles = StyleSheet.create({
   chevronIcon: {
     marginLeft: "auto",
   },
-<<<<<<< HEAD
-=======
   crmButton: {
     marginTop: 20,
     borderRadius: 10,
@@ -304,7 +297,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 20,
   },
->>>>>>> d43a70b902c025266b3630daff81320390587612
 });
 
 export default ProfileScreen;
