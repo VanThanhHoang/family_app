@@ -16,8 +16,8 @@ import * as ImagePicker from "expo-image-picker";
 import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
 import { APP_CONSTANTS } from "../helper/constant";
-import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from '@rneui/themed';
+import { LinearGradient } from "expo-linear-gradient";
+import { useTheme } from "@rneui/themed";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -26,7 +26,7 @@ const ProfileScreen = () => {
   const { setIsLoading } = useContext(AppContext);
   const [profileImage, setProfileImage] = useState(null);
   const { theme } = useTheme();
-  const isDarkMode = theme.mode === 'dark';
+  const isDarkMode = theme.mode === "dark";
 
   const getUserInfo = async () => {
     try {
@@ -98,9 +98,13 @@ const ProfileScreen = () => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.header, { borderBottomColor: theme.colors.border }]}>
-        <Text style={[styles.headerText, { color: theme.colors.text }]}>Tài khoản</Text>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <View style={[styles.header]}>
+        <Text style={[styles.headerText, { color: theme.colors.text }]}>
+          Tài khoản
+        </Text>
         <View style={styles.headerIcons}>
           <TouchableOpacity
             onPress={() => navigation.navigate("ChangePass")}
@@ -121,7 +125,7 @@ const ProfileScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={[styles.profileContainer, { borderBottomColor: theme.colors.border }]}>
+      <View style={[styles.profileContainer, { borderBottomWidth: 0 }]}>
         <View style={styles.imageWrapper}>
           <Image
             source={{
@@ -131,7 +135,19 @@ const ProfileScreen = () => {
           />
           <TouchableOpacity
             onPress={pickImage}
+<<<<<<< HEAD
             style={[styles.cameraIcon, { backgroundColor: isDarkMode ? theme.colors.card : "white" }]}
+=======
+            style={{
+              ...styles.cameraIcon,
+              backgroundColor: isDarkMode ? "#333" : "#fff",
+              width: 30,
+              height: 30,
+              borderRadius: 15,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+>>>>>>> d43a70b902c025266b3630daff81320390587612
           >
             <Ionicons name="camera" size={20} color={theme.colors.text} />
           </TouchableOpacity>
@@ -171,11 +187,24 @@ const ProfileScreen = () => {
           title="My Friend"
           onPress={() => navigation.navigate("Friend")}
         />
+<<<<<<< HEAD
         <SettingItem
           icon={"business"}
           title="Business CRM"
           onPress={() => navigation.navigate("Crm")}
         />
+=======
+        <TouchableOpacity style={styles.crmButton} onPress={() => {}}>
+          <LinearGradient
+            colors={["#32CD32", "#3CB371"]} // Adjust these colors as needed
+            start={[0, 0]}
+            end={[1, 1]}
+            style={styles.crmButtonGradient}
+          >
+            <Text style={styles.crmButtonText}>BUSINESS CRM</Text>
+          </LinearGradient>
+        </TouchableOpacity>
+>>>>>>> d43a70b902c025266b3630daff81320390587612
       </View>
     </View>
   );
@@ -184,10 +213,7 @@ const ProfileScreen = () => {
 const SettingItem = ({ title, onPress, icon }) => {
   const { theme } = useTheme();
   return (
-    <TouchableOpacity
-      style={styles.settingItem}
-      onPress={onPress}
-    >
+    <TouchableOpacity style={styles.settingItem} onPress={onPress}>
       <Ionicons name={icon} size={20} color={theme.colors.text} />
       <Text style={[styles.settingTitle, { color: theme.colors.text }]}>
         {title}
@@ -212,7 +238,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 15,
     paddingVertical: 10,
-    borderBottomWidth: 1,
   },
   headerText: {
     fontSize: 20,
@@ -274,6 +299,24 @@ const styles = StyleSheet.create({
   chevronIcon: {
     marginLeft: "auto",
   },
+<<<<<<< HEAD
+=======
+  crmButton: {
+    marginTop: 20,
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  crmButtonGradient: {
+    paddingVertical: 20,
+    paddingHorizontal: 80,
+    alignItems: "center",
+  },
+  crmButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+>>>>>>> d43a70b902c025266b3630daff81320390587612
 });
 
 export default ProfileScreen;

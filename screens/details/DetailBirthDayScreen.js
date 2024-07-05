@@ -6,7 +6,7 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-} from "react-native";
+ } from "react-native";
 import { AppContext } from "../../AppContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import AxiosInstance from "../../network/AxiosInstance";
@@ -204,7 +204,7 @@ const ListInfo = ({ data, familyData }) => {
     </ScrollView>
   );
 };
-const ItemFamily = ({ name, id, image, title }) => {
+export const ItemFamily = ({ name, id, image, title }) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
 });
-const InfoItem = ({ title, onPress, icon, textColor }) => {
+export const InfoItem = ({ title, onPress, icon, textColor }) => {
   return (
     <View
       style={{
