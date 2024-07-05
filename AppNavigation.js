@@ -15,6 +15,7 @@ import {
 } from "react-native-safe-area-context";
 import { View } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import DetailScreenChildren from "./screens/details/DetailChildren";
 const AppNavigation = () => {
   const AppStack = createStackNavigator();
   const { isLoading } = useContext(AppContext);
@@ -57,6 +58,7 @@ const AppNavigation = () => {
           component={DetailBirthDayScreen}
         />
         <AppStack.Screen name="DetailDeathDay" component={DetailEventScreen} />
+        <AppStack.Screen name="DetailChildren" component={DetailScreenChildren} />
       </AppStack.Navigator>
       <LoadingDialog open={isLoading} />
       <View
