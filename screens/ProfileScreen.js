@@ -131,7 +131,18 @@ const ProfileScreen = () => {
             }}
             style={styles.profileImage}
           />
-          <TouchableOpacity onPress={pickImage} style={styles.cameraIcon}>
+          <TouchableOpacity
+            onPress={pickImage}
+            style={{
+              ...styles.cameraIcon,
+              backgroundColor: isDarkMode ? "#333" : "#fff",
+              width: 30,
+              height: 30,
+              borderRadius: 15,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <Ionicons name="camera" size={20} color={theme.colors.text} />
           </TouchableOpacity>
         </View>
@@ -170,12 +181,7 @@ const ProfileScreen = () => {
           title="My Friend"
           onPress={() => navigation.navigate("Friend")}
         />
-        <TouchableOpacity
-          style={styles.crmButton}
-          onPress={() => {
-            /* Add your navigation or functionality here */
-          }}
-        >
+        <TouchableOpacity style={styles.crmButton} onPress={() => {}}>
           <LinearGradient
             colors={["#32CD32", "#3CB371"]} // Adjust these colors as needed
             start={[0, 0]}

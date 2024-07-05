@@ -6,7 +6,7 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-} from "react-native";
+ } from "react-native";
 import { AppContext } from "../../AppContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import AxiosInstance from "../../network/AxiosInstance";
