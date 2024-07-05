@@ -204,7 +204,7 @@ const ListInfo = ({ data, familyData }) => {
     </ScrollView>
   );
 };
-export const ItemFamily = ({ name, id, image, title }) => {
+const ItemFamily = ({ name, id, image, title }) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity

@@ -16,6 +16,12 @@ import {
 import { View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import DetailScreenChildren from "./screens/details/DetailChildren";
+import TeacherScreen from "./screens/teacher/TeacherScreen";
+import FriendScreen from "./screens/friend/FriendScreen";
+import PaternalScreen from "./screens/paternal/PaternalScreen";
+import MaternalSreen from "./screens/maternal/MaternalScreen";
+import CrmScreen from "./screens/Crm/CrmScreen";
+import MyFamilyScreen from "./screens/myfamily/MyfamilyScreen";
 const AppNavigation = () => {
   const AppStack = createStackNavigator();
   const { isLoading } = useContext(AppContext);
@@ -57,6 +63,14 @@ const AppNavigation = () => {
           name="DetailBirthDay"
           component={DetailBirthDayScreen}
         />
+        <AppStack.Screen name="TeacherScreen" component={TeacherScreen} />
+        <AppStack.Screen name="FriendScreen" component={FriendScreen} />
+        <AppStack.Screen name="PaternalScreen" component={PaternalScreen} />
+        <AppStack.Screen name="MyFamilyScreen" component={MyFamilyScreen} />
+
+        <AppStack.Screen name="MaternalScreen" component={MaternalSreen} />
+        <AppStack.Screen name="CRMScreen" component={CrmScreen} />
+
         <AppStack.Screen name="DetailDeathDay" component={DetailEventScreen} />
         <AppStack.Screen name="DetailChildren" component={DetailScreenChildren} />
       </AppStack.Navigator>

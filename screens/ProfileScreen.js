@@ -148,35 +148,40 @@ const ProfileScreen = () => {
           title="My Profile"
           onPress={() => navigation.navigate("DetailInfo")}
         />
+               {/* <AppStack.Screen name="TeacherScreen" component={TeacherScreen} />
+        <AppStack.Screen name="FriendScreen" component={FriendScreen} />
+        <AppStack.Screen name="PaternalScreen" component={PaternalScreen} />
+
+        <AppStack.Screen name="MaternalScreen" component={MaternalSreen} /> */}
         <SettingItem
           icon={"people"}
           title="My Family"
-          onPress={() => navigation.navigate("Family")}
+          onPress={() => navigation.navigate("MyFamilyScreen")}
         />
         <SettingItem
           icon={"home"}
           title="Gia Đình Nội"
-          onPress={() => navigation.navigate("GiaDinhNoi")}
+          onPress={() => navigation.navigate("PaternalScreen")}
         />
         <SettingItem
           icon={"home"}
           title="Gia Ngoại"
-          onPress={() => navigation.navigate("GiaNgoai")}
+          onPress={() => navigation.navigate("MaternalScreen")}
         />
         <SettingItem
           icon={"school"}
           title="My Teacher"
-          onPress={() => navigation.navigate("Teacher")}
+          onPress={() => navigation.navigate("TeacherScreen")}
         />
         <SettingItem
           icon={"person-add"}
           title="My Friend"
-          onPress={() => navigation.navigate("Friend")}
+          onPress={() => navigation.navigate("FriendScreen")}
         />
         <SettingItem
           icon={"business"}
           title="Business CRM"
-          onPress={() => navigation.navigate("Crm")}
+          onPress={() => navigation.navigate("CRMScreen")}
         />
         <TouchableOpacity style={styles.crmButton} onPress={() => {}}>
           <LinearGradient
