@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import AxiosInstance from "../network/AxiosInstance";
 import { FlatList } from "react-native";
@@ -10,15 +10,16 @@ import { useTheme } from '@rneui/themed';
 
 const FamilyScreen = () => {
   const [familyData, setFamilyData] = useState([]);
-  const { setIsLoading } = React.useContext(AppContext);
-  const [filteredList, setFilteredList] = useState(familyData);
+  const { setIsLoading } = useContext(AppContext);
+  const [filteredList, setFilteredList] = useState([]);
   const [searchText, setSearchText] = useState("");
   const { theme } = useTheme();
 
   const getFamilyData = async () => {
     try {
       setIsLoading(true);
-      const data = await AxiosInstance().get("families/");
+      const response = await AxiosInstance().get("families/");
+      const data = response.data; // Lấy dữ liệu từ response
       if (data) {
         setFamilyData(data);
         setFilteredList(data);
@@ -35,13 +36,13 @@ const FamilyScreen = () => {
   }, []);
 
   const searchFilter = (text) => {
-    const normalizedText = removeDiacritics(text);
+    const normalizedText = removeDiacritics(text).toLowerCase();
     setSearchText(text);
     const filteredData = familyData.filter((item) => {
       const husbandName = item?.husband?.full_name_vn || "";
       const wifeName = item?.wife?.full_name_vn || "";
-      const normalizedHusbandName = removeDiacritics(husbandName);
-      const normalizedWifeName = removeDiacritics(wifeName);
+      const normalizedHusbandName = removeDiacritics(husbandName).toLowerCase();
+      const normalizedWifeName = removeDiacritics(wifeName).toLowerCase();
       const isMatchHusband = normalizedHusbandName.includes(normalizedText);
       const isMatchWife = normalizedWifeName.includes(normalizedText);
       return isMatchHusband || isMatchWife;
