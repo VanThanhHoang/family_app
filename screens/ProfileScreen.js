@@ -135,19 +135,7 @@ const ProfileScreen = () => {
           />
           <TouchableOpacity
             onPress={pickImage}
-<<<<<<< HEAD
             style={[styles.cameraIcon, { backgroundColor: isDarkMode ? theme.colors.card : "white" }]}
-=======
-            style={{
-              ...styles.cameraIcon,
-              backgroundColor: isDarkMode ? "#333" : "#fff",
-              width: 30,
-              height: 30,
-              borderRadius: 15,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
->>>>>>> d43a70b902c025266b3630daff81320390587612
           >
             <Ionicons name="camera" size={20} color={theme.colors.text} />
           </TouchableOpacity>
