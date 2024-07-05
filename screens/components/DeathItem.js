@@ -1,17 +1,17 @@
 import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { dateFormater } from "../../helper/string_format";
 import { useNavigation } from "@react-navigation/native";
-import { useTheme } from '@rneui/themed';
+import { useTheme } from "@rneui/themed";
 
 const DeathItem = ({ ...props }) => {
   const navigation = useNavigation();
   const { theme } = useTheme();
-  const isDarkMode = theme.mode === 'dark';
+  const isDarkMode = theme.mode === "dark";
 
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate("DetailDeathDay", {
+        navigation.navigate("DetailBirthDay", {
           id: props.data.people_id,
         });
       }}
@@ -26,11 +26,16 @@ const DeathItem = ({ ...props }) => {
           }
           style={styles.image}
         />
-        <Text style={[styles.italicText, { color: theme.colors.text }]}>Hưởng dương</Text>
+        <Text style={[styles.italicText, { color: theme.colors.text }]}>
+          Hưởng dương
+        </Text>
         <View style={styles.ageContainer}>
           <Image
             source={require("../../assets/age.png")}
-            style={[styles.ageImage, { tintColor: theme.colors.text, opacity: 0.7 }]}
+            style={[
+              styles.ageImage,
+              { tintColor: theme.colors.text, opacity: 0.7 },
+            ]}
           />
           <Text style={[styles.ageText, { color: theme.colors.text }]}>
             {props.data.death_info.age_at_death ?? "Chưa rõ"}
@@ -46,7 +51,9 @@ const DeathItem = ({ ...props }) => {
         </Text>
         <View style={styles.birthDateContainer}>
           <Text style={[styles.birthDate, { color: theme.colors.text }]}>
-            {`${dateFormater(props.data.birth_date)} - ${dateFormater(props.data.death_date)}`}
+            {`${dateFormater(props.data.birth_date)} - ${dateFormater(
+              props.data.death_date
+            )}`}
           </Text>
         </View>
         {props.data.marital_status && (
@@ -185,7 +192,7 @@ const styles = StyleSheet.create({
 
 const ItemParent = ({ ...props }) => {
   const { theme } = props;
-  const isDarkMode = theme.mode === 'dark';
+  const isDarkMode = theme.mode === "dark";
 
   return (
     <View style={styles.parentContainer}>
@@ -197,7 +204,12 @@ const ItemParent = ({ ...props }) => {
             : require("../../assets/mother.png")
         }
       />
-      <Text style={[styles.parentText, { color: isDarkMode ? "#C0C0C0" : theme.colors.text }]}>
+      <Text
+        style={[
+          styles.parentText,
+          { color: isDarkMode ? "#C0C0C0" : theme.colors.text },
+        ]}
+      >
         {!props.isFather
           ? `${props.name?.wife.full_name_vn ?? "Chưa rõ"}`
           : `${props.name?.husband.full_name_vn ?? "Chưa rõ"}`}
@@ -217,7 +229,9 @@ const Children = ({ isBoy, total, theme }) => (
       }
     />
     <View style={[styles.total, { backgroundColor: theme.colors.background }]}>
-      <Text style={[styles.totalText, { color: theme.colors.text }]}>{total}</Text>
+      <Text style={[styles.totalText, { color: theme.colors.text }]}>
+        {total}
+      </Text>
     </View>
   </View>
 );
