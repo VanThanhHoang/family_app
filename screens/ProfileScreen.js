@@ -14,12 +14,18 @@ import * as ImagePicker from "expo-image-picker";
 import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
 import { APP_CONSTANTS } from "../helper/constant";
+import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '@rneui/themed';
+
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   const { setIsLoading } = useContext(AppContext);
   const [profileImage, setProfileImage] = useState(null);
+  const { theme } = useTheme();
+  const isDarkMode = theme.mode === 'dark';
+
   const getUserInfo = async () => {
     try {
       const access = await AsyncStorage.getItem("access");
@@ -29,7 +35,7 @@ const ProfileScreen = () => {
       let profile_picture = await AsyncStorage.getItem("profile_picture");
       const full_name_vn = await AsyncStorage.getItem("full_name_vn");
       setProfileImage(profile_picture);
-      // Thêm tiền tố nếu profile_picture có giá trị
+
       if (profile_picture) {
         profile_picture = `https://api.lehungba.com${profile_picture}`;
       }
@@ -46,6 +52,7 @@ const ProfileScreen = () => {
       console.log(e);
     }
   };
+
   const uploadImage = async (image) => {
     try {
       const fileData = {
@@ -62,14 +69,14 @@ const ProfileScreen = () => {
       if (data.profile_picture) {
         await AsyncStorage.setItem("profile_picture", data.profile_picture);
         Alert.alert("Thành công", "Ảnh đã được cập nhật");
-      }else{
+      } else {
         Alert.alert("Error", "Upload image failed");
       }
     } catch (err) {
       console.log({ err });
-    } finally {
     }
   };
+
   useEffect(() => {
     getUserInfo();
   }, []);
@@ -89,25 +96,15 @@ const ProfileScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          paddingHorizontal: 15,
-          paddingVertical: 10,
-          borderBottomWidth: 1,
-          borderBottomColor: "lightgray",
-        }}
-      >
-        <Text style={{ fontSize: 20, fontWeight: "bold" }}>Tài khoản</Text>
-        <View style={{ flexDirection: "row" }}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.header, { borderBottomColor: theme.colors.border }]}>
+        <Text style={[styles.headerText, { color: theme.colors.text }]}>Tài khoản</Text>
+        <View style={styles.headerIcons}>
           <TouchableOpacity
             onPress={() => navigation.navigate("ChangePass")}
-            style={{ marginRight: 15 }}
+            style={styles.iconButton}
           >
-            <Ionicons name="key" size={30} color="black" />
+            <Ionicons name="key" size={30} color={theme.colors.text} />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
@@ -118,54 +115,30 @@ const ProfileScreen = () => {
               });
             }}
           >
-            <Ionicons name="log-out" size={30} color="black" />
+            <Ionicons name="log-out" size={30} color={theme.colors.text} />
           </TouchableOpacity>
         </View>
       </View>
-      <View
-        style={{
-          alignItems: "center",
-          padding: 15,
-          borderBottomWidth: 1,
-          borderBottomColor: "lightgray",
-        }}
-      >
-        <View style={{ position: "relative", width: 80, height: 80 }}>
+      <View style={[styles.profileContainer, { borderBottomColor: theme.colors.border }]}>
+        <View style={styles.imageWrapper}>
           <Image
             source={{
-              uri:
-                profileImage ??
-                APP_CONSTANTS.defaultAvatar,
+              uri: profileImage ?? APP_CONSTANTS.defaultAvatar,
             }}
-            style={{
-              width: 80,
-              height: 80,
-              borderRadius: 40,
-              borderWidth: 2,
-              borderColor: "gray",
-              backgroundColor: "gray",
-              resizeMode: "cover",
-            }}
+            style={styles.profileImage}
           />
           <TouchableOpacity
             onPress={pickImage}
-            style={{
-              position: "absolute",
-              bottom: 1,
-              right: -1,
-              backgroundColor: "white",
-              borderRadius: 15,
-              padding: 2,
-            }}
+            style={styles.cameraIcon}
           >
-            <Ionicons name="camera" size={20} color="black" />
+            <Ionicons name="camera" size={20} color={theme.colors.text} />
           </TouchableOpacity>
         </View>
-        <Text style={{ fontSize: 18, fontWeight: "bold", marginVertical: 10 }}>
+        <Text style={[styles.emailText, { color: theme.colors.text }]}>
           {userInfo.email}
         </Text>
       </View>
-      <View style={{ flex: 1, alignItems: "center", padding: 25 }}>
+      <View style={styles.settingsContainer}>
         <SettingItem
           icon={"person"}
           title="My Profile"
@@ -202,7 +175,14 @@ const ProfileScreen = () => {
             /* Add your navigation or functionality here */
           }}
         >
-          <Text style={styles.crmButtonText}>BUSINESS CRM</Text>
+          <LinearGradient
+            colors={['#32CD32', '#3CB371']} // Adjust these colors as needed
+            start={[0, 0]}
+            end={[1, 1]}
+            style={styles.crmButtonGradient}
+          >
+            <Text style={styles.crmButtonText}>BUSINESS CRM</Text>
+          </LinearGradient>
         </TouchableOpacity>
       </View>
     </View>
@@ -210,39 +190,108 @@ const ProfileScreen = () => {
 };
 
 const SettingItem = ({ title, onPress, icon }) => {
+  const { theme } = useTheme();
   return (
     <TouchableOpacity
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        paddingVertical: 15,
-        width: "100%",
-      }}
+      style={styles.settingItem}
       onPress={onPress}
     >
-      <Ionicons name={icon} size={20} color="black" />
-      <Text style={{ fontSize: 16, fontWeight: "bold", marginLeft: 15 }}>
+      <Ionicons name={icon} size={20} color={theme.colors.text} />
+      <Text style={[styles.settingTitle, { color: theme.colors.text }]}>
         {title}
       </Text>
       <Ionicons
         name="chevron-forward"
         size={20}
-        color="gray"
-        style={{ marginLeft: "auto" }}
+        color={theme.colors.border}
+        style={styles.chevronIcon}
       />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+  },
+  headerText: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  headerIcons: {
+    flexDirection: "row",
+  },
+  iconButton: {
+    marginRight: 15,
+  },
+  profileContainer: {
+    alignItems: "center",
+    padding: 15,
+    borderBottomWidth: 1,
+  },
+  imageWrapper: {
+    position: "relative",
+    width: 80,
+    height: 80,
+  },
+  profileImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 2,
+    borderColor: "gray",
+    backgroundColor: "gray",
+    resizeMode: "cover",
+  },
+  cameraIcon: {
+    position: "absolute",
+    bottom: 1,
+    right: -1,
+    backgroundColor: "white",
+    borderRadius: 15,
+    padding: 2,
+  },
+  emailText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginVertical: 10,
+  },
+  settingsContainer: {
+    flex: 1,
+    alignItems: "center",
+    padding: 25,
+  },
+  settingItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 15,
+    width: "100%",
+  },
+  settingTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft: 15,
+  },
+  chevronIcon: {
+    marginLeft: "auto",
+  },
   crmButton: {
     marginTop: 20,
-    backgroundColor: "#3BC371",
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  crmButtonGradient: {
     paddingVertical: 20,
     paddingHorizontal: 80,
-    borderRadius: 10,
     alignItems: "center",
-    bottom: -30,
   },
   crmButtonText: {
     color: "white",

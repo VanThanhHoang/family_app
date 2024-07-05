@@ -1,40 +1,58 @@
-import { Image, StyleSheet, TextInput, View } from "react-native";
+///Users/macm1/Documents/mobile_app/components/SearchBar.js
+import React from 'react';
+import { StyleSheet, TextInput, View, TouchableOpacity } from "react-native";
+import { useTheme } from '@rneui/themed';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { useThemeContext } from '../ThemeContext';
 
 const SearchBar = ({ onChangeText, value }) => {
+  const { theme, toggleTheme } = useThemeContext();
+  const { theme: rneTheme } = useTheme();
+
   return (
-    <View>
+    <View style={styles.wrapper}>
       <TextInput
         onChangeText={onChangeText}
         value={value}
-        style={styles.container}
+        style={[styles.container, { backgroundColor: rneTheme.colors.card, color: rneTheme.colors.text }]}
         placeholder="Tìm kiếm..."
+        placeholderTextColor={rneTheme.mode === 'dark' ? '#ffffff' : rneTheme.colors.border} // Thay đổi màu placeholder khi ở chế độ tối
       />
-      <Image style={styles.image} source={require("../assets/search.png")} />
+      <Icon name="search" style={styles.searchIcon} color={rneTheme.mode === 'dark' ? '#ffffff' : 'gray'} size={20} />
+      <TouchableOpacity onPress={toggleTheme} style={styles.themeToggle}>
+        <Icon name={theme.mode === 'light' ? 'sunny' : 'moon'} style={styles.themeIcon} size={20} color={rneTheme.colors.text} />
+      </TouchableOpacity>
     </View>
   );
 };
-export default SearchBar;
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: 10,
+  },
   container: {
+    flex: 1,
     height: 48,
     borderColor: "gray",
     borderWidth: 1,
     borderRadius: 10,
-    paddingLeft: 10,
-    paddingStart: 40,
     paddingLeft: 40,
-    margin: 10,
     fontSize: 16,
-    backgroundColor: "white",
   },
-  image: {
+  searchIcon: {
+    position: 'absolute',
+    top: 14,
+    left: 10,
+  },
+  themeToggle: {
+    marginLeft: 10,
+  },
+  themeIcon: {
     width: 20,
     height: 20,
-    position: "absolute",
-    top: 25,
-    alignSelf: "center",
-    left: 20,
-    tintColor: "gray",
   },
 });
+
+export default SearchBar;

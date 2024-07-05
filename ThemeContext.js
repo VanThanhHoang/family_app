@@ -1,15 +1,15 @@
-// ThemeContext.js
+
+///Users/macm1/Documents/mobile_app/ThemeContext.js
 import React, { createContext, useState, useContext } from 'react';
-import { useColorScheme } from 'react-native';
+import { lightTheme, darkTheme } from './screens/components/Theme';
 
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const systemTheme = useColorScheme();
-  const [theme, setTheme] = useState(systemTheme);
+  const [theme, setTheme] = useState(lightTheme);
 
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === 'dark' ? 'light' : 'dark'));
+    setTheme((prevTheme) => (prevTheme.mode === 'light' ? darkTheme : lightTheme));
   };
 
   return (
@@ -19,4 +19,4 @@ export const ThemeProvider = ({ children }) => {
   );
 };
 
-export const useTheme = () => useContext(ThemeContext);
+export const useThemeContext = () => useContext(ThemeContext);

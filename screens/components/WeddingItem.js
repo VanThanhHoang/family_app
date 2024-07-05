@@ -2,9 +2,13 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { dateFormater } from "../../helper/string_format";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
+import { useTheme } from '@rneui/themed';
 
 const WeddingItem = ({ family }) => {
-  const navigatetion = useNavigation();
+  const navigation = useNavigation();
+  const { theme } = useTheme();
+  const isDarkMode = theme.mode === 'dark';
+
   const ItemInfo = ({ isHusband, image, age, isAlive }) => {
     const getImage = () => {
       if (image === null) {
@@ -13,7 +17,7 @@ const WeddingItem = ({ family }) => {
           : require("../../assets/mother.png");
       }
       return { uri: image };
-    };  
+    };
     return (
       <View style={styles.itemInfoContainer}>
         <View
@@ -21,10 +25,10 @@ const WeddingItem = ({ family }) => {
         >
           <Image style={styles.image} source={getImage()} />
         </View>
-        <Text style={styles.nameText} numberOfLines={1} adjustsFontSizeToFit>
+        <Text style={[styles.nameText, { color: "#FFFFFF" }]} numberOfLines={1} adjustsFontSizeToFit>
           {isHusband ? family.husband.full_name_vn : family.wife.full_name_vn}
         </Text>
-        <Text style={styles.birthDate}>
+        <Text style={[styles.birthDate, { color: "#C0C0C0" }]}>
           {isHusband
             ? dateFormater(family.husband.birth_date)
             : dateFormater(family.wife.birth_date)}
@@ -38,10 +42,10 @@ const WeddingItem = ({ family }) => {
           {isAlive ? (
             <Image
               source={require("../../assets/age.png")}
-              style={styles.ageIcon}
+              style={[styles.ageIcon, { tintColor: theme.colors.text, opacity: 0.7 }]}
             />
           ) : null}
-          <Text style={styles.ageText}>
+          <Text style={[styles.ageText, { color: "#C0C0C0" }]}>
             {isAlive ? age ?? "Chưa rõ" : `${age}`}
           </Text>
         </View>
@@ -51,12 +55,13 @@ const WeddingItem = ({ family }) => {
 
   return (
     <TouchableOpacity
-    onPress={()=>{
-      navigatetion.navigate("DetailWedding",{
-        id: family.relationship_id,
-      })
-    }}
-     style={styles.container}>
+      onPress={() => {
+        navigation.navigate("DetailWedding", {
+          id: family.relationship_id,
+        });
+      }}
+      style={[styles.container, { backgroundColor: theme.colors.card }]}
+    >
       <View style={styles.container2}>
         <ItemInfo
           age={family.husband.current_age}
@@ -69,13 +74,15 @@ const WeddingItem = ({ family }) => {
             {family.total_sons > 0 && <Children isBoy total={family.total_sons} />}
             {family.total_daughters > 0 && <Children total={family.total_daughters} />}
           </View>
-          <Text style={styles.anniversaryDateText}>{dateFormater(family.marriage_date)}</Text>
+          <Text style={[styles.anniversaryDateText, { color: "#C0C0C0" }]}>
+            {dateFormater(family.marriage_date)}
+          </Text>
           <Image
             style={styles.marriedIcon}
             source={require("../../assets/married.png")}
           />
           <View>
-            <Text style={styles.marriageDurationText}>
+            <Text style={[styles.marriageDurationText, { color: "#C0C0C0" }]}>
               {family.marriage_duration}
             </Text>
           </View>
@@ -157,18 +164,16 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: 13,
     fontWeight: "bold",
-    color: "black",
   },
-  textInfo: {
-    fontSize: 11,
+  birthDate: {
+    fontSize: 14,
     fontWeight: "400",
-    color: "black",
+    fontStyle: "italic",
   },
   container: {
     flex: 1,
     padding: 10,
     justifyContent: "center",
-    backgroundColor: "white",
     marginVertical: 10,
     gap: 10,
     borderRadius: 20,
@@ -183,7 +188,6 @@ const styles = StyleSheet.create({
   container2: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "white",
     flexDirection: "row",
     shadowColor: "#000",
   },
@@ -206,7 +210,6 @@ const styles = StyleSheet.create({
   marriageDurationText: {
     fontSize: 10,
     fontWeight: "600",
-    color: "black",
     fontStyle: "italic",
   },
   totalContainer: {
@@ -215,11 +218,6 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     marginTop: 10,
   },
-  birthDate: {
-    fontSize: 14,
-    fontWeight: "400",
-    fontStyle: "italic",
-  },
   totalImage: {
     width: 30,
     height: 30,
@@ -227,7 +225,6 @@ const styles = StyleSheet.create({
   },
   totalText: {
     fontSize: 12,
-    color: "black",
     fontWeight: "500",
   },
   total: {
@@ -243,7 +240,6 @@ const styles = StyleSheet.create({
   anniversaryDateText: {
     fontSize: 10,
     fontWeight: "400",
-    color: "black",
   },
 });
 

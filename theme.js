@@ -1,3 +1,4 @@
+///Users/macm1/Documents/mobile_app/theme.js
 const colors = {
   accent: '#FA754C',
   black: '#292934',

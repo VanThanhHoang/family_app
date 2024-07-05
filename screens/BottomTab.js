@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Image, Text } from "react-native";
+import { Image, Text, StyleSheet } from "react-native";
 import FamilyScreen from "./FamilyScreen";
 import BirthDayScreen from "./BirthDayScreen";
 import DeathScreen from "./DeathScreen";
@@ -7,6 +7,8 @@ import WeddingScreen from "./WeddingScreen";
 import AuthNavigation from "./AuthStack";
 import React from "react";
 import { AppContext } from "../AppContext";
+import { useThemeContext } from '../ThemeContext';
+import { useTheme } from '@rneui/themed';
 
 const Tab = createBottomTabNavigator();
 
@@ -38,8 +40,10 @@ const screens = [
   },
 ];
 
-function HomeTab() {
+function CustomBottomTabNavigator() {
   const { birhdayData } = React.useContext(AppContext);
+  const { theme } = useThemeContext();
+  const { theme: rneTheme } = useTheme();
 
   const getBadge = () => {
     if (birhdayData.notification?.count > 5) {
@@ -53,17 +57,18 @@ function HomeTab() {
       screenOptions={({ route }) => ({
         headerShown: false,
         headerStatusBarHeight: 0,
-        tabBarStyle: {
-          height: 80,
-        },
-        tabBarActiveTintColor: "#005500", // Set the active color here
-        tabBarInactiveTintColor: "#444444", // Set the inactive color here
+        tabBarStyle: [
+          styles.tabBar,
+          { backgroundColor: rneTheme.mode === 'dark' ? '#808080' : rneTheme.colors.card },
+        ],
+        tabBarActiveTintColor: '#005500',
+        tabBarInactiveTintColor: rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444',
         tabBarLabel: ({ focused }) => {
           const screen = screens.find(screen => screen.name === route.name);
           return (
             <Text
               style={{
-                color: focused ? "#005500" : "#444444", // Use the active and inactive colors here
+                color: focused ? '#005500' : (rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444'),
                 fontSize: 13,
                 fontWeight: "bold",
               }}
@@ -79,7 +84,7 @@ function HomeTab() {
               style={{
                 width: 25,
                 height: 25,
-                tintColor: focused ? "#005500" : "#444444", // Use the active and inactive colors here
+                tintColor: focused ? '#005500' : (rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444'),
               }}
               source={screen.icon}
             />
@@ -102,4 +107,10 @@ function HomeTab() {
   );
 }
 
-export default HomeTab;
+const styles = StyleSheet.create({
+  tabBar: {
+    height: 80,
+  },
+});
+
+export default CustomBottomTabNavigator;

@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import {
   createStackNavigator,
-  TransitionPresets,
 } from "@react-navigation/stack";
-import { SafeAreaView, View } from "react-native";
+import { SafeAreaView } from "react-native";
+import { useThemeContext } from './ThemeContext';
 import LoadingDialog from "./components/LoadingDialog";
 import { AppContext } from "./AppContext";
 import HomeTab from "./screens/BottomTab";
@@ -11,9 +11,11 @@ import DetailWeddingScreen from "./screens/details/DetailWedingScreen";
 import DetailFamilyScreen from "./screens/details/DetailFamilyScreen";
 import DetailBirthDayScreen from "./screens/details/DetailBirthDayScreen";
 import DetailEventScreen from "./screens/details/DetailDeathDayScreen";
+
 const AppNavigation = () => {
   const AppStack = createStackNavigator();
   const { isLoading } = useContext(AppContext);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <AppStack.Navigator
@@ -31,4 +33,5 @@ const AppNavigation = () => {
     </SafeAreaView>
   );
 };
+
 export default AppNavigation;
