@@ -1,11 +1,13 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { dateFormater } from "../../helper/string_format";
-import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useTheme } from '@rneui/themed';
 
 const FamilyItem = ({ family }) => {
   const navigation = useNavigation();
+  const { theme } = useTheme();
+  const isDarkMode = theme.mode === 'dark';
 
   const ItemInfo = ({ isHusband, image, age, isAlive }) => {
     const getImage = () => {
@@ -17,39 +19,24 @@ const FamilyItem = ({ family }) => {
       return { uri: image };
     };
     return (
-      <View
-     
-       style={styles.itemInfoContainer}>
-        <View
-          style={[styles.imageRow, isHusband ? styles.rowReverse : styles.row]}
-        >
+      <View style={styles.itemInfoContainer}>
+        <View style={[styles.imageRow, isHusband ? styles.rowReverse : styles.row]}>
           <Image style={styles.image} source={getImage()} />
         </View>
-        <Text
-          style={styles.nameText}
-          numberOfLines={1}
-          adjustsFontSizeToFit
-        >
+        <Text style={[styles.nameText, { color: theme.colors.text }]} numberOfLines={1} adjustsFontSizeToFit>
           {isHusband ? family.husband.full_name_vn : family.wife.full_name_vn}
         </Text>
-        <Text style={styles.textInfo}>
-          {isHusband
-            ? dateFormater(family.husband.birth_date)
-            : dateFormater(family.wife.birth_date)}
+        <Text style={[styles.textInfo, { color: theme.colors.text }]}>
+          {isHusband ? dateFormater(family.husband.birth_date) : dateFormater(family.wife.birth_date)}
         </Text>
-        <View
-          style={[
-            styles.ageContainer,
-            isHusband ? styles.ageContainerLeft : styles.ageContainerRight,
-          ]}
-        >
+        <View style={[styles.ageContainer, isHusband ? styles.ageContainerLeft : styles.ageContainerRight]}>
           {isAlive ? (
             <Image
               source={require("../../assets/age.png")}
-              style={styles.ageIcon}
+              style={[styles.ageIcon, { tintColor: theme.colors.text, opacity: 0.7 }]}
             />
           ) : null}
-          <Text style={styles.ageText}>
+          <Text style={[styles.ageText, { color: theme.colors.text }]}>
             {isAlive ? age ?? "Chưa rõ" : `${age}`}
           </Text>
         </View>
@@ -59,12 +46,13 @@ const FamilyItem = ({ family }) => {
 
   return (
     <TouchableOpacity
-    onPress={() => {
-      navigation.navigate("DetailFamily", {
-        id: family.relationship_id,
-      });
-    }}
-    style={styles.container}>
+      onPress={() => {
+        navigation.navigate("DetailFamily", {
+          id: family.relationship_id,
+        });
+      }}
+      style={[styles.container, { backgroundColor: theme.colors.card }]}
+    >
       <View style={styles.container2}>
         <ItemInfo
           age={family.husband.current_age}
@@ -159,18 +147,15 @@ const styles = StyleSheet.create({
   nameText: {
     fontSize: 13,
     fontWeight: "bold",
-    color: "black",
   },
   textInfo: {
     fontSize: 11,
     fontWeight: "400",
-    color: "black",
   },
   container: {
     flex: 1,
     padding: 10,
     justifyContent: "center",
-    backgroundColor: "white",
     marginVertical: 10,
     gap: 10,
     borderRadius: 20,
@@ -185,7 +170,6 @@ const styles = StyleSheet.create({
   container2: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "white",
     flexDirection: "row",
     shadowColor: "#000",
   },
@@ -208,7 +192,6 @@ const styles = StyleSheet.create({
   marriageDurationText: {
     fontSize: 10,
     fontWeight: "600",
-    color: "black",
     fontStyle: "italic",
   },
   totalContainer: {
@@ -222,14 +205,10 @@ const styles = StyleSheet.create({
     height: 30,
     borderRadius: 50,
     backgroundColor: "white",
-    borderRadius: 7.5,
-    justifyContent: "center",
-    alignItems: "center",
-    bottom: 30,  
+    bottom: 28,
   },
   totalText: {
     fontSize: 12,
-    color: "black",
     fontWeight: "500",
   },
   total: {
@@ -245,7 +224,6 @@ const styles = StyleSheet.create({
   anniversaryDateText: {
     fontSize: 10,
     fontWeight: "400",
-    color: "black",
   },
 });
 

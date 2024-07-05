@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Image, Text, View, StyleSheet } from "react-native";
+import { Image, Text, StyleSheet } from "react-native";
 import FamilyScreen from "./FamilyScreen";
 import BirthDayScreen from "./BirthDayScreen";
 import DeathScreen from "./DeathScreen";
@@ -61,14 +61,14 @@ function CustomBottomTabNavigator() {
           styles.tabBar,
           { backgroundColor: rneTheme.mode === 'dark' ? '#808080' : rneTheme.colors.card },
         ],
-        tabBarActiveTintColor: rneTheme.mode === 'dark' ? '#FFFFFF' : '#005500',
+        tabBarActiveTintColor: '#005500',
         tabBarInactiveTintColor: rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444',
         tabBarLabel: ({ focused }) => {
           const screen = screens.find(screen => screen.name === route.name);
           return (
             <Text
               style={{
-                color: focused ? (rneTheme.mode === 'dark' ? '#FFFFFF' : '#005500') : (rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444'),
+                color: focused ? '#005500' : (rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444'),
                 fontSize: 13,
                 fontWeight: "bold",
               }}
@@ -84,7 +84,7 @@ function CustomBottomTabNavigator() {
               style={{
                 width: 25,
                 height: 25,
-                tintColor: focused ? (rneTheme.mode === 'dark' ? '#000000' : '#005500') : (rneTheme.mode === 'dark' ? '#000000' : '#444444'), // Đổi màu khi hover
+                tintColor: focused ? '#005500' : (rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444'),
               }}
               source={screen.icon}
             />

@@ -8,9 +8,15 @@ import { FlatList } from "react-native-gesture-handler";
 import BirthDayItem from "./components/BirthDayItem";
 import DeathItem from "./components/DeathItem";
 import { removeDiacritics } from "../helper/string_format";
+import { useThemeContext } from "../ThemeContext";
+import { useTheme } from '@rneui/themed';
+
 const DeathScreen = () => {
     const [birhdayData, setBirhdayData] = useState([]);
     const { setIsLoading } = React.useContext(AppContext);
+    const { theme } = useThemeContext();
+    const { theme: rneTheme } = useTheme();
+
     const getFamilyData = async () => {
       try {
         setIsLoading(true);
@@ -25,11 +31,14 @@ const DeathScreen = () => {
         setIsLoading(false);
       }
     };
+
     useEffect(() => {
       getFamilyData();
     }, []);
+
     const [filteredList, setFilteredList] = useState(birhdayData);
     const [searchText, setSearchText] = useState("");
+
     const searchFilter = (text) => {
       const normalizedText = removeDiacritics(text);
       setSearchText(text);
@@ -41,26 +50,29 @@ const DeathScreen = () => {
       });
       setFilteredList(filteredData);
     };
-  return (
-    <View style={styles.container}>
-      <SearchBar/>
-      <FlatList
-        contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
-        style={{ width: "100%" }}
-        keyExtractor={(item) => {
-          return item.people_id.toString();
-        }}
-        renderItem={({ item }) => {
-          return <DeathItem data={item} />;
-        }}
-        data={filteredList}
-      />
-    </View>
-  );
+
+    return (
+      <View style={[styles.container, { backgroundColor: rneTheme.colors.background }]}>
+        <SearchBar onChangeText={searchFilter} />
+        <FlatList
+          contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
+          style={{ width: "100%" }}
+          keyExtractor={(item) => {
+            return item.people_id.toString();
+          }}
+          renderItem={({ item }) => {
+            return <DeathItem data={item} />;
+          }}
+          data={filteredList}
+        />
+      </View>
+    );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
 });
+
 export default DeathScreen;

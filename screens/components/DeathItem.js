@@ -1,76 +1,52 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { dateFormater } from "../../helper/string_format";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
+import { useTheme } from '@rneui/themed';
 
 const DeathItem = ({ ...props }) => {
   const navigation = useNavigation();
+  const { theme } = useTheme();
+  const isDarkMode = theme.mode === 'dark';
 
   return (
     <TouchableOpacity
-    onPress={()=>{
-        navigation.navigate("DetailDeathDay",{
-            id: props.data.people_id,
-        })
-    }}
-    style={styles.container}>
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 3,
-        }}
-      >
+      onPress={() => {
+        navigation.navigate("DetailDeathDay", {
+          id: props.data.people_id,
+        });
+      }}
+      style={[styles.container, { backgroundColor: theme.colors.card }]}
+    >
+      <View style={styles.imageContainer}>
         <Image
           source={
             props.data.gender
               ? require("../../assets/father.png")
               : require("../../assets/mother.png")
           }
-          style={{ width: 80, height: 80, borderRadius: 40 }}
+          style={styles.image}
         />
-        <Text style={{
-          fontStyle: "italic",
-          fontSize: 12,
-          fontWeight: "500",
-        }}>Hưởng dương</Text>
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 5,
-            alignItems: "center",
-          }}
-        >
+        <Text style={[styles.italicText, { color: theme.colors.text }]}>Hưởng dương</Text>
+        <View style={styles.ageContainer}>
           <Image
             source={require("../../assets/age.png")}
-            style={{ width: 15, height: 15, borderRadius: 25 }}
+            style={[styles.ageImage, { tintColor: theme.colors.text, opacity: 0.7 }]}
           />
-          <Text
-            style={{
-              fontSize: 19,
-              fontWeight: "bold",
-            }}
-          >
+          <Text style={[styles.ageText, { color: theme.colors.text }]}>
             {props.data.death_info.age_at_death ?? "Chưa rõ"}
           </Text>
         </View>
-        <Text style={styles.totalText}>{props.data.death_info.years_since_death}</Text>
+        <Text style={[styles.totalText, { color: theme.colors.text }]}>
+          {props.data.death_info.years_since_death}
+        </Text>
       </View>
-      <View
-        style={{
-          gap: 5,
-        }}
-      >
-        <Text style={styles.name}>{props.data.full_name_vn}</Text>
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 5,
-            alignItems: "center",
-          }}
-        >
-          <Text style={styles.birthDate}>
-           {`${dateFormater(props.data.birth_date)} - ${dateFormater(props.data.death_date)}`}
+      <View style={styles.infoContainer}>
+        <Text style={[styles.name, { color: theme.colors.text }]}>
+          {props.data.full_name_vn}
+        </Text>
+        <View style={styles.birthDateContainer}>
+          <Text style={[styles.birthDate, { color: theme.colors.text }]}>
+            {`${dateFormater(props.data.birth_date)} - ${dateFormater(props.data.death_date)}`}
           </Text>
         </View>
         {props.data.marital_status && (
@@ -79,26 +55,31 @@ const DeathItem = ({ ...props }) => {
               isMarried={props.data.marital_status}
               name={props.data.spouse_relationships[0]}
               isFather={!props.data.gender}
+              theme={theme}
             />
-            <View style={{ flexDirection: "row", gap: 5, flexWrap: "wrap" }}>
-              <Children isBoy total={props.data.spouse_relationships[0].total_sons} />
-              <Children total={props.data.spouse_relationships[0].total_daughters} />
+            <View style={styles.childrenContainer}>
+              <Children
+                isBoy
+                total={props.data.spouse_relationships[0].total_sons}
+                theme={theme}
+              />
+              <Children
+                total={props.data.spouse_relationships[0].total_daughters}
+                theme={theme}
+              />
             </View>
           </View>
         )}
       </View>
-         
     </TouchableOpacity>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     padding: 10,
-    backgroundColor: "white",
     borderRadius: 10,
-    gap:10,
-    alignItems: "flex-start",
     marginVertical: 5,
     shadowColor: "#000",
     shadowOffset: {
@@ -110,14 +91,75 @@ const styles = StyleSheet.create({
     elevation: 5,
     gap: 10,
   },
+  imageContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 3,
+  },
+  image: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
+  italicText: {
+    fontStyle: "italic",
+    fontSize: 12,
+    fontWeight: "500",
+  },
+  ageContainer: {
+    flexDirection: "row",
+    gap: 5,
+    alignItems: "center",
+  },
+  ageImage: {
+    width: 15,
+    height: 15,
+    borderRadius: 25,
+  },
+  ageText: {
+    fontSize: 19,
+    fontWeight: "bold",
+  },
+  totalText: {
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  infoContainer: {
+    gap: 5,
+  },
   name: {
     fontSize: 20,
     fontWeight: "bold",
+  },
+  birthDateContainer: {
+    flexDirection: "row",
+    gap: 5,
+    alignItems: "center",
   },
   birthDate: {
     fontSize: 14,
     fontWeight: "400",
     fontStyle: "italic",
+  },
+  childrenContainer: {
+    flexDirection: "row",
+    gap: 5,
+    flexWrap: "wrap",
+  },
+  parentContainer: {
+    flexDirection: "row",
+    gap: 5,
+    flexWrap: "wrap",
+    alignItems: "center",
+  },
+  parentImage: {
+    width: 30,
+    height: 30,
+    borderRadius: 50,
+  },
+  parentText: {
+    fontWeight: "bold",
+    fontSize: 14,
   },
   totalContainer: {
     gap: 5,
@@ -128,11 +170,6 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 50,
-  },
-  totalText: {
-    fontSize: 14,
-    color: "black",
-    fontWeight: "700",
   },
   total: {
     position: "absolute",
@@ -145,34 +182,22 @@ const styles = StyleSheet.create({
     bottom: -5,
   },
 });
+
 const ItemParent = ({ ...props }) => {
+  const { theme } = props;
+  const isDarkMode = theme.mode === 'dark';
+
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        gap: 5,
-        flexWrap: "wrap",
-        alignItems: "center",
-      }}
-    >
+    <View style={styles.parentContainer}>
       <Image
-        style={{
-          width: 30,
-          height: 30,
-          borderRadius: 50,
-        }}
+        style={styles.parentImage}
         source={
           props.isFather
             ? require("../../assets/father.png")
             : require("../../assets/mother.png")
         }
       />
-      <Text
-        style={{
-          fontWeight: "bold",
-          fontSize: 14,
-        }}
-      >
+      <Text style={[styles.parentText, { color: isDarkMode ? "#C0C0C0" : theme.colors.text }]}>
         {!props.isFather
           ? `${props.name?.wife.full_name_vn ?? "Chưa rõ"}`
           : `${props.name?.husband.full_name_vn ?? "Chưa rõ"}`}
@@ -180,7 +205,8 @@ const ItemParent = ({ ...props }) => {
     </View>
   );
 };
-const Children = ({ isBoy, total }) => (
+
+const Children = ({ isBoy, total, theme }) => (
   <View style={styles.totalContainer}>
     <Image
       style={styles.totalImage}
@@ -190,9 +216,10 @@ const Children = ({ isBoy, total }) => (
           : require("../../assets/dauther.png")
       }
     />
-    <View style={styles.total}>
-      <Text style={styles.totalText}>{total}</Text>
+    <View style={[styles.total, { backgroundColor: theme.colors.background }]}>
+      <Text style={[styles.totalText, { color: theme.colors.text }]}>{total}</Text>
     </View>
   </View>
 );
+
 export default DeathItem;
