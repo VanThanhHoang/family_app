@@ -9,7 +9,7 @@ const BirthDayItem = ({ ...props }) => {
   const familyInfo = props.data?.parent_relationships[0];
 
   const isDarkMode = theme.mode === 'dark';
-
+  console.log({...props})
   return (
     <TouchableOpacity
       onPress={() => {
@@ -34,6 +34,10 @@ const BirthDayItem = ({ ...props }) => {
       <View style={styles.imageContainer}>
         <Image
           source={
+            props.data.profile_picture ?
+            {
+              uri: `https://api.lehungba.com${props.data.profile_picture}`,
+            }:
             props.data.gender
               ? require("../../assets/father.png")
               : require("../../assets/mother.png")
@@ -110,7 +114,7 @@ const styles = StyleSheet.create({
   image: {
     width: 80,
     height: 80,
-    borderRadius: 25,
+    borderRadius: 40,
   },
   infoContainer: {
     gap: 5,

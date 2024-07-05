@@ -14,8 +14,8 @@ import * as ImagePicker from "expo-image-picker";
 import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
 import { APP_CONSTANTS } from "../helper/constant";
-import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from '@rneui/themed';
+import { LinearGradient } from "expo-linear-gradient";
+import { useTheme } from "@rneui/themed";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -24,7 +24,7 @@ const ProfileScreen = () => {
   const { setIsLoading } = useContext(AppContext);
   const [profileImage, setProfileImage] = useState(null);
   const { theme } = useTheme();
-  const isDarkMode = theme.mode === 'dark';
+  const isDarkMode = theme.mode === "dark";
 
   const getUserInfo = async () => {
     try {
@@ -96,9 +96,13 @@ const ProfileScreen = () => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.header, { borderBottomColor: theme.colors.border }]}>
-        <Text style={[styles.headerText, { color: theme.colors.text }]}>Tài khoản</Text>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <View style={[styles.header]}>
+        <Text style={[styles.headerText, { color: theme.colors.text }]}>
+          Tài khoản
+        </Text>
         <View style={styles.headerIcons}>
           <TouchableOpacity
             onPress={() => navigation.navigate("ChangePass")}
@@ -119,7 +123,7 @@ const ProfileScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={[styles.profileContainer, { borderBottomColor: theme.colors.border }]}>
+      <View style={[styles.profileContainer, { borderBottomWidth: 0 }]}>
         <View style={styles.imageWrapper}>
           <Image
             source={{
@@ -127,10 +131,7 @@ const ProfileScreen = () => {
             }}
             style={styles.profileImage}
           />
-          <TouchableOpacity
-            onPress={pickImage}
-            style={styles.cameraIcon}
-          >
+          <TouchableOpacity onPress={pickImage} style={styles.cameraIcon}>
             <Ionicons name="camera" size={20} color={theme.colors.text} />
           </TouchableOpacity>
         </View>
@@ -176,7 +177,7 @@ const ProfileScreen = () => {
           }}
         >
           <LinearGradient
-            colors={['#32CD32', '#3CB371']} // Adjust these colors as needed
+            colors={["#32CD32", "#3CB371"]} // Adjust these colors as needed
             start={[0, 0]}
             end={[1, 1]}
             style={styles.crmButtonGradient}
@@ -192,10 +193,7 @@ const ProfileScreen = () => {
 const SettingItem = ({ title, onPress, icon }) => {
   const { theme } = useTheme();
   return (
-    <TouchableOpacity
-      style={styles.settingItem}
-      onPress={onPress}
-    >
+    <TouchableOpacity style={styles.settingItem} onPress={onPress}>
       <Ionicons name={icon} size={20} color={theme.colors.text} />
       <Text style={[styles.settingTitle, { color: theme.colors.text }]}>
         {title}
@@ -220,7 +218,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 15,
     paddingVertical: 10,
-    borderBottomWidth: 1,
   },
   headerText: {
     fontSize: 20,
@@ -286,7 +283,7 @@ const styles = StyleSheet.create({
   crmButton: {
     marginTop: 20,
     borderRadius: 10,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   crmButtonGradient: {
     paddingVertical: 20,
