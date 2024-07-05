@@ -25,10 +25,10 @@ const WeddingItem = ({ family }) => {
         >
           <Image style={styles.image} source={getImage()} />
         </View>
-        <Text style={[styles.nameText, { color: "#FFFFFF" }]} numberOfLines={1} adjustsFontSizeToFit>
+        <Text style={[styles.nameText, isDarkMode && { color: "#FFFFFF" }]} numberOfLines={1} adjustsFontSizeToFit>
           {isHusband ? family.husband.full_name_vn : family.wife.full_name_vn}
         </Text>
-        <Text style={[styles.birthDate, { color: "#C0C0C0" }]}>
+        <Text style={[styles.birthDate, isDarkMode && { color: "#C0C0C0" }]}>
           {isHusband
             ? dateFormater(family.husband.birth_date)
             : dateFormater(family.wife.birth_date)}
@@ -45,7 +45,7 @@ const WeddingItem = ({ family }) => {
               style={[styles.ageIcon, { tintColor: theme.colors.text, opacity: 0.7 }]}
             />
           ) : null}
-          <Text style={[styles.ageText, { color: "#C0C0C0" }]}>
+          <Text style={[styles.ageText, isDarkMode && { color: "#C0C0C0" }]}>
             {isAlive ? age ?? "Chưa rõ" : `${age}`}
           </Text>
         </View>
@@ -74,7 +74,7 @@ const WeddingItem = ({ family }) => {
             {family.total_sons > 0 && <Children isBoy total={family.total_sons} />}
             {family.total_daughters > 0 && <Children total={family.total_daughters} />}
           </View>
-          <Text style={[styles.anniversaryDateText, { color: "#C0C0C0" }]}>
+          <Text style={[styles.anniversaryDateText, isDarkMode && { color: "#C0C0C0" }]}>
             {dateFormater(family.marriage_date)}
           </Text>
           <Image
@@ -82,7 +82,7 @@ const WeddingItem = ({ family }) => {
             source={require("../../assets/married.png")}
           />
           <View>
-            <Text style={[styles.marriageDurationText, { color: "#C0C0C0" }]}>
+            <Text style={[styles.marriageDurationText, isDarkMode && { color: "#C0C0C0" }]}>
               {family.marriage_duration}
             </Text>
           </View>
