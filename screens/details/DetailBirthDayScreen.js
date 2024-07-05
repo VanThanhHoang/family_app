@@ -6,7 +6,6 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  Animated,
 } from "react-native";
 import { AppContext } from "../../AppContext";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -14,7 +13,6 @@ import AxiosInstance from "../../network/AxiosInstance";
 import AppHeader from "../../components/AppHeader";
 import { APP_CONSTANTS } from "../../helper/constant";
 import { Ionicons } from "@expo/vector-icons";
-import { FlatList } from "react-native-gesture-handler";
 
 const DetailScreen = () => {
   const [data, setData] = React.useState([]);
@@ -220,7 +218,6 @@ const ItemFamily = ({ name, id, image, title }) => {
         minWidth: 120,
         marginHorizontal: 10,
         gap: 5,
-
       }}
     >
       <Image
