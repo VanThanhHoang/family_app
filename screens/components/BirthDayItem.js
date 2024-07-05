@@ -7,9 +7,7 @@ const BirthDayItem = ({ ...props }) => {
   const navigation = useNavigation();
   const { theme } = useTheme();
   const familyInfo = props.data?.parent_relationships[0];
-
   const isDarkMode = theme.mode === 'dark';
-  console.log({...props})
   return (
     <TouchableOpacity
       onPress={() => {

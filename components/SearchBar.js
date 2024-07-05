@@ -1,26 +1,57 @@
 ///Users/macm1/Documents/mobile_app/components/SearchBar.js
-import React from 'react';
-import { StyleSheet, TextInput, View, TouchableOpacity } from "react-native";
-import { useTheme } from '@rneui/themed';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { useThemeContext } from '../ThemeContext';
+import React from "react";
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  TouchableOpacity,
+  StatusBar,
+} from "react-native";
+import { useTheme } from "@rneui/themed";
+import Icon from "react-native-vector-icons/Ionicons";
+import { useThemeContext } from "../ThemeContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SearchBar = ({ onChangeText, value }) => {
   const { theme, toggleTheme } = useThemeContext();
   const { theme: rneTheme } = useTheme();
-
   return (
     <View style={styles.wrapper}>
       <TextInput
         onChangeText={onChangeText}
         value={value}
-        style={[styles.container, { backgroundColor: rneTheme.colors.card, color: rneTheme.colors.text }]}
+        style={[
+          styles.container,
+          {
+            backgroundColor: rneTheme.colors.card,
+            color: rneTheme.colors.text,
+          },
+        ]}
         placeholder="Tìm kiếm..."
-        placeholderTextColor={rneTheme.mode === 'dark' ? '#ffffff' : rneTheme.colors.border} // Thay đổi màu placeholder khi ở chế độ tối
+        placeholderTextColor={
+          rneTheme.mode === "dark" ? "#ffffff" : rneTheme.colors.border
+        } // Thay đổi màu placeholder khi ở chế độ tối
       />
-      <Icon name="search" style={styles.searchIcon} color={rneTheme.mode === 'dark' ? '#ffffff' : 'gray'} size={20} />
-      <TouchableOpacity onPress={toggleTheme} style={styles.themeToggle}>
-        <Icon name={theme.mode === 'light' ? 'sunny' : 'moon'} style={styles.themeIcon} size={20} color={rneTheme.colors.text} />
+      <Icon
+        name="search"
+        style={styles.searchIcon}
+        color={rneTheme.mode === "dark" ? "#ffffff" : "gray"}
+        size={20}
+      />
+      <TouchableOpacity
+        onPress={() => {
+          toggleTheme();
+          // change status bar style
+          AsyncStorage.setItem("theme", theme.mode === "light" ? "dark" : "light");
+        }}
+        style={styles.themeToggle}
+      >
+        <Icon
+          name={theme.mode === "light" ? "sunny" : "moon"}
+          style={styles.themeIcon}
+          size={20}
+          color={rneTheme.colors.text}
+        />
       </TouchableOpacity>
     </View>
   );
@@ -28,8 +59,8 @@ const SearchBar = ({ onChangeText, value }) => {
 
 const styles = StyleSheet.create({
   wrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     margin: 10,
   },
   container: {
@@ -42,7 +73,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   searchIcon: {
-    position: 'absolute',
+    position: "absolute",
     top: 14,
     left: 10,
   },
