@@ -8,6 +8,7 @@ import * as ImagePicker from "expo-image-picker";
 import { APP_CONSTANTS } from "../../helper/constant";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeContext } from "../../ThemeContext";
+import ItemToogle from "./ItemToogle";
 
 const FriendScreen = () => {
   const pickImage = async () => {
@@ -23,9 +24,56 @@ const FriendScreen = () => {
       uploadImage(result.assets[0]);
     }
   };
-  
+  const [formData, setFormData] = useState({
+    email: "",
+    full_name_vn: "",
+    birth_date: "",
+    phone_number: "",
+    nationality: "Việt Nam",
+    marital_status: false, // false là độc thân, true là đã kết hôn
+    history: "",
+    status: ["employed"], // mặc định là "Đi Làm"
+    gender: true, // true là nam, false là nữ
+    is_alive: true, // true là còn sống, false là đã mất
+    education_level: "",
+    occupation: "",
+    monk_notes: "",
+    unemployed_notes: "",
+    death_date: "",
+    wedding_day: "",
+    profile_picture: null,
+    hobbies_interests: "",
+    social_media_links: "",
+    cause_of_death: "",
+    religion: ["catholic"], // mặc định là "Công giáo"
+    achievement: "",
+    relationship_category: ["ex_girlfriend"], // mặc định là "Bạn"
+    address: {
+      country: "",
+      postal_code: "",
+      city: "",
+      state_or_province: "",
+      district_or_county: "",
+      address_line: "",
+    },
+    place_of_birth: {
+      country: "",
+      postal_code: "",
+      city: "",
+      state_or_province: "",
+      district_or_county: "",
+      address_line: "",
+    },
+    place_of_death: {
+      country: "",
+      postal_code: "",
+      city: "",
+      state_or_province: "",
+      district_or_county: "",
+      address_line: "",
+    },
+  });
   const { theme } = useThemeContext();
-  const isDarkMode = theme.mode === "dark";
   const styles = useStyles(theme);
   console.log(theme.mode);
 
@@ -36,38 +84,33 @@ const FriendScreen = () => {
         flex: 1,
       }}
     >
-      <AppHeader back title="Bạn bè" />
-      <View
-        style={{
-          flex: 1,
-          padding: 15,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <View style={styles.imageWrapper}>
-          <Image
-            source={{
-              uri: APP_CONSTANTS.defaultAvatar,
-            }}
-            style={styles.profileImage}
-          />
-          <TouchableOpacity
-            onPress={pickImage}
-            style={[
-              styles.cameraIcon,
-              { backgroundColor: isDarkMode ? theme.colors.card : "white" },
-            ]}
-          >
-            <Ionicons name="camera" size={20} color={theme.colors.text} />
-          </TouchableOpacity>
-        </View>
+      <AppHeader back title="Thêm bạn bè" />
+      <View style={styles.container}>
         <ScrollView
           style={{
             width: "100%",
           }}
         >
           <AppFormInput title="Họ và tên" />
+          <AppFormInput title="Email" />
+          <AppFormInput title="Ngày tháng năm sinh (yyy-mm-dd)" />
+          <AppFormInput title="Số điện thoại" />
+          <AppFormInput title="Quốc tịch" />
+          <ItemToogle
+            onPress={() => {
+              setFormData({
+                ...formData,
+                gender: !formData.gender,
+              });
+            }}
+            isChecked={formData.gender}
+            color={"#ff1694"}
+            colorChecked={"#1a70ce"}
+            icon={"transgender"}
+            title="Giới tính"
+            textChecked="Nam"
+            textUnchecked="Nữ"
+          />
         </ScrollView>
       </View>
     </View>
@@ -77,6 +120,9 @@ const useStyles = (theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
+      padding: 15,
+      justifyContent: "center",
+      alignItems: "center",
     },
     header: {
       flexDirection: "row",

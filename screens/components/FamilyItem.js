@@ -3,6 +3,7 @@ import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { dateFormater } from "../../helper/string_format";
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '@rneui/themed';
+import { useThemeContext } from '../../ThemeContext';
 
 const FamilyItem = ({ family }) => {
   const navigation = useNavigation();

@@ -9,6 +9,8 @@ const AppFormInput = ({ title, onTextChange, value }) => {
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <TextInput
+        placeholderTextColor={theme.colors.placeHolder}
+        placeholder={`Nhập ${title}`}
         style={styles.input}
         value={value}
         onChangeText={onTextChange}
@@ -28,6 +30,7 @@ const useStyle = (theme) => {
       fontSize: 16,
       fontWeight: "bold",
       color: theme.colors.text,
+
     },
     input: {
       borderWidth: 1,
@@ -37,6 +40,7 @@ const useStyle = (theme) => {
       height: 48,
       paddingHorizontal: 10,
       fontSize: 16,
+      fontWeight: "600",
     },
   });
 };

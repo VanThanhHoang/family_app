@@ -17,7 +17,7 @@ const Tab = createBottomTabNavigator();
 const screens = [
   {
     name: "Gia đình",
-    component:FriendScreen,
+    component:FamilyScreen,
     icon: require("../assets/family_tree.png"),
   },
   {
@@ -110,7 +110,7 @@ function CustomBottomTabNavigator() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    height: 80,
+    height: 100,
   },
 });
 

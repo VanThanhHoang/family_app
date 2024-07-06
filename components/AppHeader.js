@@ -3,7 +3,6 @@ import { StatusBar } from "expo-status-bar";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@rneui/themed";
 import { useThemeContext } from "../ThemeContext";
 const AppHeader = ({ ...props }) => {
   // get device status bar height
