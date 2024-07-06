@@ -6,7 +6,8 @@ import { useTheme } from '@rneui/themed';
 
 const FamilyItem = ({ family }) => {
   const navigation = useNavigation();
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
+
   const isDarkMode = theme.mode === 'dark';
 
   const ItemInfo = ({ isHusband, image, age, isAlive }) => {

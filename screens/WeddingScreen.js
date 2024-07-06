@@ -6,11 +6,12 @@ import AxiosInstance from "../network/AxiosInstance";
 import WeddingItem from "./components/WeddingItem";
 import { removeDiacritics } from "../helper/string_format";
 import { useTheme } from '@rneui/themed';
+import { useThemeContext } from "../ThemeContext";
 
 const WeddingScreen = () => {
   const [weddingData, setWeddingData] = useState([]);
   const { setIsLoading } = React.useContext(AppContext);
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const getFamilyData = async () => {
     try {

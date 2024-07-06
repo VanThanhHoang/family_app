@@ -14,7 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SearchBar = ({ onChangeText, value }) => {
   const { theme, toggleTheme } = useThemeContext();
-  const { theme: rneTheme } = useTheme();
+  
   return (
     <View style={styles.wrapper}>
       <TextInput
@@ -23,19 +23,19 @@ const SearchBar = ({ onChangeText, value }) => {
         style={[
           styles.container,
           {
-            backgroundColor: rneTheme.colors.card,
-            color: rneTheme.colors.text,
+            backgroundColor: theme.colors.card,
+            color: theme.colors.text,
           },
         ]}
         placeholder="Tìm kiếm..."
         placeholderTextColor={
-          rneTheme.mode === "dark" ? "#ffffff" : rneTheme.colors.border
+          theme.mode === "dark" ? "#ffffff" : theme.colors.border
         } // Thay đổi màu placeholder khi ở chế độ tối
       />
       <Icon
         name="search"
         style={styles.searchIcon}
-        color={rneTheme.mode === "dark" ? "#ffffff" : "gray"}
+        color={theme.mode === "dark" ? "#ffffff" : "gray"}
         size={20}
       />
       <TouchableOpacity
@@ -50,7 +50,7 @@ const SearchBar = ({ onChangeText, value }) => {
           name={theme.mode === "light" ? "sunny" : "moon"}
           style={styles.themeIcon}
           size={20}
-          color={rneTheme.colors.text}
+          color={theme.colors.text}
         />
       </TouchableOpacity>
     </View>

@@ -9,13 +9,15 @@ import React from "react";
 import { AppContext } from "../AppContext";
 import { useThemeContext } from '../ThemeContext';
 import { useTheme } from '@rneui/themed';
+import FamilyTreeScreen from "./familyTree/FamilyTreeScreen";
+import FriendScreen from "./friend/FriendScreen";
 
 const Tab = createBottomTabNavigator();
 
 const screens = [
   {
     name: "Gia đình",
-    component: FamilyScreen,
+    component:FriendScreen,
     icon: require("../assets/family_tree.png"),
   },
   {
@@ -42,9 +44,7 @@ const screens = [
 
 function CustomBottomTabNavigator() {
   const { birhdayData } = React.useContext(AppContext);
-  const { theme } = useThemeContext();
-  const { theme: rneTheme } = useTheme();
-
+  const { theme: rneTheme } = useThemeContext();
   const getBadge = () => {
     if (birhdayData.notification?.count > 5) {
       return birhdayData.notification?.count;

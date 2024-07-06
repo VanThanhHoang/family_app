@@ -7,14 +7,14 @@ import { AppContext } from "../AppContext";
 import SearchBar from "../components/SearchBar";
 import { removeDiacritics } from "../helper/string_format";
 import { useTheme } from '@rneui/themed';
+import { useThemeContext } from "../ThemeContext";
 
 const FamilyScreen = () => {
   const [familyData, setFamilyData] = useState([]);
   const { setIsLoading } = useContext(AppContext);
   const [filteredList, setFilteredList] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const { theme } = useTheme();
-
+  const { theme } = useThemeContext();
   const getFamilyData = async () => {
     try {
       setIsLoading(true);

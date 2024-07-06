@@ -31,9 +31,7 @@ const AppProvier = ({ children }) => {
   const getFamilyData = async () => {
     try {
       const data = await AxiosInstance().get("birthdays/");
-
       data && setBirhdayData(data);
-
       console.log(data.notification);
     } catch (err) {
       console.log({ ...err });

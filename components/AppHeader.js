@@ -3,10 +3,13 @@ import { StatusBar } from "expo-status-bar";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "@rneui/themed";
+import { useThemeContext } from "../ThemeContext";
 const AppHeader = ({ ...props }) => {
   // get device status bar height
-  const paddingTop = Platform.OS === "android" ? StatusBar.currentHeight : 0;
   const navigation = useNavigation();
+  const { theme } = useThemeContext();
+  const styles = useStyles(theme);
   return (
     <View
       style={[
@@ -18,39 +21,40 @@ const AppHeader = ({ ...props }) => {
     >
       {props?.back && (
         <TouchableOpacity
-          style={{
-            width: 50,
-            height: 50,
-            justifyContent: "center",
-
-          }}
+          style={styles.back}
           onPress={() => {
             navigation.goBack();
           }}
         >
-          <Ionicons name="arrow-back-outline" size={28} color={"black"} />
+          <Ionicons name="arrow-back-outline" size={28} color={theme.colors.text} />
         </TouchableOpacity>
       )}
       <Text style={styles.text}>{props.title}</Text>
     </View>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "white",
-    alignItems: "center",
-    height: 60,
-    padding: 10,
-    paddingHorizontal: 20,
-    borderBottomColor: "#969696",
-    borderBottomWidth: 0.5,
-    flexDirection: "row",
-    gap: 10,
-  },
-  text: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "black",
-  },
-});
+const useStyles = (theme) =>
+  StyleSheet.create({
+    container: {
+      backgroundColor: theme.colors.background,
+      alignItems: "center",
+      height: 60,
+      padding: 10,
+      paddingHorizontal: 20,
+      borderBottomColor: "#969696",
+      borderBottomWidth: 0.5,
+      flexDirection: "row",
+      gap: 10,
+    },
+    text: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: theme.colors.text,
+    },
+    back:{
+      width: 50,
+      height: 50,
+      justifyContent: "center",
+    }
+  });
 export default AppHeader;

@@ -2,8 +2,10 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { dateFormater } from "../../helper/string_format";
 import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native";
+import { useThemeContext } from "../../ThemeContext";
 
 const BirthDayItem = ({ ...props }) => {
+  const { theme  } = useThemeContext();
   const navigation = useNavigation();
   const familyInfo = props.data?.parent_relationships[0];
   return (
@@ -24,6 +26,9 @@ const BirthDayItem = ({ ...props }) => {
           borderWidth: 0.2,
           borderColor: "red",
         },
+        {
+          backgroundColor:theme.colors.itemBackground,
+        }
       ]}
     >
       <View
@@ -46,7 +51,10 @@ const BirthDayItem = ({ ...props }) => {
           gap: 5,
         }}
       >
-        <Text style={styles.name}>{props.data.full_name_vn}</Text>
+        <Text style={{
+          ...styles.name,
+          color:theme.colors.text
+        }}>{props.data.full_name_vn}</Text>
         <View
           style={{
             flexDirection: "row",
@@ -69,12 +77,16 @@ const BirthDayItem = ({ ...props }) => {
               style={{
                 fontSize: 16,
                 fontWeight: "bold",
+                color:theme.colors.text,
               }}
             >
               {props.data.current_age ?? "Chưa rõ"}
             </Text>
           </View>
-          <Text style={styles.birthDate}>
+          <Text style={{
+            ...styles.birthDate,
+            color:theme.colors.text,
+          }}>
             {dateFormater(props.data.birth_date)}
           </Text>
         </View>
@@ -133,6 +145,7 @@ const styles = StyleSheet.create({
   },
 });
 export const ItemParent = ({ ...props }) => {
+  const { theme } = useThemeContext();
   return (
     <View
       style={{
@@ -157,6 +170,7 @@ export const ItemParent = ({ ...props }) => {
       <Text
         style={{
           fontSize: 11,
+          color:theme.colors.text,
         }}
       >
         {props.isFather
