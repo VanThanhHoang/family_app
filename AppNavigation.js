@@ -22,6 +22,7 @@ import PaternalScreen from "./screens/paternal/PaternalScreen";
 import MaternalSreen from "./screens/maternal/MaternalScreen";
 import CrmScreen from "./screens/Crm/CrmScreen";
 import MyFamilyScreen from "./screens/myfamily/MyfamilyScreen";
+import CRFriendScreen from "./screens/friend/CreateFriendScreen";
 const AppNavigation = () => {
   const AppStack = createStackNavigator();
   const { isLoading } = useContext(AppContext);
@@ -56,6 +57,8 @@ const AppNavigation = () => {
           headerShown: false,
         }}
       >
+        <AppStack.Screen name="AddFriendScreen" component={CRFriendScreen} />
+
         <AppStack.Screen name="HomeTab" component={HomeTab} />
         <AppStack.Screen name="DetailWedding" component={DetailWeddingScreen} />
         <AppStack.Screen name="DetailFamily" component={DetailFamilyScreen} />
