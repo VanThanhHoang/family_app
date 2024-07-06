@@ -1,3 +1,4 @@
+///Users/macm1/Documents/mobile_app/screens/components/friend/FriendItem.js
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
@@ -26,10 +27,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   input: {
-    height: 40,
+    height: 50,
+    width: "100%",
     borderColor: 'gray',
     borderWidth: 1,
     marginBottom: 12,
+    borderRadius: 10,
     paddingLeft: 8,
     backgroundColor: '#fff',
   },

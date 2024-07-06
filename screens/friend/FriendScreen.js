@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, ScrollView, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, TextInput, ScrollView, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
 import { useTheme } from '@rneui/themed';
 import * as ImagePicker from 'expo-image-picker';
-import Icon from 'react-native-vector-icons/Ionicons';
+import * as FileSystem from 'expo-file-system';
 import { useNavigation } from '@react-navigation/native';
 import Checkbox from 'expo-checkbox';
-import styles from '../components/friend/FriendItem'; // Adjust the import path if necessary
+import Icon from 'react-native-vector-icons/Ionicons';
+import styles from '../components/friend/FriendItem'; // Điều chỉnh đường dẫn nếu cần thiết
+import Button from '/Users/macm1/Documents/mobile_app/components/Button.js'; // Import nút bấm
 
 const ToggleSwitch = ({ isOn, handleToggle }) => {
   return (
@@ -20,31 +22,52 @@ const CreateFriendScreen = () => {
   const [formVisible, setFormVisible] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
-    full_name: '',
     full_name_vn: '',
     birth_date: '',
-    gender: false, // false for female, true for male
-    is_alive: true, // true for alive, false for deceased
     phone_number: '',
-    nationality: '',
-    marital_status: '',
+    nationality: 'Việt Nam',
+    marital_status: false, // false là độc thân, true là đã kết hôn
     history: '',
-    status: [],
+    status: ['employed'], // mặc định là "Đi Làm"
+    gender: true, // true là nam, false là nữ
+    is_alive: true, // true là còn sống, false là đã mất
     education_level: '',
     occupation: '',
     monk_notes: '',
     unemployed_notes: '',
-    health_status: '',
     death_date: '',
     wedding_day: '',
-    family_info: '',
     profile_picture: null,
     hobbies_interests: '',
     social_media_links: '',
     cause_of_death: '',
-    religion: [],
+    religion: ['catholic'], // mặc định là "Công giáo"
     achievement: '',
-    relationship_category: [],
+    relationship_category: ['ex_girlfriend'], // mặc định là "Bạn"
+    address: {
+      country: '',
+      postal_code: '',
+      city: '',
+      state_or_province: '',
+      district_or_county: '',
+      address_line: '',
+    },
+    place_of_birth: {
+      country: '',
+      postal_code: '',
+      city: '',
+      state_or_province: '',
+      district_or_county: '',
+      address_line: '',
+    },
+    place_of_death: {
+      country: '',
+      postal_code: '',
+      city: '',
+      state_or_province: '',
+      district_or_county: '',
+      address_line: '',
+    },
   });
 
   const { theme } = useTheme();
@@ -55,6 +78,16 @@ const CreateFriendScreen = () => {
     setFormData({
       ...formData,
       [name]: value,
+    });
+  };
+
+  const handleNestedInputChange = (section, name, value) => {
+    setFormData({
+      ...formData,
+      [section]: {
+        ...formData[section],
+        [name]: value,
+      },
     });
   };
 
@@ -72,24 +105,31 @@ const CreateFriendScreen = () => {
     });
   };
 
+  const handleToggleMaritalStatus = () => {
+    setFormData({
+      ...formData,
+      marital_status: !formData.marital_status,
+    });
+  };
+
   const handleStatusChange = (status) => {
     const newStatus = formData.status.includes(status)
       ? formData.status.filter(item => item !== status)
-      : [...formData.status, status];
+      : [status]; // đảm bảo chỉ có một trạng thái được chọn mỗi lần
     setFormData({ ...formData, status: newStatus });
   };
 
   const handleReligionChange = (religion) => {
     const newReligion = formData.religion.includes(religion)
       ? formData.religion.filter(item => item !== religion)
-      : [...formData.religion, religion];
+      : [religion]; // đảm bảo chỉ có một tôn giáo được chọn mỗi lần
     setFormData({ ...formData, religion: newReligion });
   };
 
   const handleRelationshipCategoryChange = (category) => {
     const newCategory = formData.relationship_category.includes(category)
       ? formData.relationship_category.filter(item => item !== category)
-      : [...formData.relationship_category, category];
+      : [category]; // đảm bảo chỉ có một loại quan hệ được chọn mỗi lần
     setFormData({ ...formData, relationship_category: newCategory });
   };
 
@@ -116,11 +156,11 @@ const CreateFriendScreen = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      alert('Friend created successfully');
+      alert('Tạo bạn thành công');
       navigation.goBack(); // Quay lại màn hình trước sau khi tạo thành công
     } catch (error) {
       console.error(error);
-      alert('Error creating friend');
+      alert('Lỗi khi tạo bạn');
     } finally {
       setLoading(false);
     }
@@ -135,7 +175,14 @@ const CreateFriendScreen = () => {
     });
 
     if (!result.canceled) {
-      setFormData({ ...formData, profile_picture: result.uri });
+      const cacheDir = FileSystem.cacheDirectory + 'avatars/';
+      await FileSystem.makeDirectoryAsync(cacheDir, { intermediates: true });
+      const newPath = cacheDir + result.uri.split('/').pop();
+      await FileSystem.copyAsync({
+        from: result.uri,
+        to: newPath,
+      });
+      setFormData({ ...formData, profile_picture: newPath });
     }
   };
 
@@ -147,16 +194,16 @@ const CreateFriendScreen = () => {
   ];
 
   const STATUS_CHOICES = [
-    { value: 'student', label: 'Đang đi học' },
-    { value: 'employed', label: 'Đã đi làm' },
-    { value: 'unemployed', label: 'Thất nghiệp' },
+    { value: 'student', label: 'Đang học' },
+    { value: 'employed', label: 'Đi Làm' },
+    { value: 'unemployed', label: 'Nội Trợ' },
     { value: 'monk', label: 'Đi tu' },
   ];
 
   const RELATIONSHIP_CATEGORY_CHOICES = [
     { value: 'benefactor', label: 'Ân Nhân' },
     { value: 'teacher', label: 'Teacher' },
-    { value: 'ex_girlfriend', label: 'Bạn gái cũ' },
+    { value: 'ex_girlfriend', label: 'Bạn' },
     { value: 'classmate', label: 'Bạn học' },
   ];
 
@@ -178,6 +225,15 @@ const CreateFriendScreen = () => {
       </View>
       {formVisible && (
         <ScrollView contentContainerStyle={styles.formContainer}>
+          <View style={updatedStyles.avatarContainer}>
+            <Image
+              source={{ uri: formData.profile_picture || 'https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=' }}
+              style={updatedStyles.avatar}
+            />
+            <TouchableOpacity onPress={pickImage} style={updatedStyles.cameraIconContainer}>
+              <Icon name="camera" size={20} color="#fff" />
+            </TouchableOpacity>
+          </View>
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -186,196 +242,191 @@ const CreateFriendScreen = () => {
           />
           <TextInput
             style={styles.input}
-            placeholder="Full Name"
-            value={formData.full_name}
-            onChangeText={(text) => handleInputChange('full_name', text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Full Name VN"
+            placeholder="Tên đầy đủ"
             value={formData.full_name_vn}
             onChangeText={(text) => handleInputChange('full_name_vn', text)}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Birth Date"
-            value={formData.birth_date}
-            onChangeText={(text) => handleInputChange('birth_date', text)}
-          />
           <View style={styles.toggleContainer}>
+            <TextInput
+              style={[styles.input, { flex: 1, marginRight: 8 }]}
+              placeholder="Ngày sinh"
+              value={formData.birth_date}
+              onChangeText={(text) => handleInputChange('birth_date', text)}
+            />
             <TouchableOpacity onPress={handleToggleGender} style={styles.toggleButton}>
               <Icon
                 name={formData.gender ? "male" : "female"}
                 size={30}
                 color={formData.gender ? "blue" : "pink"}
               />
-              <Text>{formData.gender ? "Male" : "Female"}</Text>
+              <Text>{formData.gender ? "Nam" : "Nữ"}</Text>
             </TouchableOpacity>
-            <ToggleSwitch isOn={formData.is_alive} handleToggle={handleToggleIsAlive} />
           </View>
           <TextInput
             style={styles.input}
-            placeholder="Phone Number"
+            placeholder="Số điện thoại"
             value={formData.phone_number}
             onChangeText={(text) => handleInputChange('phone_number', text)}
           />
           <TextInput
             style={styles.input}
-            placeholder="Nationality"
+            placeholder="Quốc tịch"
             value={formData.nationality}
             onChangeText={(text) => handleInputChange('nationality', text)}
           />
+          <View style={styles.toggleContainer}>
+            <View style={styles.checkboxContainer}>
+              <Checkbox
+                value={formData.marital_status}
+                onValueChange={handleToggleMaritalStatus}
+                style={styles.checkbox}
+              />
+              <Text style={styles.checkboxLabel}>Đã Kết Hôn</Text>
+            </View>
+            <ToggleSwitch isOn={formData.is_alive} handleToggle={handleToggleIsAlive} />
+          </View>
+          {formData.marital_status && (
+            <TextInput
+              style={styles.input}
+              placeholder="Ngày cưới"
+              value={formData.wedding_day}
+              onChangeText={(text) => handleInputChange('wedding_day', text)}
+            />
+          )}
+
+          {!formData.is_alive && (
+            <>
+              <TextInput
+                style={styles.input}
+                placeholder="Nguyên nhân tử vong"
+                value={formData.cause_of_death}
+                onChangeText={(text) => handleInputChange('cause_of_death', text)}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Ngày mất"
+                value={formData.death_date}
+                onChangeText={(text) => handleInputChange('death_date', text)}
+              />
+            </>
+          )}
+
           <TextInput
             style={styles.input}
-            placeholder="Marital Status"
-            value={formData.marital_status}
-            onChangeText={(text) => handleInputChange('marital_status', text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="History"
+            placeholder="Lịch sử"
             value={formData.history}
             onChangeText={(text) => handleInputChange('history', text)}
           />
-
-          <Text>Status:</Text>
-          {STATUS_CHOICES.map((status) => (
-            <View key={status.value} style={styles.checkboxContainer}>
-              <Checkbox
-                value={formData.status.includes(status.value)}
-                onValueChange={() => handleStatusChange(status.value)}
-              />
-              <Text>{status.label}</Text>
+          <View style={updatedStyles.checkboxSection}>
+            <Text>Trạng thái:</Text>
+            <View style={updatedStyles.checkboxContainerRow}>
+              {STATUS_CHOICES.map((status) => (
+                <View key={status.value} style={updatedStyles.checkboxItem}>
+                  <Checkbox
+                    value={formData.status.includes(status.value)}
+                    onValueChange={() => handleStatusChange(status.value)}
+                    style={styles.checkbox}
+                  />
+                  <Text style={styles.checkboxLabel}>{status.label}</Text>
+                </View>
+              ))}
             </View>
-          ))}
+          </View>
 
-          <Text>Religion:</Text>
-          {RELIGION_CHOICES.map((religion) => (
-            <View key={religion.value} style={styles.checkboxContainer}>
-              <Checkbox
-                value={formData.religion.includes(religion.value)}
-                onValueChange={() => handleReligionChange(religion.value)}
-              />
-              <Text>{religion.label}</Text>
+          <View style={updatedStyles.checkboxSection}>
+            <Text>Tôn giáo:</Text>
+            <View style={updatedStyles.checkboxContainerRow}>
+              {RELIGION_CHOICES.map((religion) => (
+                <View key={religion.value} style={updatedStyles.checkboxItem}>
+                  <Checkbox
+                    value={formData.religion.includes(religion.value)}
+                    onValueChange={() => handleReligionChange(religion.value)}
+                    style={styles.checkbox}
+                  />
+                  <Text style={styles.checkboxLabel}>{religion.label}</Text>
+                </View>
+              ))}
             </View>
-          ))}
+          </View>
 
-          <Text>Relationship Category:</Text>
-          {RELATIONSHIP_CATEGORY_CHOICES.map((category) => (
-            <View key={category.value} style={styles.checkboxContainer}>
-              <Checkbox
-                value={formData.relationship_category.includes(category.value)}
-                onValueChange={() => handleRelationshipCategoryChange(category.value)}
-              />
-              <Text>{category.label}</Text>
+          <View style={updatedStyles.checkboxSection}>
+            <Text>Quan hệ:</Text>
+            <View style={updatedStyles.checkboxContainerRow}>
+              {RELATIONSHIP_CATEGORY_CHOICES.map((category) => (
+                <View key={category.value} style={updatedStyles.checkboxItem}>
+                  <Checkbox
+                    value={formData.relationship_category.includes(category.value)}
+                    onValueChange={() => handleRelationshipCategoryChange(category.value)}
+                    style={styles.checkbox}
+                  />
+                  <Text style={styles.checkboxLabel}>{category.label}</Text>
+                </View>
+              ))}
             </View>
-          ))}
+          </View>
 
           <TextInput
             style={styles.input}
-            placeholder="Education Level"
+            placeholder="Trình độ học vấn"
             value={formData.education_level}
             onChangeText={(text) => handleInputChange('education_level', text)}
           />
           <TextInput
             style={styles.input}
-            placeholder="Occupation"
+            placeholder="Nghề nghiệp"
             value={formData.occupation}
             onChangeText={(text) => handleInputChange('occupation', text)}
           />
           <TextInput
             style={styles.input}
-            placeholder="Monk Notes"
+            placeholder="Ghi chú tu hành"
             value={formData.monk_notes}
             onChangeText={(text) => handleInputChange('monk_notes', text)}
           />
+
           <TextInput
             style={styles.input}
-            placeholder="Unemployed Notes"
-            value={formData.unemployed_notes}
-            onChangeText={(text) => handleInputChange('unemployed_notes', text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Health Status"
-            value={formData.health_status}
-            onChangeText={(text) => handleInputChange('health_status', text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Death Date"
-            value={formData.death_date}
-            onChangeText={(text) => handleInputChange('death_date', text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Wedding Day"
-            value={formData.wedding_day}
-            onChangeText={(text) => handleInputChange('wedding_day', text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Family Info"
-            value={formData.family_info}
-            onChangeText={(text) => handleInputChange('family_info', text)}
-          />
-          <TouchableOpacity onPress={pickImage}>
-            <Text style={styles.button}>Pick an image from camera roll</Text>
-          </TouchableOpacity>
-          {formData.profile_picture && (
-            <Image source={{ uri: formData.profile_picture }} style={styles.image} />
-          )}
-          <TextInput
-            style={styles.input}
-            placeholder="Hobbies Interests"
+            placeholder="Sở thích"
             value={formData.hobbies_interests}
             onChangeText={(text) => handleInputChange('hobbies_interests', text)}
           />
           <TextInput
             style={styles.input}
-            placeholder="Social Media Links"
+            placeholder="Liên kết mạng xã hội"
             value={formData.social_media_links}
             onChangeText={(text) => handleInputChange('social_media_links', text)}
           />
           <TextInput
             style={styles.input}
-            placeholder="Cause of Death"
-            value={formData.cause_of_death}
-            onChangeText={(text) => handleInputChange('cause_of_death', text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Religion"
-            value={formData.religion}
-            onChangeText={(text) => handleInputChange('religion', text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Achievement"
+            placeholder="Thành tích"
             value={formData.achievement}
             onChangeText={(text) => handleInputChange('achievement', text)}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Relationship Category"
-            value={formData.relationship_category}
-            onChangeText={(text) => handleInputChange('relationship_category', text)}
+
+          {formData.profile_picture && (
+            <Image source={{ uri: formData.profile_picture }} style={styles.image} />
+          )}
+          <Button
+            title="Tạo Bạn"
+            onPress={handleSubmit}
+            filled
+            style={{ marginBottom: 20 }}
+            disabled={loading}
           />
-          <Button title="Create Friend" onPress={handleSubmit} disabled={loading} />
         </ScrollView>
       )}
     </View>
   );
-};;
+};
 
 const toggleStyles = StyleSheet.create({
   switch: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 100,
-    height: 50,
-    borderRadius: 25,
+    width: 80,
+    height: 30,
+    borderRadius: 10,
     padding: 5,
     margin: 10,
   },
@@ -386,25 +437,48 @@ const toggleStyles = StyleSheet.create({
     backgroundColor: 'red',
   },
   text: {
-    fontSize: 18,
+    fontSize: 13,
     fontWeight: 'bold',
   },
 });
 
-const additionalStyles = StyleSheet.create({
-  alive: {
-    backgroundColor: 'green',
-    borderRadius: 20,
-    padding: 10,
+const updatedStyles = StyleSheet.create({
+  avatarContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 0,
+    position: 'relative',
   },
-  deceased: {
-    backgroundColor: 'red',
-    borderRadius: 20,
-    padding: 10,
+  avatar: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
   },
-  toggleText: {
-    color: 'white',
-    fontWeight: 'bold',
+  cameraIconContainer: {
+    position: 'absolute',
+    bottom: 15,
+    right: 130,
+    backgroundColor: '#000',
+    borderRadius: 15,
+    padding: 5,
+  },
+  checkboxSection: {
+    marginBottom: 20,
+  },
+  checkboxContainerRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  checkboxItem: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '22%',
+    marginBottom: -15,
+  },
+  checkboxLabel: {
+    marginTop: 8,
   },
 });
 
