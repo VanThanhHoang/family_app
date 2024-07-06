@@ -1,4 +1,4 @@
-//Users/macm1/Documents/mobile_app/screens/components/details/DetailBirthDayItem.js
+//Users/macm1/Documents/mobile_app/screens/components/details/PeopleDetailItem.js
 import React, { useContext, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { AppContext } from '../../AppContext';
