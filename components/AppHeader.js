@@ -15,7 +15,9 @@ const AppHeader = ({ ...props }) => {
         styles.container,
         {
           paddingTop: Platform.OS === "android" ? 40 : 0,
+          justifyContent:props.right ? "space-between" : "left",
         },
+
       ]}
     >
       {props?.back && (
@@ -25,10 +27,23 @@ const AppHeader = ({ ...props }) => {
             navigation.goBack();
           }}
         >
-          <Ionicons name="arrow-back-outline" size={28} color={theme.colors.text} />
+          <Ionicons
+            name="arrow-back-outline"
+            size={28}
+            color={theme.colors.text}
+          />
         </TouchableOpacity>
       )}
       <Text style={styles.text}>{props.title}</Text>
+      {props.right && (
+        <TouchableOpacity style={styles.back} onPress={props.right.onPress}>
+          <Ionicons
+            name={props.right.icon}
+            size={28}
+            color={theme.colors.text}
+          />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -50,10 +65,10 @@ const useStyles = (theme) =>
       fontWeight: "bold",
       color: theme.colors.text,
     },
-    back:{
+    back: {
       width: 50,
       height: 50,
       justifyContent: "center",
-    }
+    },
   });
 export default AppHeader;

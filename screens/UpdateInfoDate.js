@@ -7,19 +7,13 @@ import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { formatDate2 } from "../helper/string_format";
 const UpdateProfileScreen = ({ navigation }) => {
   const { type, label, value } = useRoute().params;
   const { userData, setUserData, setIsLoading } = React.useContext(AppContext);
   const [newInfo, setNewInfo] = React.useState(value);
   const [showModal, setShowModal] = React.useState(false);
-  function formatDate(isoString) {
-    const date = new Date(isoString);
-    const year = date.getFullYear();
-    // Tháng trong JavaScript được đánh số từ 0 (January) đến 11 (December), nên cần cộng thêm 1.
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
+ 
   const showDatePicker = () => {
     setShowModal(true);
   };
@@ -29,7 +23,7 @@ const UpdateProfileScreen = ({ navigation }) => {
   };
 
   const handleConfirm = (date) => {
-    setNewInfo(formatDate(date));
+    setNewInfo(formatDate2(date));
     hideDatePicker();
   };
 
@@ -70,15 +64,19 @@ const UpdateProfileScreen = ({ navigation }) => {
         back
         title={label}
       />
-     <TouchableOpacity onPress={showDatePicker}  style={styles.textInput}>
-     <Ionicons name={'calendar'} size={24} color="black" />
-     <Text style={{
-      fontWeight: '500',
-      fontSize: 16,
-     }} >{newInfo}</Text>
-     </TouchableOpacity>
-     <DateTimePickerModal
-      date={new Date(newInfo)}
+      <TouchableOpacity onPress={showDatePicker} style={styles.textInput}>
+        <Ionicons name={"calendar"} size={24} color="black" />
+        <Text
+          style={{
+            fontWeight: "500",
+            fontSize: 16,
+          }}
+        >
+          {newInfo}
+        </Text>
+      </TouchableOpacity>
+      <DateTimePickerModal
+        date={new Date(newInfo)}
         isVisible={showModal}
         mode="date"
         onConfirm={handleConfirm}
@@ -102,8 +100,8 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     backgroundColor: "#F5F5F5",
-    flexDirection: 'row',
-    gap:20
+    flexDirection: "row",
+    gap: 20,
   },
 });
 export default UpdateProfileScreen;
