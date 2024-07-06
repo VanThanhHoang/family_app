@@ -57,7 +57,6 @@ const AppNavigation = () => {
           headerShown: false,
         }}
       >
-        <AppStack.Screen name="AddFriendScreen" component={CRFriendScreen} />
 
         <AppStack.Screen name="HomeTab" component={HomeTab} />
         <AppStack.Screen name="DetailWedding" component={DetailWeddingScreen} />
@@ -76,6 +75,8 @@ const AppNavigation = () => {
 
         <AppStack.Screen name="DetailDeathDay" component={DetailEventScreen} />
         <AppStack.Screen name="DetailChildren" component={DetailScreenChildren} />
+        <AppStack.Screen name="AddFriendScreen" component={CRFriendScreen} />
+     
       </AppStack.Navigator>
       <LoadingDialog open={isLoading} />
       <View

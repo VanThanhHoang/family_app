@@ -1,8 +1,5 @@
 import {
   View,
-  Text,
-  Image,
-  TouchableOpacity,
   StyleSheet,
   Alert,
 } from "react-native";
@@ -19,12 +16,6 @@ import { formatDate2 } from "../../helper/string_format";
 import AppFormDateInput from "../../components/FormDateInput";
 import { AppContext } from "../../AppContext";
 import AxiosInstance from "../../network/AxiosInstance";
-const genderOptions = [
-  { label: "Đang học", value: "Đang học" },
-  { label: "Đi làm", value: "Đi làm" },
-  { label: "Nội trợ", value: "Nội trợ" },
-  { label: "Đi tu", value: "Đi tu" },
-];
 const CRFriendScreen = () => {
   const [formData, setFormData] = useState(defaultInfo);
   const { theme } = useThemeContext();
