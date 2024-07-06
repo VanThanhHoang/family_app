@@ -292,10 +292,12 @@ const CRFriendScreen = () => {
           {!formData.is_alive && (
             <AppFormDateInput
               value={formData.death_date}
-              onSaveText={setFormData({
-                ...formData,
-                death_date: formatDate2(date),
-              })}
+              onSaveText={(date)=>{
+                setFormData({
+                  ...formData,
+                  death_date: formatDate2(date),
+                })
+              }}
               title="Ngày mất (yyy-mm-dd)"
             />
           )}
