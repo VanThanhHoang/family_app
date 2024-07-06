@@ -10,6 +10,7 @@ export const lightTheme = createTheme({
     text: '#000000',
     border: '#d3d3d3', // Light grey color
     notification: '#f50057',
+    placeHolder:'#727272'
   },
 });
 
@@ -23,5 +24,6 @@ export const darkTheme = createTheme({
     text: '#ffffff',
     border: '#aaaaaa',      // Lighter dark border
     notification: '#ff4081',
+    placeHolder:'#727272'
   },
 });
