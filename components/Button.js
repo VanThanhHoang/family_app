@@ -1,3 +1,4 @@
+//Users/macm1/Documents/mobile_app/components/Button.js
 import { Text, TouchableOpacity, StyleSheet } from 'react-native'
 import React from 'react'
 import COLORS from '../constants/colors'

@@ -1,14 +1,11 @@
-import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import { dateFormater } from "../../helper/string_format";
 import { useNavigation } from "@react-navigation/native";
-import { useTheme } from '@rneui/themed';
+import { TouchableOpacity } from "react-native";
 
 const BirthDayItem = ({ ...props }) => {
   const navigation = useNavigation();
-  
-  const { theme } = useTheme();
   const familyInfo = props.data?.parent_relationships[0];
-  const isDarkMode = theme.mode === 'dark';
   return (
     <TouchableOpacity
       onPress={() => {
@@ -18,7 +15,6 @@ const BirthDayItem = ({ ...props }) => {
       }}
       style={[
         styles.container,
-        { backgroundColor: theme.colors.card },
         props.data?.notification && {
           shadowColor: "red",
           shadowOffset: {
@@ -30,33 +26,55 @@ const BirthDayItem = ({ ...props }) => {
         },
       ]}
     >
-      <View style={styles.imageContainer}>
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <Image
           source={
-            props.data.profile_picture ?
-            {
-              uri: `https://api.lehungba.com${props.data.profile_picture}`,
-            }:
             props.data.gender
               ? require("../../assets/father.png")
               : require("../../assets/mother.png")
           }
-          style={styles.image}
+          style={{ width: 80, height: 80, borderRadius: 25 }}
         />
       </View>
-      <View style={styles.infoContainer}>
-        <Text style={[styles.name, { color: isDarkMode ? "#FFFFFF" : theme.colors.text }]}>{props.data.full_name_vn}</Text>
-        <View style={styles.ageContainer}>
-          <View style={styles.ageInfo}>
+      <View
+        style={{
+          gap: 5,
+        }}
+      >
+        <Text style={styles.name}>{props.data.full_name_vn}</Text>
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 5,
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 5,
+              alignItems: "center",
+            }}
+          >
             <Image
               source={require("../../assets/age.png")}
-              style={[styles.ageImage, { tintColor: theme.colors.text, opacity: 0.7 }]}
+              style={{ width: 15, height: 15, borderRadius: 25 }}
             />
-            <Text style={[styles.ageText, { color: theme.colors.text }]}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "bold",
+              }}
+            >
               {props.data.current_age ?? "Chưa rõ"}
             </Text>
           </View>
-          <Text style={[styles.birthDate, { color: theme.colors.text }]}>
+          <Text style={styles.birthDate}>
             {dateFormater(props.data.birth_date)}
           </Text>
         </View>
@@ -64,24 +82,21 @@ const BirthDayItem = ({ ...props }) => {
           isMarried={props.data.marital_status}
           name={familyInfo?.parent.full_name_vn}
           isFather
-          theme={theme}
         />
         <ItemParent
           isMarried={props.data.marital_status}
           name={familyInfo?.mother?.full_name_vn}
-          theme={theme}
         />
       </View>
       {props.data.marital_status && (
         <Image
-          style={[styles.marri_image, { tintColor: theme.colors.text, opacity: 0.7 }]}
-          source={require("../../assets/rings.png")}
+          style={styles.marri_image}
+          source={require("../../assets/ring2.png")}
         />
       )}
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
   marri_image: {
     width: 30,
@@ -94,6 +109,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
+    backgroundColor: "white",
     borderRadius: 10,
     marginVertical: 5,
     shadowColor: "#000",
@@ -106,76 +122,43 @@ const styles = StyleSheet.create({
     elevation: 5,
     gap: 10,
   },
-  imageContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  image: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-  },
-  infoContainer: {
-    gap: 5,
-  },
   name: {
     fontSize: 15,
     fontWeight: "bold",
   },
-  ageContainer: {
-    flexDirection: "row",
-    gap: 5,
-    alignItems: "center",
-  },
-  ageInfo: {
-    flexDirection: "row",
-    gap: 5,
-    alignItems: "center",
-  },
-  ageImage: {
-    width: 15,
-    height: 15,
-    borderRadius: 25,
-  },
-  ageText: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
   birthDate: {
     fontSize: 12,
-  },
-  parentContainer: {
-    flexDirection: "row",
-    gap: 5,
-    flexWrap: "wrap",
-  },
-  parentImage: {
-    width: 20,
-    height: 20,
-    borderRadius: 50,
-    opacity: 0.7,
-  },
-  parentText: {
-    fontSize: 11,
-    color: "#C0C0C0", // Set parent text color to grey
+
+    fontWeight: "500",
   },
 });
-
 export const ItemParent = ({ ...props }) => {
-  const { theme } = props;
-  const isDarkMode = theme.mode === 'dark';
-
   return (
-    <View style={styles.parentContainer}>
+    <View
+      style={{
+        flexDirection: "row",
+        gap: 5,
+        flexWrap: "wrap",
+      }}
+      marital_status
+    >
       <Image
-        style={styles.parentImage}
+        style={{
+          width: 20,
+          height: 20,
+          borderRadius: 50,
+        }}
         source={
           props.isFather
             ? require("../../assets/father.png")
             : require("../../assets/mother.png")
         }
       />
-      <Text style={[styles.parentText, { color: isDarkMode ? "#C0C0C0" : theme.colors.text }]}>
+      <Text
+        style={{
+          fontSize: 11,
+        }}
+      >
         {props.isFather
           ? `Ba: ${props.name ?? "Chưa rõ"}`
           : `Mẹ: ${props.name ?? "Chưa rõ"}`}
@@ -183,5 +166,4 @@ export const ItemParent = ({ ...props }) => {
     </View>
   );
 };
-
 export default BirthDayItem;
