@@ -20,8 +20,8 @@ const FamilyScreen = () => {
       setIsLoading(true);
       const data = await AxiosInstance().get("families/");
       if (data) {
-        setFamilyData(data);
-        setFilteredList(data);
+        setFamilyData(data.data);
+        setFilteredList(data.data);
       }
     } catch (err) {
       console.log(err);
