@@ -3,10 +3,12 @@ import { dateFormater } from "../../helper/string_format";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 import { useTheme } from '@rneui/themed';
+import { useThemeContext } from "../../ThemeContext";
 
 const WeddingItem = ({ family }) => {
   const navigation = useNavigation();
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
+
   const isDarkMode = theme.mode === 'dark';
 
   const ItemInfo = ({ isHusband, image, age, isAlive }) => {

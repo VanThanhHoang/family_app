@@ -7,22 +7,22 @@ import { AppContext } from "../AppContext";
 import SearchBar from "../components/SearchBar";
 import { removeDiacritics } from "../helper/string_format";
 import { useTheme } from '@rneui/themed';
+import { useThemeContext } from "../ThemeContext";
 
 const FamilyScreen = () => {
   const [familyData, setFamilyData] = useState([]);
   const { setIsLoading } = useContext(AppContext);
   const [filteredList, setFilteredList] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const { theme } = useTheme();
-
+  const { theme } = useThemeContext();
   const getFamilyData = async () => {
     try {
       setIsLoading(true);
       const response = await AxiosInstance().get("families/");
       const data = response.data; // Lấy dữ liệu từ response
       if (data) {
-        setFamilyData(data.data);
-        setFilteredList(data.data);
+        setFamilyData(data);
+        setFilteredList(data);
       }
     } catch (err) {
       console.log(err);

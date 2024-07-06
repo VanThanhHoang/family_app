@@ -16,10 +16,10 @@ import AppHeader from "../../components/AppHeader";
 import { ScrollView } from "react-native-gesture-handler";
 import { APP_CONSTANTS } from "../../helper/constant";
 const DetailScreen = () => {
-  const [data, setData] = React.useState([]);
   const { setIsLoading } = useContext(AppContext);
   const { id } = useRoute().params;
   const navigation = useNavigation();
+  const [data, setData] = React.useState([]);
 
   const getData = async () => {
     setIsLoading(true);

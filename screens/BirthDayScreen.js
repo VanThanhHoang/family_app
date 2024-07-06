@@ -11,8 +11,7 @@ import { StatusBar } from "expo-status-bar";
 
 const BirthDayScreen = () => {
   const { birhdayData } = React.useContext(AppContext);
-  const { theme } = useThemeContext();
-  const { theme: rneTheme } = useTheme();
+  const { theme : rneTheme } = useThemeContext();
   const [filteredList, setFilteredList] = useState(birhdayData.data);
   const [searchText, setSearchText] = useState("");
 

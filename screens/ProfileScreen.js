@@ -16,6 +16,7 @@ import AxiosInstance from "../network/AxiosInstance";
 import { APP_CONSTANTS } from "../helper/constant";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "@rneui/themed";
+import { useThemeContext } from "../ThemeContext";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -23,7 +24,7 @@ const ProfileScreen = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const { setIsLoading } = useContext(AppContext);
   const [profileImage, setProfileImage] = useState(null);
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const isDarkMode = theme.mode === "dark";
 
   const getUserInfo = async () => {
@@ -148,11 +149,6 @@ const ProfileScreen = () => {
           title="My Profile"
           onPress={() => navigation.navigate("DetailInfo")}
         />
-               {/* <AppStack.Screen name="TeacherScreen" component={TeacherScreen} />
-        <AppStack.Screen name="FriendScreen" component={FriendScreen} />
-        <AppStack.Screen name="PaternalScreen" component={PaternalScreen} />
-
-        <AppStack.Screen name="MaternalScreen" component={MaternalSreen} /> */}
         <SettingItem
           icon={"people"}
           title="My Family"
@@ -199,7 +195,7 @@ const ProfileScreen = () => {
 };
 
 const SettingItem = ({ title, onPress, icon }) => {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   return (
     <TouchableOpacity style={styles.settingItem} onPress={onPress}>
       <Ionicons name={icon} size={20} color={theme.colors.text} />

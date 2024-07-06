@@ -14,8 +14,7 @@ import { useTheme } from '@rneui/themed';
 const DeathScreen = () => {
     const [birhdayData, setBirhdayData] = useState([]);
     const { setIsLoading } = React.useContext(AppContext);
-    const { theme } = useThemeContext();
-    const { theme: rneTheme } = useTheme();
+    const { theme: rneTheme } = useThemeContext();
 
     const getFamilyData = async () => {
       try {
