@@ -1,8 +1,9 @@
 import { StyleSheet, View, Text, TextInput } from "react-native";
 import { useTheme } from "@rneui/themed";
+import { useThemeContext } from "../ThemeContext";
 
 const AppFormInput = ({ title, onTextChange, value }) => {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const styles = useStyle(theme);
   return (
     <View style={styles.container}>

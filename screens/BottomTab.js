@@ -17,7 +17,7 @@ const Tab = createBottomTabNavigator();
 const screens = [
   {
     name: "Gia đình",
-    component:FamilyScreen,
+    component:FriendScreen,
     icon: require("../assets/family_tree.png"),
   },
   {

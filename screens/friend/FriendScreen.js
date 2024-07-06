@@ -7,6 +7,7 @@ import React, { useContext, useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import { APP_CONSTANTS } from "../../helper/constant";
 import { Ionicons } from "@expo/vector-icons";
+import { useThemeContext } from "../../ThemeContext";
 
 const FriendScreen = () => {
   const pickImage = async () => {
@@ -23,7 +24,7 @@ const FriendScreen = () => {
     }
   };
   
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const isDarkMode = theme.mode === "dark";
   const styles = useStyles(theme);
   console.log(theme.mode);
