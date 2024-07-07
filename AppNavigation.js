@@ -23,6 +23,7 @@ import MaternalSreen from "./screens/maternal/MaternalScreen";
 import CrmScreen from "./screens/Crm/CrmScreen";
 import MyFamilyScreen from "./screens/myfamily/MyfamilyScreen";
 import CRFriendScreen from "./screens/friend/CreateFriendScreen";
+import UploadImageScreen from "./screens/friend/AddImageScreen";
 const AppNavigation = () => {
   const AppStack = createStackNavigator();
   const { isLoading } = useContext(AppContext);
@@ -76,7 +77,7 @@ const AppNavigation = () => {
         <AppStack.Screen name="DetailDeathDay" component={DetailEventScreen} />
         <AppStack.Screen name="DetailChildren" component={DetailScreenChildren} />
         <AppStack.Screen name="AddFriendScreen" component={CRFriendScreen} />
-     
+        <AppStack.Screen name="UploadImageScreen" component={UploadImageScreen} />
       </AppStack.Navigator>
       <LoadingDialog open={isLoading} />
       <View

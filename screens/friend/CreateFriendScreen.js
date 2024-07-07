@@ -1,8 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  Alert,
-} from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 import AppFormInput from "../../components/FormInput";
 import { useTheme } from "@rneui/themed";
 import { ScrollView } from "react-native-gesture-handler";
@@ -16,9 +12,12 @@ import { formatDate2 } from "../../helper/string_format";
 import AppFormDateInput from "../../components/FormDateInput";
 import { AppContext } from "../../AppContext";
 import AxiosInstance from "../../network/AxiosInstance";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 const CRFriendScreen = () => {
-  const { isAddFamilyMember}=useRoute()?.params ?? {isAddFamilyMember:false};
+  const { isAddFamilyMember } = useRoute()?.params ?? {
+    isAddFamilyMember: false,
+  };
+  const navigation = useNavigation();
   const [formData, setFormData] = useState(defaultInfo);
   const { theme } = useThemeContext();
   const styles = useStyles(theme);
@@ -191,24 +190,36 @@ const CRFriendScreen = () => {
     if (formErrors.length > 0) {
       Alert.alert("Lỗi", formErrors.join("\n"), [{ text: "OK" }]);
     } else {
-      console.log(formData);
       handleSubmit();
-      // Here you would typically send the data to your backend
     }
   };
-  const {setIsLoading}=useContext(AppContext);
-  const handleSubmit= async() => {
+  const { setIsLoading } = useContext(AppContext);
+  const handleSubmit = async () => {
     setIsLoading(true);
-    try{
-      const res = await AxiosInstance().post('/create-friend',formData);
-      console.log("123",res);
-    }catch(error){
+    try {
+      let data = {
+        ...formData,
+      }
+      delete data.status;
+      delete data.religion;
+      delete data.relationship_category;
+      delete data.death_date;
+      const res = await AxiosInstance().post("friend/", data);
+      if(!res){
+        Alert.alert("Lỗi", "Đã xảy ra lỗi khi thêm bạn", [{ text: "OK" }]);
+      }
+      console.log("res",res);
+      if(res){
+        navigation.navigate('UploadImageScreen', { id: res.friend_id })
+        setFormData(defaultInfo);
+      }
+    } catch (error) {
       console.log(error);
-    }finally{
+
+    } finally {
       setIsLoading(false);
-    
     }
-  }
+  };
   return (
     <View
       style={{
@@ -225,7 +236,7 @@ const CRFriendScreen = () => {
           },
         }}
         back
-        title={!isAddFamilyMember?"Thêm bạn":"Thêm thành viên gia đình"}
+        title={!isAddFamilyMember ? "Thêm bạn" : "Thêm thành viên gia đình"}
       />
       <View style={styles.container}>
         <ScrollView
@@ -285,11 +296,11 @@ const CRFriendScreen = () => {
           {!formData.is_alive && (
             <AppFormDateInput
               value={formData.death_date}
-              onSaveText={(date)=>{
+              onSaveText={(date) => {
                 setFormData({
                   ...formData,
                   death_date: formatDate2(date),
-                })
+                });
               }}
               title="Ngày mất (yyy-mm-dd)"
             />
@@ -414,4 +425,4 @@ const useStyles = (theme) =>
     },
   });
 
-export default CRFriendScreen
+export default CRFriendScreen;
