@@ -16,17 +16,18 @@ import { Ionicons } from "@expo/vector-icons";
 import { useThemeContext } from "../../ThemeContext";
 function getSiblingsList(siblings) {
   const types = {
-    older_brothers: 'Anh',
-    younger_brothers: 'Em trai',
-    older_sisters: 'Chị',
-    younger_sisters: 'Em gái'
+    older_brothers: "Anh",
+    younger_brothers: "Em trai",
+    older_sisters: "Chị",
+    younger_sisters: "Em gái",
   };
 
   return Object.entries(siblings).flatMap(([key, value]) =>
-    value.map(sibling => ({
-      name: sibling.full_name,
+    value.map((sibling) => ({
+      name: sibling.full_name_vn,
       id: sibling.people_id,
-      type: types[key]
+      type: types[key],
+      profile_picture: sibling.profile_picture,
     }))
   );
 }
@@ -46,7 +47,7 @@ const DetailScreen = () => {
       const siblingsList = getSiblingsList(siblings);
       setFamily({
         ...res,
-        siblings: siblingsList
+        siblings: siblingsList,
       });
     } catch (error) {
       console.log(error);
@@ -73,7 +74,6 @@ const DetailScreen = () => {
       <AppHeader title={data.full_name_vn} back />
       <View style={styles.container}>
         <ListInfo data={data} familyData={family} />
-
       </View>
     </View>
   );
@@ -141,7 +141,7 @@ const ListInfo = ({ data, familyData }) => {
   }
   return (
     <ScrollView
-    showsVerticalScrollIndicator={false}
+      showsVerticalScrollIndicator={false}
       style={{
         width: "100%",
       }}
@@ -187,7 +187,6 @@ const ListInfo = ({ data, familyData }) => {
       <Text style={styles.detail}>Thành viên trong gia đình</Text>
 
       <ScrollView
-      
         style={{
           flex: 1,
         }}
@@ -231,12 +230,18 @@ const ListInfo = ({ data, familyData }) => {
             );
           })}
       </ScrollView>
-      <Text style={{
-        ...styles.detail,
-        marginTop: 20,
-        fontSize: 14, 
-        fontStyle: 'italic',
-      }}>Anh chị em ruột</Text>
+      {familyData?.siblings?.length > 0 && (
+        <Text
+          style={{
+            ...styles.detail,
+            marginTop: 20,
+            fontSize: 14,
+            fontStyle: "italic",
+          }}
+        >
+          Anh chị em ruột
+        </Text>
+      )}
       <ScrollView
         style={{
           flex: 1,
@@ -245,8 +250,7 @@ const ListInfo = ({ data, familyData }) => {
         showsHorizontalScrollIndicator={false}
         horizontal
       >
-       {
-        familyData?.siblings?.map((item) => {
+        {familyData?.siblings?.map((item) => {
           return (
             <ItemFamily
               key={item.id}
@@ -256,8 +260,7 @@ const ListInfo = ({ data, familyData }) => {
               id={item.id}
             />
           );
-        })
-       }
+        })}
       </ScrollView>
     </ScrollView>
   );
