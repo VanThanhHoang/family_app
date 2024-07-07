@@ -18,7 +18,7 @@ import { AppContext } from "../../AppContext";
 import AxiosInstance from "../../network/AxiosInstance";
 import { useRoute } from "@react-navigation/native";
 const CRFriendScreen = () => {
-  const { isAddFamilyMember}=useRoute().params;
+  const { isAddFamilyMember}=useRoute()?.params ?? {isAddFamilyMember:false};
   const [formData, setFormData] = useState(defaultInfo);
   const { theme } = useThemeContext();
   const styles = useStyles(theme);
