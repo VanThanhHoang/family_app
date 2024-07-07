@@ -16,7 +16,9 @@ import { formatDate2 } from "../../helper/string_format";
 import AppFormDateInput from "../../components/FormDateInput";
 import { AppContext } from "../../AppContext";
 import AxiosInstance from "../../network/AxiosInstance";
+import { useRoute } from "@react-navigation/native";
 const CRFriendScreen = () => {
+  const { isAddFamilyMember}=useRoute().params;
   const [formData, setFormData] = useState(defaultInfo);
   const { theme } = useThemeContext();
   const styles = useStyles(theme);
@@ -223,7 +225,7 @@ const CRFriendScreen = () => {
           },
         }}
         back
-        title="Thêm bạn bè"
+        title={!isAddFamilyMember?"Thêm bạn":"Thêm thành viên gia đình"}
       />
       <View style={styles.container}>
         <ScrollView

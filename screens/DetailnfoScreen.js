@@ -6,9 +6,12 @@ import AxiosInstance from "../network/AxiosInstance";
 import React, { useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
 import { ScrollView } from "react-native-gesture-handler";
+import { useThemeContext } from "../ThemeContext";
 
 const DetailProfileScreen = () => {
+  const {theme}=useThemeContext();
   const [userData, setUserData] = useState({}); //[{},{}
+  
   const getUserInfo = async () => {
     try {
       const data = await AxiosInstance().get("/user-detail/update/");

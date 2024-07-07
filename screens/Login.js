@@ -28,8 +28,8 @@ const Login = () => {
   const [isUsePhone, setIsUsePhone] = useState(true);
   const [countryCode, setCountryCode] = useState("");
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("lesa77040@gmail.com");
+  const [password, setPassword] = useState("Dequa@123!");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [ip, setIp] = useState("");

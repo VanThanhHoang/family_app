@@ -6,24 +6,48 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
- } from "react-native";
+} from "react-native";
 import { AppContext } from "../../AppContext";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import AxiosInstance from "../../network/AxiosInstance";
 import AppHeader from "../../components/AppHeader";
 import { APP_CONSTANTS } from "../../helper/constant";
 import { Ionicons } from "@expo/vector-icons";
+import { useThemeContext } from "../../ThemeContext";
+function getSiblingsList(siblings) {
+  const types = {
+    older_brothers: 'Anh',
+    younger_brothers: 'Em trai',
+    older_sisters: 'Chị',
+    younger_sisters: 'Em gái'
+  };
 
+  return Object.entries(siblings).flatMap(([key, value]) =>
+    value.map(sibling => ({
+      name: sibling.full_name,
+      id: sibling.people_id,
+      type: types[key]
+    }))
+  );
+}
 const DetailScreen = () => {
   const [data, setData] = React.useState([]);
   const [family, setFamily] = React.useState([]);
+  const { theme } = useThemeContext();
+  const styles = useStyle(theme);
   const { setIsLoading } = useContext(AppContext);
   const [listLoading, setListLoading] = React.useState(false);
   const { id } = useRoute().params;
+  console.log(id);
   const getFamily = async () => {
     try {
       const res = await AxiosInstance().get(`/people/?people_id=${id}`);
-      setFamily(res);
+      const siblings = res.siblings;
+      const siblingsList = getSiblingsList(siblings);
+      setFamily({
+        ...res,
+        siblings: siblingsList
+      });
     } catch (error) {
       console.log(error);
     } finally {
@@ -45,15 +69,18 @@ const DetailScreen = () => {
     getData();
   }, []);
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <AppHeader title={data.full_name_vn} back />
       <View style={styles.container}>
         <ListInfo data={data} familyData={family} />
+
       </View>
     </View>
   );
 };
 const HeaderData = ({ data }) => {
+  const { theme } = useThemeContext();
+  const styles = useStyle(theme);
   return (
     <View
       style={{
@@ -98,6 +125,8 @@ const HeaderData = ({ data }) => {
   );
 };
 const ListInfo = ({ data, familyData }) => {
+  const { theme } = useThemeContext();
+  const styles = useStyle(theme);
   const isHasSpouse = familyData?.spouse_relationships?.length > 0;
   let spouse, children, parent;
   if (isHasSpouse) {
@@ -112,9 +141,9 @@ const ListInfo = ({ data, familyData }) => {
   }
   return (
     <ScrollView
+    showsVerticalScrollIndicator={false}
       style={{
         width: "100%",
-        flex: 1,
       }}
     >
       <HeaderData data={data} />
@@ -158,6 +187,7 @@ const ListInfo = ({ data, familyData }) => {
       <Text style={styles.detail}>Thành viên trong gia đình</Text>
 
       <ScrollView
+      
         style={{
           flex: 1,
         }}
@@ -201,10 +231,40 @@ const ListInfo = ({ data, familyData }) => {
             );
           })}
       </ScrollView>
+      <Text style={{
+        ...styles.detail,
+        marginTop: 20,
+        fontSize: 14, 
+        fontStyle: 'italic',
+      }}>Anh chị em ruột</Text>
+      <ScrollView
+        style={{
+          flex: 1,
+          marginTop: 20,
+        }}
+        showsHorizontalScrollIndicator={false}
+        horizontal
+      >
+       {
+        familyData?.siblings?.map((item) => {
+          return (
+            <ItemFamily
+              key={item.id}
+              title={item.type}
+              name={item.name}
+              image={item.image}
+              id={item.id}
+            />
+          );
+        })
+       }
+      </ScrollView>
     </ScrollView>
   );
 };
 const ItemFamily = ({ name, id, image, title }) => {
+  const { theme } = useThemeContext();
+  const styles = useStyle(theme);
   const navigation = useNavigation();
   return (
     <TouchableOpacity
@@ -228,7 +288,7 @@ const ItemFamily = ({ name, id, image, title }) => {
         style={{
           textAlign: "center",
           fontSize: 15,
-          color: "#909090",
+          color: theme.colors.placeHolder,
           fontWeight: "600",
         }}
       >
@@ -240,6 +300,7 @@ const ItemFamily = ({ name, id, image, title }) => {
           fontSize: 16,
           fontWeight: "bold",
           marginTop: 5,
+          color: theme.colors.text,
         }}
       >
         {name}
@@ -247,39 +308,44 @@ const ItemFamily = ({ name, id, image, title }) => {
     </TouchableOpacity>
   );
 };
-const styles = StyleSheet.create({
-  detail: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginVertical: 10,
-    textAlign: "left",
-  },
-  container: {
-    flex: 1,
-    alignItems: "center",
-    padding: 20,
-  },
-  image: {
-    width: 150,
-    height: 150,
-    borderRadius: 100,
-    marginVertical: 20,
-    borderWidth: 1,
-    borderColor: "#f4f4f4",
-  },
-  textName: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  line: {
-    width: "100%",
-    height: 6,
-    backgroundColor: "#f4f4f4",
-    marginVertical: 10,
-    borderRadius: 3,
-  },
-});
+const useStyle = (theme) =>
+  StyleSheet.create({
+    detail: {
+      fontSize: 18,
+      fontWeight: "bold",
+      marginVertical: 10,
+      textAlign: "left",
+      color: theme.colors.text,
+    },
+    container: {
+      flex: 1,
+      alignItems: "center",
+      padding: 20,
+    },
+    image: {
+      width: 150,
+      height: 150,
+      borderRadius: 100,
+      marginVertical: 20,
+      borderWidth: 1,
+      borderColor: "#f4f4f4",
+    },
+    textName: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: theme.colors.text,
+    },
+    line: {
+      width: "100%",
+      height: 6,
+      backgroundColor: "#f4f4f4",
+      marginVertical: 10,
+      borderRadius: 3,
+    },
+  });
 export const InfoItem = ({ title, onPress, icon, textColor }) => {
+  const { theme } = useThemeContext();
+  const styles = useStyle(theme);
   return (
     <View
       style={{
@@ -296,7 +362,7 @@ export const InfoItem = ({ title, onPress, icon, textColor }) => {
           fontSize: 16,
           fontWeight: "500",
           marginLeft: 15,
-          color: "black",
+          color: theme.colors.text,
         }}
       >
         {title}
