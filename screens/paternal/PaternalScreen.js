@@ -61,7 +61,7 @@ const PaternalScreen = () => {
   const renderFamilyMember = ({ item }) => (
     <TouchableOpacity 
       style={styles.memberContainer}
-      onPress={() => navigation.navigate('PeopleDetailItem', { id: item.people_id })}
+      onPress={() => navigation.navigate('DetailBirthDay', { id: item.people_id })}
     >
       <Image
         source={item.profile_picture ? { uri: item.profile_picture } : (item.gender ? require("../../assets/father.png") : require("../../assets/mother.png"))}
