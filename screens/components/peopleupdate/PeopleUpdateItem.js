@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useThemeContext } from "../../../ThemeContext"; // Cập nhật đường dẫn
 import Icon from 'react-native-vector-icons/MaterialIcons'; // Sử dụng thư viện icon
 
-const FriendItem = ({ item }) => {
+const PeopleUpdateItem = ({ item }) => {
   const { theme } = useThemeContext();
   const styles = useStyles(theme);
   const navigation = useNavigation();
@@ -37,7 +37,7 @@ const FriendItem = ({ item }) => {
       </View>
       <TouchableOpacity
         style={styles.editButton}
-        onPress={() => navigation.navigate("EditFriendScreen", { id: item.people_id })}
+        onPress={() => navigation.navigate("PeopleEditScreen", { id: item.people_id })}
       >
         <Icon name="edit" size={20} color="gray" />
       </TouchableOpacity>
@@ -96,4 +96,4 @@ const useStyles = (theme) =>
     },
   });
 
-export default FriendItem;
+export default PeopleUpdateItem;

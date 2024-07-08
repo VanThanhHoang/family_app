@@ -17,7 +17,7 @@ import { AppContext } from "../../AppContext";
 
 const UploadImageScreen = () => {
   const route = useRoute();
-  const {setIsLoading} = useContext(AppContext)
+  const { setIsLoading } = useContext(AppContext);
   const navigation = useNavigation();
   const { id } = route.params;
   const [selectedImage, setSelectedImage] = useState(null);
@@ -49,24 +49,24 @@ const UploadImageScreen = () => {
         name: `${new Date().getTime()}.jpg`,
       };
       const formData = new FormData();
-      formData.append("profile_picture", fileData)
-      console.log("formData",id);
+      formData.append("profile_picture", fileData);
+      console.log("formData", id);
       const response = await AxiosInstance("multipart/form-data").put(
         `friend/${id}/`,
         formData
       );
-      console.log("res",response);
-        if (response.profile_picture) {
-          Alert.alert('Thành công', 'Ảnh đã được cập nhật');
-          navigation.goBack();
-        } else {
-          Alert.alert('Lỗi', 'Tải lên ảnh thất bại');
-        }
+      console.log("res", response);
+      if (response.profile_picture) {
+        Alert.alert("Thành công", "Ảnh đã được cập nhật");
+        navigation.goBack();
+      } else {
+        Alert.alert("Lỗi", "Tải lên ảnh thất bại");
+      }
     } catch (error) {
-      console.log("123",{ ...error });
+      console.log("123", { ...error });
       Alert.alert("Lỗi", "Đã xảy ra lỗi khi tải lên ảnh");
-    }finally{
-        setIsLoading(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -74,6 +74,9 @@ const UploadImageScreen = () => {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+      </TouchableOpacity>
       <Text style={[styles.title, { color: theme.colors.text }]}>
         Chọn ảnh đại diện
       </Text>
@@ -94,7 +97,7 @@ const UploadImageScreen = () => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={uploadImage}>
           <LinearGradient
-            colors={["#4CAF50", "#45B649"]}
+            colors={["#A8E063", "#56AB2F"]}
             start={[0, 0]}
             end={[1, 1]}
             style={styles.gradient}
@@ -107,7 +110,7 @@ const UploadImageScreen = () => {
           onPress={() => navigation.goBack()}
         >
           <LinearGradient
-            colors={["#FF5722", "#F4511E"]}
+            colors={["#D3D3D3", "#A9A9A9"]} // Màu xám gradient
             start={[0, 0]}
             end={[1, 1]}
             style={styles.gradient}
@@ -126,6 +129,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
+  },
+  backButton: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    padding: 10,
+    zIndex: 1,
   },
   title: {
     fontSize: 24,
@@ -150,15 +160,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
     width: "100%",
+    alignItems: "center",
   },
   button: {
-    width: "40%",
+    width: "100%",
     height: 50,
-    borderRadius: 25,
+    borderRadius: 10,
     overflow: "hidden",
+    marginBottom: 30, // Thêm khoảng cách giữa các nút
+    // Shadow for iOS
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    // Elevation for Android
+    elevation: 5,
   },
   gradient: {
     flex: 1,

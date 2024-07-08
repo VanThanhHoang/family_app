@@ -8,6 +8,7 @@ import DetailWeddingScreen from "./screens/details/DetailWedingScreen";
 import DetailFamilyScreen from "./screens/details/DetailFamilyScreen";
 import DetailBirthDayScreen from "./screens/details/DetailBirthDayScreen";
 import DetailEventScreen from "./screens/details/DetailDeathDayScreen";
+
 import {
   SafeAreaView,
   SafeAreaProvider,
@@ -24,6 +25,8 @@ import CrmScreen from "./screens/Crm/CrmScreen";
 import MyFamilyScreen from "./screens/myfamily/MyfamilyScreen";
 import CRFriendScreen from "./screens/friend/CreateFriendScreen";
 import UploadImageScreen from "./screens/friend/AddImageScreen";
+import PeopleUpdateSrceen from "./screens/peopleupdate/PeopleUpdateSrceen";
+import PeopleEditScreen from "./screens/peopleupdate/PeopleEditScreen";
 const AppNavigation = () => {
   const AppStack = createStackNavigator();
   const { isLoading } = useContext(AppContext);
@@ -78,6 +81,9 @@ const AppNavigation = () => {
         <AppStack.Screen name="DetailChildren" component={DetailScreenChildren} />
         <AppStack.Screen name="AddFriendScreen" component={CRFriendScreen} />
         <AppStack.Screen name="UploadImageScreen" component={UploadImageScreen} />
+        <AppStack.Screen name="PeopleUpdateSrceen" component={PeopleUpdateSrceen} />
+        <AppStack.Screen name="PeopleEditScreen" component={PeopleEditScreen} />
+        
       </AppStack.Navigator>
       <LoadingDialog open={isLoading} />
       <View
