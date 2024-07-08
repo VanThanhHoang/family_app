@@ -22,8 +22,8 @@ const ProfileScreen = () => {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
-  const { setIsLoading } = useContext(AppContext);
   const [profileImage, setProfileImage] = useState(null);
+  const { setIsLoading } = useContext(AppContext);
   const { theme } = useThemeContext();
   const isDarkMode = theme.mode === "dark";
 

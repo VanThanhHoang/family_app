@@ -10,7 +10,6 @@ const WeddingItem = ({ family }) => {
   const { theme } = useThemeContext();
 
   const isDarkMode = theme.mode === 'dark';
-
   const ItemInfo = ({ isHusband, image, age, isAlive }) => {
     const getImage = () => {
       if (image === null) {
@@ -58,8 +57,8 @@ const WeddingItem = ({ family }) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate("DetailWedding", {
-          id: family.relationship_id,
+        navigation.navigate("DetailWeddingScreen", {
+         data:family,
         });
       }}
       style={[styles.container, { backgroundColor: theme.colors.card }]}

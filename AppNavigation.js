@@ -27,6 +27,7 @@ import CRFriendScreen from "./screens/friend/CreateFriendScreen";
 import UploadImageScreen from "./screens/friend/AddImageScreen";
 import PeopleUpdateSrceen from "./screens/peopleupdate/PeopleUpdateSrceen";
 import PeopleEditScreen from "./screens/peopleupdate/PeopleEditScreen";
+import DetailWedding from "./screens/details/DetailWedding";
 const AppNavigation = () => {
   const AppStack = createStackNavigator();
   const { isLoading } = useContext(AppContext);
@@ -61,7 +62,6 @@ const AppNavigation = () => {
           headerShown: false,
         }}
       >
-
         <AppStack.Screen name="HomeTab" component={HomeTab} />
         <AppStack.Screen name="DetailWedding" component={DetailWeddingScreen} />
         <AppStack.Screen name="DetailFamily" component={DetailFamilyScreen} />
@@ -76,14 +76,23 @@ const AppNavigation = () => {
 
         <AppStack.Screen name="MaternalScreen" component={MaternalSreen} />
         <AppStack.Screen name="CRMScreen" component={CrmScreen} />
+        <AppStack.Screen name="DetailWeddingScreen" component={DetailWedding} />
 
         <AppStack.Screen name="DetailDeathDay" component={DetailEventScreen} />
-        <AppStack.Screen name="DetailChildren" component={DetailScreenChildren} />
+        <AppStack.Screen
+          name="DetailChildren"
+          component={DetailScreenChildren}
+        />
         <AppStack.Screen name="AddFriendScreen" component={CRFriendScreen} />
-        <AppStack.Screen name="UploadImageScreen" component={UploadImageScreen} />
-        <AppStack.Screen name="PeopleUpdateSrceen" component={PeopleUpdateSrceen} />
+        <AppStack.Screen
+          name="UploadImageScreen"
+          component={UploadImageScreen}
+        />
+        <AppStack.Screen
+          name="PeopleUpdateSrceen"
+          component={PeopleUpdateSrceen}
+        />
         <AppStack.Screen name="PeopleEditScreen" component={PeopleEditScreen} />
-        
       </AppStack.Navigator>
       <LoadingDialog open={isLoading} />
       <View

@@ -34,7 +34,6 @@ const WeddingScreen = () => {
 
   const [filteredList, setFilteredList] = useState(weddingData);
   const [searchText, setSearchText] = useState("");
-
   const searchFilter = (text) => {
     const normalizedText = removeDiacritics(text);
     setSearchText(text);
@@ -47,9 +46,7 @@ const WeddingScreen = () => {
       const isMatchWife = normalizedWifeName.includes(normalizedText);
       return isMatchHusband || isMatchWife;
     });
-    setFilteredList(filteredData);
   };
-
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <SearchBar onChangeText={searchFilter} value={searchText} />
