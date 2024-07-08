@@ -39,12 +39,11 @@ const AxiosInstance = (contentType = "application/json") => {
       if (err.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
         try {
-          console.log("refreshToken");
           const newToken = await refreshToken();
           axios.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
           return axiosInstance(originalRequest);
         } catch (tokenRefreshError) {
-          return console.log(tokenRefreshError);
+          return console.log("rf-tokne-err",tokenRefreshError);
         }
       }
       (err)=> Promise.reject(err);

@@ -206,7 +206,7 @@ const CRFriendScreen = () => {
       delete data.death_date;
       const res = await AxiosInstance().post("friend/", data);
       if(!res){
-        Alert.alert("Lỗi", "Đã xảy ra lỗi khi thêm bạn", [{ text: "OK" }]);
+        Alert.alert("Lỗi", "Đã xảy ra lỗi khi thêm bạn,email không được trùng", [{ text: "OK" }]);
       }
       console.log("res",res);
       if(res){
