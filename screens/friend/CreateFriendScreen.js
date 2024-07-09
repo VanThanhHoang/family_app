@@ -204,16 +204,22 @@ const CRFriendScreen = () => {
       delete data.religion;
       delete data.relationship_category;
       delete data.death_date;
+      delete data.address;
+      delete data.place_of_birth;
+      delete data.place_of_death
+      console.log("data",data); 
       const res = await AxiosInstance().post("friend/", data);
       if(!res){
         Alert.alert("Lỗi", "Đã xảy ra lỗi khi thêm bạn,email không được trùng", [{ text: "OK" }]);
       }
       console.log("res",res);
       if(res){
-        navigation.navigate('UploadImageScreen', { id: res.friend_id })
-        setFormData(defaultInfo);
+        navigation.navigate('UploadImageScreen', { id: res.data.friend_id })
+      //  setFormData(defaultInfo);
       }
     } catch (error) {
+      Alert.alert("Lỗi", "Đã xảy ra lỗi khi thêm bạn,email không được trùng", [{ text: "OK" }]); 
+      console.log("error",{...error});
       console.log(error);
 
     } finally {

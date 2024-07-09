@@ -1,56 +1,61 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const refreshToken = async () => {
-  try {
-    const refreshToken = await AsyncStorage.getItem("refresh");
-    const response = await axios.post("https://api.lehungba.com/api/token/refresh/", { refresh: refreshToken??'rf' });
-    const newAccessToken = response.data.access;
-    await AsyncStorage.setItem("access", newAccessToken );
-    return newAccessToken;
-  } catch (err) {
-    return Promise.reject(err);
-  }
-};
+const AxiosInstance = (contentType = 'application/json') => {
+    const axiosInstance = axios.create({
+        baseURL: 'https://api.lehungba.com/api/'
+    });
 
-const AxiosInstance = (contentType = "application/json") => {
-  const axiosInstance = axios.create({
-    baseURL: "https://api.lehungba.com/api/",
-  });
-  axiosInstance.interceptors.request.use(
-    async (config) => {
-      const token = await AsyncStorage.getItem("access");
-      config.headers = {
-        Accept: "application/json",
-        "Content-Type": contentType,
-      };
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    },
-    (err) => Promise.reject(err)
-  );
+    axiosInstance.interceptors.request.use(
+        async (config) => {
+            const token = await AsyncStorage.getItem('access');
+            console.log('config', token);
+            console.log('token', token);
+            config.headers = {
+                'Accept': 'application/json',
+                'Content-Type': contentType
+            }
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+            return config;
+        },
+        err => Promise.reject(err)
+    );
 
-  axiosInstance.interceptors.response.use(
-    (res) => res.data,
-    async (err) => {
-      const originalRequest = err.config;
-      if (err.response.status === 401 && !originalRequest._retry) {
-        originalRequest._retry = true;
-        try {
-          const newToken = await refreshToken();
-          axios.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
-          return axiosInstance(originalRequest);
-        } catch (tokenRefreshError) {
-          return console.log("rf-tokne-err",tokenRefreshError);
+    axiosInstance.interceptors.response.use(
+        res => res.data,
+        async (err) => {
+            const originalConfig = err.config;
+
+            if (err.response) {
+                // Token was expired
+                if (err.response.status === 401 && !originalConfig._retry) {
+                    originalConfig._retry = true;
+
+                    try {
+                        const refreshToken = await AsyncStorage.getItem('refresh');
+                        const rs = await axiosInstance.post('/token/refresh/', {
+                            refresh: refreshToken
+                        });
+                        console.log('rs', rs);  
+                        const { access } = rs;
+                        await AsyncStorage.setItem('access', access);
+
+                        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${access}`;
+
+                        return axiosInstance(originalConfig);
+                    } catch (_error) {
+                        return Promise.reject(_error);
+                    }
+                }
+            }
+
+            return Promise.reject(err);
         }
-      }
-      (err)=> Promise.reject(err);
-    }
-  );
+    );
 
-  return axiosInstance;
+    return axiosInstance;
 };
 
 export default AxiosInstance;

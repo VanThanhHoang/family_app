@@ -98,17 +98,20 @@ const Signup = ({ navigation }) => {
       const data = {
         [isUsePhone ? "phone_number" : "email"]: regInfo,
         password,
+        confirm_password: confirmPassword,
       };
-      await AxiosInstance().post(
+   const res =   await AxiosInstance().post(
         `register/${isUsePhone ? "phone/" : "email/"}`,
         data
       );
+      console.log("res", res);
       Alert.alert("Thành công", "Vui lòng kiểm tra OTP đã được gửi đến bạn");
       navigation.navigate("OTP", {
         dataReg: regInfo,
         type: isUsePhone ? "phone_number" : "email",
       });
     } catch (err) {
+      console.log("err", {...err});
       if (err.response && err.response.status === 400) {
         Alert.alert("Lỗi", "Số điện thoại hoặc email đã được sử dụng");
       } else {

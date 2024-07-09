@@ -92,6 +92,8 @@ const Login = () => {
         password,
       };
       const endpoint = isUsePhone ? "login/phone/" : "login/email/";
+      console.log(data);
+      console.log(endpoint);
       const response = await AxiosInstance().post(endpoint, data);
       console.log(response);
       // Lưu các giá trị vào AsyncStorage
@@ -114,6 +116,7 @@ const Login = () => {
         "Đăng nhập không thành công\n Tài khoản hoặc mật khẩu không đúng"
       );
       console.log(error);
+      console.log({...error});
     } finally {
       setIsLoading(false);
     }

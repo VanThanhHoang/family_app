@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import AxiosInstance from "../network/AxiosInstance";
 import { FlatList } from "react-native";
 import FamilyItem from "./components/FamilyItem";
@@ -7,6 +7,8 @@ import { AppContext } from "../AppContext";
 import SearchBar from "../components/SearchBar";
 import { removeDiacritics } from "../helper/string_format";
 import { useThemeContext } from "../ThemeContext";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useNavigation } from "@react-navigation/native";
 
 const FamilyScreen = () => {
   const { theme } = useThemeContext();
@@ -48,10 +50,29 @@ const FamilyScreen = () => {
     });
     setFilteredList(filteredData);
   };
-
+  const navigation = useNavigation();
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <SearchBar onChangeText={searchFilter} value={searchText} />
+      <TouchableOpacity 
+        onPress={() => {
+            navigation.navigate("FamilyTree");
+        }}
+      >
+        <Text
+          style={{
+            margin: 15,
+            fontWeight: "bold",
+            fontSize: 18,
+            color: theme.colors.text,
+            textAlign:'right'
+          }}
+        >
+          Xem gia phả
+        </Text>
+      </TouchableOpacity>
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
         style={{ width: "100%" }}

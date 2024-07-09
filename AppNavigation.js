@@ -28,6 +28,7 @@ import UploadImageScreen from "./screens/friend/AddImageScreen";
 import PeopleUpdateSrceen from "./screens/peopleupdate/PeopleUpdateSrceen";
 import PeopleEditScreen from "./screens/peopleupdate/PeopleEditScreen";
 import DetailWedding from "./screens/details/DetailWedding";
+import FamilyTreeScreen from "./screens/familyTree/FamilyTreeScreen";
 const AppNavigation = () => {
   const AppStack = createStackNavigator();
   const { isLoading } = useContext(AppContext);
@@ -83,6 +84,7 @@ const AppNavigation = () => {
           name="DetailChildren"
           component={DetailScreenChildren}
         />
+        <AppStack.Screen name="FamilyTree" component={FamilyTreeScreen} />
         <AppStack.Screen name="AddFriendScreen" component={CRFriendScreen} />
         <AppStack.Screen
           name="UploadImageScreen"

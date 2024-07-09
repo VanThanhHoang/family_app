@@ -1,5 +1,15 @@
 import { useRoute } from "@react-navigation/native";
-import { Alert, Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View, TextInput, Modal, TouchableOpacity } from "react-native";
+import {
+  Alert,
+  Keyboard,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+  TextInput,
+  Modal,
+  TouchableOpacity,
+} from "react-native";
 import { OtpInput } from "react-native-otp-entry";
 import Button from "../components/Button";
 import React, { useContext, useState } from "react";
@@ -15,12 +25,8 @@ const OTPScreen = ({ navigation }) => {
   const { setIsLoading } = useContext(AppContext);
 
   const [otp, setOtp] = useState("");
-  const [modalVisible, setModalVisible] = useState(true);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordModalVisible, setPasswordModalVisible] = useState(true);
-  const [otpModalVisible, setOtpModalVisible] = useState(false);
-
   const makeHiddenInfo = (string) => {
     if (string.length <= 5) {
       return string;
@@ -54,16 +60,25 @@ const OTPScreen = ({ navigation }) => {
 
   const handleOtpSubmit = async () => {
     if (!validateOtp()) return;
-    
+
     try {
       setIsLoading(true);
-      const link = `https://api.lehungba.com/activate/phone/`;
-      const response = await axios.post(link, {
-        phone_number: dataReg,
-        activation_code: otp,
-        new_password: newPassword,
-        confirm_password: confirmPassword,
-      });
+      const link = `https://api.lehungba.com/activate/${type}/`;
+    
+      if (type === "phone") {
+        data =  {
+          phone_number: dataReg,
+          activation_code: otp,
+          new_password: newPassword,
+          confirm_password: confirmPassword,
+        }
+      }else{
+        data = {
+          email: dataReg,
+          activation_code: otp,
+        };
+      }
+      const response = await axios.post(link,data);
       Alert.alert("Kích hoạt tài khoản thành công");
       setOtpModalVisible(false);
       setTimeout(() => {
@@ -82,14 +97,8 @@ const OTPScreen = ({ navigation }) => {
       <View style={{ width: "100%" }}>
         <AppHeader back title="Xác minh OTP" />
       </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={passwordModalVisible}
-        onRequestClose={() => {
-          setPasswordModalVisible(!passwordModalVisible);
-        }}
-      >
+
+      {type === "phone" && (
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>Nhập mật khẩu mới</Text>
@@ -115,15 +124,9 @@ const OTPScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={otpModalVisible}
-        onRequestClose={() => {
-          setOtpModalVisible(!otpModalVisible);
-        }}
-      >
+      )}
+
+      {type === "email" && (
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>Nhập mã OTP</Text>
@@ -143,7 +146,7 @@ const OTPScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
-      </Modal>
+      )}
     </View>
   );
 };
@@ -182,16 +185,17 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
-    width: '100%',
+    width: "100%",
     borderRadius: 5,
   },
   centeredView: {
     flex: 1,
-    justifyContent: "center",
+    paddingTop: 50,
+    width: "100%",
     alignItems: "center",
     marginTop: 22,
   },
@@ -204,30 +208,30 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: '90%',
+    width: "90%",
   },
   modalText: {
     marginBottom: 15,
     textAlign: "center",
     fontSize: 20,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   submitButton: {
-    backgroundColor: '#198754',
+    backgroundColor: "#198754",
     borderRadius: 5,
     padding: 10,
     marginTop: 10,
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
   },
   submitButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
   },
 });
 
