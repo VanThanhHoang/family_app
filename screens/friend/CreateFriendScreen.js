@@ -213,10 +213,10 @@ const CRFriendScreen = () => {
         Alert.alert("Lỗi", "Đã xảy ra lỗi khi thêm bạn,email không được trùng", [{ text: "OK" }]);
       }
       console.log("res",res);
-      if(res){
-        navigation.navigate('UploadImageScreen', { id: res.data.friend_id })
-      //  setFormData(defaultInfo);
-      }
+      // if(res){
+      //   navigation.navigate('UploadImageScreen', { id: res.data.friend_id })
+      // //  setFormData(defaultInfo);
+      // }
     } catch (error) {
       Alert.alert("Lỗi", "Đã xảy ra lỗi khi thêm bạn,email không được trùng", [{ text: "OK" }]); 
       console.log("error",{...error});

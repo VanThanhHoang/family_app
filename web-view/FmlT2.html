@@ -1,4 +1,110 @@
-const familyData  = {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Tree</title>
+    <style>
+        *, *:before, *:after {
+          box-sizing: border-box;
+        }
+        body {
+          min-width: 1200px;
+          margin: 0;
+          padding: 50px;
+          color: #eee9dc;
+          font: 16px Verdana, sans-serif;
+          background: #2e6ba7;
+          user-select: none;
+        }
+        #wrapper {
+          position: relative;
+        }
+        .branch {
+          position: relative;
+          margin-left: 250px;
+        }
+        .branch:before {
+          content: "";
+          width: 50px;
+          border-top: 2px solid #eee9dc;
+          position: absolute;
+          left: -100px;
+          top: 50%;
+          margin-top: 1px;
+        }
+        .entry {
+          position: relative;
+          min-height: 60px;
+        }
+        .entry:before {
+          content: "";
+          height: 100%;
+          border-left: 2px solid #eee9dc;
+          position: absolute;
+          left: -50px;
+        }
+        .entry:after {
+          content: "";
+          width: 50px;
+          border-top: 2px solid #eee9dc;
+          position: absolute;
+          left: -50px;
+          top: 50%;
+          margin-top: 1px;
+        }
+        .entry:first-child:before {
+          width: 10px;
+          height: 50%;
+          top: 50%;
+          margin-top: 2px;
+          border-radius: 10px 0 0 0;
+        }
+        .entry:first-child:after {
+          height: 10px;
+          border-radius: 10px 0 0 0;
+        }
+        .entry:last-child:before {
+          width: 10px;
+          height: 50%;
+          border-radius: 0 0 0 10px;
+        }
+        .entry:last-child:after {
+          height: 10px;
+          border-top: none;
+          border-bottom: 2px solid #eee9dc;
+          border-radius: 0 0 0 10px;
+          margin-top: -9px;
+        }
+        .entry.sole:before {
+          display: none;
+        }
+        .entry.sole:after {
+          width: 50px;
+          height: 0;
+          margin-top: 1px;
+          border-radius: 0;
+        }
+        .label {
+          display: block;
+          min-width: 150px;
+          padding: 5px 10px;
+          line-height: 20px;
+          text-align: center;
+          border: 2px solid #eee9dc;
+          border-radius: 5px;
+          position: absolute;
+          left: 0;
+          top: 50%;
+          margin-top: -15px;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper"></div>
+
+    <script>
+        const familyData  = {
     email: null,
     people_id: 3,
     profile_picture: null,
@@ -1005,3 +1111,29 @@ const familyData  = {
     spouse_name: "Nguyễn Thị Minh",
     spouse_profile_picture: null,
   }; // Paste your JSON data here
+        function generateFamilyTree(person, level = 1) {
+            let html = `<div class="entry">
+                <span class="label">${person.full_name_vn}</span>`;
+            
+            if (person.children && person.children.length > 0) {
+                html += `<div class="branch lv${level + 1}">`;
+                person.children.forEach(child => {
+                    html += generateFamilyTree(child, level + 1);
+                });
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const wrapper = document.getElementById('wrapper');
+            wrapper.innerHTML = `<span class="label">${familyData.full_name_vn}</span>
+                <div class="branch lv1">
+                    ${familyData.children.map(child => generateFamilyTree(child)).join('')}
+                </div>`;
+        });
+    </script>
+</body>
+</html>

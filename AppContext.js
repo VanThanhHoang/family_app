@@ -5,7 +5,7 @@ const AppContext = React.createContext();
 const AppProvier = ({ children }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [birhdayData, setBirhdayData] = useState([]);
-  
+  const [userData, setUserData] = useState({}); //[{},{}
   const getFamilyData = async () => {
     try {
       const data = await AxiosInstance().get("birthdays/");
@@ -20,7 +20,7 @@ const AppProvier = ({ children }) => {
   }, []);
   return (
     <AppContext.Provider
-      value={{ isLoading, setIsLoading, birhdayData}}
+      value={{ isLoading, setIsLoading, birhdayData,userData, setUserData}}
     >
       {children}
     </AppContext.Provider>

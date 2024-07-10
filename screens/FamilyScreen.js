@@ -56,6 +56,27 @@ const FamilyScreen = () => {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <SearchBar onChangeText={searchFilter} value={searchText} />
+     <View style={{
+        flexDirection:'row',
+        justifyContent:'space-between'
+     }}>
+       <TouchableOpacity 
+        onPress={() => {
+            navigation.navigate("FamilyTreeWeb");
+        }}
+      >
+        <Text
+          style={{
+            margin: 15,
+            fontWeight: "bold",
+            fontSize: 18,
+            color: theme.colors.text,
+            textAlign:'right'
+          }}
+        >
+          Xem dạng cây
+        </Text>
+      </TouchableOpacity>
       <TouchableOpacity 
         onPress={() => {
             navigation.navigate("FamilyTree");
@@ -73,6 +94,7 @@ const FamilyScreen = () => {
           Xem gia phả
         </Text>
       </TouchableOpacity>
+     </View>
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
         style={{ width: "100%" }}

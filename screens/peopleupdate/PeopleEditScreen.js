@@ -33,7 +33,6 @@ const PeopleEditScreen = () => {
   const isDarkMode = theme.mode === "dark";
   const styles = useStyles(theme);
   const scrollView = React.useRef(null);
-
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -45,9 +44,37 @@ const PeopleEditScreen = () => {
       setSelectedImage(result.assets[0]);
       setProfileImage(result.assets[0].uri);
       uploadImage(result.assets[0]);
+      console.log(result)
     }
   };
-
+  const uploadImage = async (file) => {
+    setIsLoading(true);
+    try {
+      const fileData = {
+        uri: file.uri,
+        type: file.type,
+        name: `${new Date().getTime()}.jpg`,
+      };
+      const formData = new FormData();
+      formData.append("profile_picture", fileData);
+      const response = await AxiosInstance("multipart/form-data").put(
+        `people/upload/${id}/`,
+        formData
+      );
+      console.log("res", response);
+      if (response.profile_picture) {
+        Alert.alert("Thành công", "Ảnh đã được cập nhật");
+        navigation.goBack();
+      } else {
+        Alert.alert("Lỗi", "Tải lên ảnh thất bại");
+      }
+    } catch (error) {
+      console.log("123", { ...error });
+      Alert.alert("Lỗi", "Đã xảy ra lỗi khi tải lên ảnh");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const scroll = () => {
     if (scrollView.current) {
       scrollView.current.scrollTo({

@@ -52,7 +52,7 @@ const UploadImageScreen = () => {
       formData.append("profile_picture", fileData);
       console.log("formData", id);
       const response = await AxiosInstance("multipart/form-data").put(
-        `friend/${id}/`,
+        `people/upload/${id}/`,
         formData
       );
       console.log("res", response);
