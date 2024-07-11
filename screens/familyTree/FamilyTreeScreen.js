@@ -1,18 +1,26 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, Image, TouchableOpacity, Animated } from "react-native";
 import AxiosInstance from "../../network/AxiosInstance";
 import { AppContext } from "../../AppContext";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import AppHeader from "../../components/AppHeader";
 import { useNavigation } from "@react-navigation/native";
 import { APP_CONSTANTS } from "../../helper/constant";
+import { Ionicons } from "@expo/vector-icons";
 
 const FamilyTreeNode = ({ person, level, onToggle }) => {
   const navigation = useNavigation();
   const [expanded, setExpanded] = useState(level < 1);
+  const [animation] = useState(new Animated.Value(level < 1 ? 1 : 0));
 
   const toggleExpand = () => {
-    setExpanded(!expanded);
+    const newExpanded = !expanded;
+    setExpanded(newExpanded);
+    Animated.timing(animation, {
+      toValue: newExpanded ? 1 : 0,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
     onToggle();
   };
 
@@ -21,11 +29,16 @@ const FamilyTreeNode = ({ person, level, onToggle }) => {
     return new Date(date).toLocaleDateString('vi-VN');
   };
 
+  const maxHeight = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 10000], // Adjust this value based on your content
+  });
+
   return (
     <View style={[styles.nodeContainer, { marginLeft: level * 20 }]}>
-      <TouchableOpacity onPress={toggleExpand}>
+      <TouchableOpacity onPress={toggleExpand} style={styles.nodeHeader}>
         <View style={styles.personInfo}>
-            <Image source={{ uri: person.profile_picture ?? APP_CONSTANTS.defaultAvatar}} style={styles.profileImage} />
+          <Image source={{ uri: person.profile_picture ?? APP_CONSTANTS.defaultAvatar}} style={styles.profileImage} />
           <View style={styles.textInfo}>
             <Text style={styles.personName}>{person.full_name_vn}</Text>
             <Text style={styles.dateInfo}>
@@ -34,23 +47,30 @@ const FamilyTreeNode = ({ person, level, onToggle }) => {
             </Text>
           </View>
           <TouchableOpacity
-          style={{
-          }}
             onPress={() => {
               navigation.navigate("DetailBirthDay", {
                 id: person.people_id,
               });
             }}
+            style={{
+              ...styles.detailButton,
+              marginRight:!person.children.length > 0 &&24
+            }}
           >
-            <Text style={styles.detailButton}>Chi tiết</Text>
+            <Text style={styles.detailButtonText}>Chi tiết</Text>
           </TouchableOpacity>
         </View>
         {person.children && person.children.length > 0 && (
-          <Text style={styles.expandIcon}>{expanded ? "▼" : "▶"}</Text>
+          <Animated.View style={{ transform: [{ rotate: animation.interpolate({
+            inputRange: [0, 1],
+            outputRange: ['0deg', '90deg']
+          }) }] }}>
+            <Ionicons name="chevron-forward" size={24} color="#8B4513" />
+          </Animated.View>
         )}
       </TouchableOpacity>
-      {expanded && person.children && (
-        <View>
+      {person.children && person.children.length > 0 && (
+        <Animated.View style={{ maxHeight, overflow: 'hidden' }}>
           {person.children.map((child) => (
             <FamilyTreeNode
               key={child.people_id}
@@ -59,7 +79,7 @@ const FamilyTreeNode = ({ person, level, onToggle }) => {
               onToggle={onToggle}
             />
           ))}
-        </View>
+        </Animated.View>
       )}
     </View>
   );
@@ -74,6 +94,9 @@ const FamilyTree = ({ data }) => {
 
   return (
     <FlatList
+    style={{
+      paddingBottom:100
+    }}
       data={[data]}
       horizontal
       renderItem={({ item }) => (
@@ -106,20 +129,15 @@ const FamilyTreeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={{ width: "100%" }}>
-        <AppHeader back title="Gia phả" />
-      </View>
+      <AppHeader back title="Gia phả" />
       <ScrollView
-        style={{ flex: 1, width: "100%" }}
-        contentContainerStyle={{
-          justifyContent: "center",
-          padding: 10,
-        }}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
       >
         {data ? (
           <FamilyTree data={data} />
         ) : (
-          <Text>Loading family tree data...</Text>
+          <Text style={styles.loadingText}>Đang tải dữ liệu gia phả...</Text>
         )}
       </ScrollView>
     </View>
@@ -129,49 +147,75 @@ const FamilyTreeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: '#FFF8DC',
+    // Beige background for a classic look
+  },
+  scrollView: {
+    flex: 1,
+    width: "100%",
+  },
+  scrollViewContent: {
+    padding: 10,
   },
   nodeContainer: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#ddd",
     marginVertical: 5,
-    backgroundColor: 'white',
+    backgroundColor: '#FFF8DC',
+    borderWidth:0, // Cornsilk background for nodes
+    borderLeftWidth: 2,
+    borderColor: '#DEB887', // Burlywood border
+    minWidth: 250,
+  },
+  nodeHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 10,
   },
   personInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 10,
+    flex: 1,
+    gap:10
   },
   profileImage: {
     width: 50,
     height: 50,
     borderRadius: 25,
     marginRight: 10,
+    borderWidth: 2,
+    borderColor: '#8B4513', // SaddleBrown border for image
   },
   textInfo: {
     flex: 1,
-    justifyContent:'center',
   },
   personName: {
+    maxWidth: 150,
     fontSize: 16,
     fontWeight: "bold",
+    color: '#8B4513', // SaddleBrown text
   },
   dateInfo: {
     fontSize: 12,
-    color: '#666',
-    fontWeight:'bold',
+    color: '#A0522D', // Sienna text for dates
     marginTop: 5,
   },
   detailButton: {
-    color: "#005400",
+    backgroundColor: '#DEB887', // Burlywood background
+    padding: 5,
+    borderRadius: 5,
+    width: 70,
+    justifyContent: 'center',
+    alignItems:'center'
+  },
+  detailButtonText: {
+    color: '#8B4513', // SaddleBrown text
     fontWeight: "bold",
   },
-  expandIcon: {
-    marginLeft: 10,
+  loadingText: {
+    textAlign: 'center',
+    color: '#8B4513', // SaddleBrown text
+    fontSize: 16,
+    marginTop: 20,
   },
 });
 
