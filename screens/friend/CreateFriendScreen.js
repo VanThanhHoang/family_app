@@ -193,7 +193,7 @@ const CRFriendScreen = () => {
       !dataF.religion && delete dataF.religion;
       !dataF.status && delete dataF.status;
       !dataF.relationship_category && delete dataF.relationship_category;
-      if (data) {
+      if (data?.friend_id) {
         console.log("data", data);
         const res = await AxiosInstance().put(
           "friend/" + data.friend_id + "/",

@@ -53,11 +53,10 @@ const UploadImageScreen = () => {
       formData.append("profile_picture", fileData);
       console.log("formData", id);
       const response = await AxiosInstance("multipart/form-data").put(
-        `/friend/upload/${id}/`,
+        `/friend/${id}/`,
         formData
       );
-      console.log("res", response);
-      if (response.profile_picture) {
+      if (response) {
         Alert.alert("Thành công", "Ảnh đã được cập nhật");
         navigation.goBack();
       } else {
@@ -75,7 +74,10 @@ const UploadImageScreen = () => {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
         <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
       </TouchableOpacity>
       <Text style={[styles.title, { color: theme.colors.text }]}>
