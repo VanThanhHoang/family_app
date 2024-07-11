@@ -17,10 +17,11 @@ import { AppContext } from "../../AppContext";
 import AxiosInstance from "../../network/AxiosInstance";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
-import { Image } from 'expo-image';
+import { Image } from "expo-image";
 
 import { APP_CONSTANTS } from "../../helper/constant";
 import { Ionicons } from "@expo/vector-icons";
+import Dropdown from "../friend/Dropdown";
 
 const PeopleEditScreen = () => {
   const route = useRoute();
@@ -90,7 +91,9 @@ const PeopleEditScreen = () => {
     try {
       const response = await AxiosInstance().get(`people/people-detail/${id}/`);
       setPersonData(response.data);
-      setProfileImage(response.data.profile_picture ?? APP_CONSTANTS.defaultAvatar);
+      setProfileImage(
+        response.data.profile_picture ?? APP_CONSTANTS.defaultAvatar
+      );
       console.log("personData", response.data);
     } catch (err) {
       Alert.alert("Error", "Failed to load person data.");
@@ -265,6 +268,26 @@ const PeopleEditScreen = () => {
       value: personData?.social_media_links,
     },
   ];
+  const RELIGION_CHOICES = [
+    { label: "Công giáo", value: "catholic" },
+    { label: "Phật giáo", value: "buddhist" },
+    { label: "Tin Lành", value: "protestant" },
+    { label: "Đạo khác", value: "other" },
+  ];
+
+  const STATUS_CHOICES = [
+    { label: "Đang đi học", value: "student" },
+    { label: "Đã đi làm", value: "employed" },
+    { label: "Thất nghiệp", value: "unemployed" },
+    { label: "Đi tu", value: "monk" },
+  ];
+
+  const RELATIONSHIP_CATEGORY_CHOICES = [
+    { label: "Ân Nhân", value: "benefactor" },
+    { label: "Teacher", value: "teacher" },
+    { label: "Bạn gái cũ", value: "ex_girlfriend" },
+    { label: "Bạn học", value: "classmate" },
+  ];
 
   const handleSave = async () => {
     setIsLoading(true);
@@ -290,20 +313,21 @@ const PeopleEditScreen = () => {
         occupation: personData.occupation,
         people_id: personData.people_id,
         phone_number: personData.phone_number,
-        profile_picture: personData.profile_picture,
         social_media_links: personData.social_media_links,
-        address: personData.address,
+        status: personData.status,
+        relationship_category: personData.relationship_category,
+        religion: personData.religion,
       };
+
       const res = await AxiosInstance().patch(
         `people/people-detail/${id}/`,
         dataUpdate
       );
       console.log("res", res);
-      if (res) {
-        Alert.alert("Thành công", "Đã cập nhật thông tin người dùng");
-        navigation.goBack();
-      }
+      Alert.alert("Thành công", "Đã cập nhật thông tin người dùng");
+      navigation.goBack();
     } catch (error) {
+      console.log("error", {...error});
       Alert.alert("Lỗi", "Đã xảy ra lỗi khi cập nhật thông tin");
     } finally {
       setIsLoading(false);
@@ -339,7 +363,9 @@ const PeopleEditScreen = () => {
         <View style={styles.imageWrapper}>
           <Image
             source={{
-              uri:`${profileImage}?timestamp=${new Date().getTime()}` ?? APP_CONSTANTS.defaultAvatar,
+              uri:
+                `${profileImage}?timestamp=${new Date().getTime()}` ??
+                APP_CONSTANTS.defaultAvatar,
             }}
             style={styles.profileImage}
           />
@@ -409,19 +435,31 @@ const PeopleEditScreen = () => {
             title="Ngày mất (yyy-mm-dd)"
           />
         )}
-        {radioButtonGroups.map((group, index) => (
-          <RadioButtonGroup
-            key={index}
-            title={group.title}
-            options={group.options}
-            selectedValue={group.selectedValue}
-            onSelect={(value) => {
-              setPersonData({ ...personData, [group.formKey]: [value] });
-            }}
-            color={theme.colors.text}
-            colorSelected="#1a70ce"
-          />
-        ))}
+          <Dropdown
+          label="Tình trạng công việc"
+          options={STATUS_CHOICES}
+          selectedValue={personData.status}
+          onSelect={(value) => setPersonData({ ...formData, status: value })}
+          theme={theme}
+        />
+
+        <Dropdown
+          label="Tôn giáo"
+          options={RELIGION_CHOICES}
+          selectedValue={personData.religion}
+          onSelect={(value) => setPersonData({ ...personData, religion: value })}
+          theme={theme}
+        />
+
+        <Dropdown
+          label="Quan hệ"
+          options={RELATIONSHIP_CATEGORY_CHOICES}
+          selectedValue={personData.relationship_category}
+          onSelect={(value) =>
+            setPersonData({ ...personData, relationship_category: value })
+          }
+          theme={theme}
+        />
         {additionalFormInputs.map((input, index) => (
           <AppFormInput
             key={index}
