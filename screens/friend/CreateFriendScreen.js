@@ -1,47 +1,48 @@
-import { View, StyleSheet, Alert, Text } from "react-native";
+import React, { useContext, useState, useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  Alert,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import AppFormInput from "../../components/FormInput";
-import { useTheme } from "@rneui/themed";
-import { ScrollView } from "react-native-gesture-handler";
 import AppHeader from "../../components/AppHeader";
-import React, { useContext, useEffect, useState } from "react";
-import { useThemeContext } from "../../ThemeContext";
 import ItemToogle from "./ItemToogle";
-import { defaultInfo, validateForm } from "./data";
-import RadioButtonGroup from "./RadioButtonGroup";
-import { formatDate2 } from "../../helper/string_format";
 import AppFormDateInput from "../../components/FormDateInput";
+import Dropdown from "./Dropdown";
+import { useThemeContext } from "../../ThemeContext";
 import { AppContext } from "../../AppContext";
 import AxiosInstance from "../../network/AxiosInstance";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { Picker } from "@react-native-picker/picker";
-import Dropdown from "./Dropdown";
+import { defaultInfo, validateForm } from "./data";
+import { formatDate2 } from "../../helper/string_format";
+
 const CRFriendScreen = () => {
-  const { isAddFamilyMember } = useRoute()?.params ?? {
-    isAddFamilyMember: false,
-  };
-  const { data } = useRoute()?.params ?? { data: {} };
+  const route = useRoute();
   const navigation = useNavigation();
-  const [formData, setFormData] = useState(data ?? defaultInfo);
-  const { theme } = useThemeContext();
-  const styles = useStyles(theme);
-  const scrollView = React.useRef(null);
-  const scroll = () => {
-    if (scrollView.current) {
-      scrollView.current.scrollTo({
-        y: 400,
-        animated: true,
-      });
-    }
+  const { isAddFamilyMember, data } = route.params ?? {
+    isAddFamilyMember: false,
+    data: {},
   };
+  const [formData, setFormData] = useState(data ?? defaultInfo);
+  const [selectedImage, setSelectedImage] = useState(
+    data?.profile_picture ?? null
+  );
+  const { theme } = useThemeContext();
+  const { setIsLoading } = useContext(AppContext);
+  const styles = useStyles(theme);
+  const scrollViewRef = React.useRef(null);
+
   const toggleItems = [
     {
       title: "Giới tính",
-      onPress: () => {
-        setFormData({
-          ...formData,
-          gender: !formData.gender,
-        });
-      },
+      onPress: () => setFormData({ ...formData, gender: !formData.gender }),
       isChecked: formData.gender,
       color: "#ff1694",
       colorChecked: "#1a70ce",
@@ -52,13 +53,9 @@ const CRFriendScreen = () => {
     {
       title: "Tình trạng hôn nhân",
       onPress: () => {
-        setFormData({
-          ...formData,
-          marital_status: !formData.marital_status,
-        });
-        if (!formData.marital_status) {
-          scroll();
-        }
+        setFormData({ ...formData, marital_status: !formData.marital_status });
+        if (!formData.marital_status)
+          scrollViewRef.current?.scrollTo({ y: 400, animated: true });
       },
       isChecked: formData.marital_status,
       color: theme.colors.text,
@@ -75,9 +72,8 @@ const CRFriendScreen = () => {
           is_alive: !formData.is_alive,
           death_date: formData.is_alive ? "" : formData.death_date,
         });
-        if (formData.is_alive) {
-          scroll();
-        }
+        if (formData.is_alive)
+          scrollViewRef.current?.scrollTo({ y: 400, animated: true });
       },
       isChecked: formData.is_alive,
       color: theme.colors.text,
@@ -87,6 +83,7 @@ const CRFriendScreen = () => {
       textUnchecked: "Đã mất",
     },
   ];
+
   const RELIGION_CHOICES = [
     { label: "Công giáo", value: "catholic" },
     { label: "Phật giáo", value: "buddhist" },
@@ -109,350 +106,274 @@ const CRFriendScreen = () => {
   ];
 
   const formInputs = [
-    {
-      title: "Họ và tên",
-      key: "full_name_vn",
-      value: formData.full_name_vn,
-    },
-    {
-      title: "Email",
-      key: "email",
-      value: formData.email,
-    },
+    { title: "Họ và tên", key: "full_name_vn" },
+    { title: "Email", key: "email" },
     {
       title: "Ngày tháng năm sinh (yyyy-mm-dd)",
       key: "birth_date",
       isDate: true,
-      onChangeDate: (date) => {
-        setFormData({
-          ...formData,
-          birth_date: formatDate2(date),
-        });
-      },
-      value: formData.birth_date,
+      onChangeDate: (date) =>
+        setFormData({ ...formData, birth_date: formatDate2(date) }),
     },
-    {
-      title: "Số điện thoại",
-      key: "phone_number",
-      value: formData.phone_number,
-    },
-    {
-      title: "Quốc tịch",
-      key: "nationality",
-      value: formData.nationality,
-    },
-    {
-      title: "Tiểu sử",
-      key: "history",
-      value: formData.history,
-    },
+    { title: "Số điện thoại", key: "phone_number" },
+    { title: "Quốc tịch", key: "nationality" },
+    { title: "Tiểu sử", key: "history" },
   ];
+
   const additionalFormInputs = [
-    {
-      title: "Trình độ học vấn",
-      key: "education_level",
-      value: formData.education_level,
-    },
-    {
-      title: "Ghi chú tu hành",
-      key: "monk_notes",
-      value: formData.monk_notes,
-    },
-    {
-      title: "Nghề nghiệp",
-      key: "occupation",
-      value: formData.occupation,
-    },
-    {
-      title: "Liên kết mạng xã hội",
-      key: "social_media_links",
-      value: formData.social_media_links,
-    },
+    { title: "Trình độ học vấn", key: "education_level" },
+    { title: "Ghi chú tu hành", key: "monk_notes" },
+    { title: "Nghề nghiệp", key: "occupation" },
+    { title: "Liên kết mạng xã hội", key: "social_media_links" },
   ];
-  // Trong phần render của component:
-  const handleSave = () => {
-    const formErrors = validateForm(formData);
-    if (formErrors.length > 0) {
-      Alert.alert("Lỗi", formErrors.join("\n"), [{ text: "OK" }]);
-    } else {
-      handleSubmit();
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0,
+    });
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri);
     }
   };
-  const { setIsLoading } = useContext(AppContext);
-  const handleSubmit = async () => {
+
+  const uploadImage = async () => {
+    if (!selectedImage) {
+      Alert.alert("Lỗi", "Vui lòng chọn ảnh trước khi tải lên");
+      return;
+    }
     setIsLoading(true);
     try {
-      let dataF = {
-        ...formData,
+      const fileData = {
+        uri: selectedImage,
+        type: "image/jpeg",
+        name: `${new Date().getTime()}.jpg`,
       };
-      delete data.place_of_death;
-      if (dataF.is_alive) {
-        delete dataF.address;
-        delete dataF.death_date;
-      }
-      !dataF.religion && delete dataF.religion;
-      !dataF.status && delete dataF.status;
-      !dataF.relationship_category && delete dataF.relationship_category;
-      if (data?.friend_id) {
-        console.log("data", data);
-        const res = await AxiosInstance().put(
-          "friend/" + data.friend_id + "/",
-          dataF
-        );
-        Alert.alert("Thông báo", "Cập nhật thông tin thành công");
+      const formData = new FormData();
+      formData.append("profile_picture", fileData);
+      const response = await AxiosInstance("multipart/form-data").put(
+        `/friend/${data.friend_id}/`,
+        formData
+      );
+      if (response) {
+        Alert.alert("Thành công", "Ảnh đã được cập nhật");
+        setFormData({
+          ...formData,
+          profile_picture: response.data.profile_picture,
+        });
       } else {
-        const res = await AxiosInstance().post("friend/", dataF);
-        if (!res) {
-          Alert.alert(
-            "Lỗi",
-            "Đã xảy ra lỗi khi thêm bạn,email không được trùng",
-            [{ text: "OK" }]
-          );
-        }
-        if (res) {
-          navigation.navigate("UploadImageScreen", { id: res.data.friend_id });
-          setFormData(defaultInfo);
-        }
+        Alert.alert("Lỗi", "Tải lên ảnh thất bại");
       }
     } catch (error) {
-      Alert.alert("Lỗi", "Đã xảy ra lỗi khi thêm bạn,email không được trùng", [
-        { text: "OK" },
-      ]);
-      console.log(error);
+      console.log("Error uploading image:", { ...error });
+      Alert.alert("Lỗi", "Đã xảy ra lỗi khi tải lên ảnh");
     } finally {
       setIsLoading(false);
     }
   };
+
+  const handleSave = async () => {
+    const formErrors = validateForm(formData);
+    if (formErrors.length > 0) {
+      Alert.alert("Lỗi", formErrors.join("\n"), [{ text: "OK" }]);
+    } else {
+      setIsLoading(true);
+      try {
+        let dataF = { ...formData };
+        if (dataF.is_alive) {
+          delete dataF.address;
+          delete dataF.death_date;
+        }
+        delete dataF.profile_picture;
+        !dataF.religion && delete dataF.religion;
+        !dataF.status && delete dataF.status;
+        !dataF.relationship_category && delete dataF.relationship_category;
+
+        if (data?.friend_id) {
+          const res = await AxiosInstance().put(
+            `friend/${data.friend_id}/`,
+            dataF
+          );
+          if (selectedImage !== data?.profile_picture) {
+            await uploadImage();
+          }
+        } else {
+          const res = await AxiosInstance().post("friend/", dataF);
+          if (res) {
+            if (selectedImage) {
+              await uploadImage();
+            }
+            navigation.goBack();
+          }
+        }
+      } catch (error) {
+        Alert.alert("Lỗi", "Đã xảy ra lỗi khi lưu thông tin", [{ text: "OK" }]);
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   return (
     <View
-      style={{
-        backgroundColor: theme.colors.background,
-        flex: 1,
-      }}
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <AppHeader
         right={{
           icon: "save",
-          onPress: () => {
-            console.log(formData);
-            handleSave();
-          },
+          onPress: handleSave,
         }}
         back
         title={!isAddFamilyMember ? "Thêm bạn" : "Thêm thành viên gia đình"}
       />
-      <View style={styles.container}>
-        <ScrollView
-          contentContainerStyle={{
-            paddingBottom: 300,
-          }}
-          ref={scrollView}
-          showsVerticalScrollIndicator={false}
-          style={{
-            width: "100%",
-          }}
-        >
-          {formInputs.map((input, index) => {
-            return input.isDate ? (
-              <AppFormDateInput
-                key={index}
-                onSaveText={input.onChangeDate}
-                value={input.value}
-                title={input.title}
+      <ScrollView
+        ref={scrollViewRef}
+        contentContainerStyle={styles.scrollViewContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.imageContainer}>
+          <TouchableOpacity onPress={pickImage}>
+            {selectedImage ? (
+              <Image
+                source={{ uri: selectedImage }}
+                style={styles.profileImage}
               />
             ) : (
-              <AppFormInput
-                key={index}
-                title={input.title}
-                value={input.value}
-                onTextChange={(text) =>
-                  setFormData({ ...formData, [input.key]: text })
-                }
-              />
-            );
-          })}
-          {toggleItems.map((item, index) => (
-            <ItemToogle
+              <View
+                style={[
+                  styles.placeholderImage,
+                  { backgroundColor: theme.colors.card },
+                ]}
+              >
+                <Ionicons name="camera" size={50} color={theme.colors.text} />
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {formInputs.map((input, index) =>
+          input.isDate ? (
+            <AppFormDateInput
               key={index}
-              title={item.title}
-              onPress={item.onPress}
-              isChecked={item.isChecked}
-              color={item.color}
-              colorChecked={item.colorChecked}
-              icon={item.icon}
-              textChecked={item.textChecked}
-              textUnchecked={item.textUnchecked}
+              onSaveText={input.onChangeDate}
+              value={formData[input.key]}
+              title={input.title}
             />
-          ))}
-          {formData.marital_status && (
-            <AppFormDateInput
-              value={formData.wedding_day}
-              onSaveText={(date) => {
-                setFormData({
-                  ...formData,
-                  wedding_day: formatDate2(date),
-                });
-              }}
-              title="Ngày cưới (yyy-mm-dd)"
-            />
-          )}
-          {!formData.is_alive && (
-            <AppFormDateInput
-              value={formData.death_date}
-              onSaveText={(date) => {
-                setFormData({
-                  ...formData,
-                  death_date: formatDate2(date),
-                });
-              }}
-              title="Ngày mất (yyy-mm-dd)"
-            />
-          )}
-          <Dropdown
-            label="Tình trạng công việc"
-            options={STATUS_CHOICES}
-            selectedValue={formData.status}
-            onSelect={(value) => setFormData({ ...formData, status: value })}
-            theme={theme}
-          />
-
-          <Dropdown
-            label="Tôn giáo"
-            options={RELIGION_CHOICES}
-            selectedValue={formData.religion}
-            onSelect={(value) => setFormData({ ...formData, religion: value })}
-            theme={theme}
-          />
-
-          <Dropdown
-            label="Quan hệ"
-            options={RELATIONSHIP_CATEGORY_CHOICES}
-            selectedValue={formData.relationship_category}
-            onSelect={(value) =>
-              setFormData({ ...formData, relationship_category: value })
-            }
-            theme={theme}
-          />
-          {additionalFormInputs.map((input, index) => (
+          ) : (
             <AppFormInput
               key={index}
               title={input.title}
-              value={input.value}
-              onTextChange={(text) => {
-                setFormData({ ...formData, [input.key]: text });
-              }}
+              value={formData[input.key]}
+              onTextChange={(text) =>
+                setFormData({ ...formData, [input.key]: text })
+              }
             />
-          ))}
-        </ScrollView>
-      </View>
+          )
+        )}
+
+        {toggleItems.map((item, index) => (
+          <ItemToogle
+            key={index}
+            title={item.title}
+            onPress={item.onPress}
+            isChecked={item.isChecked}
+            color={item.color}
+            colorChecked={item.colorChecked}
+            icon={item.icon}
+            textChecked={item.textChecked}
+            textUnchecked={item.textUnchecked}
+          />
+        ))}
+
+        {formData.marital_status && (
+          <AppFormDateInput
+            value={formData.wedding_day}
+            onSaveText={(date) =>
+              setFormData({ ...formData, wedding_day: formatDate2(date) })
+            }
+            title="Ngày cưới (yyyy-mm-dd)"
+          />
+        )}
+
+        {!formData.is_alive && (
+          <AppFormDateInput
+            value={formData.death_date}
+            onSaveText={(date) =>
+              setFormData({ ...formData, death_date: formatDate2(date) })
+            }
+            title="Ngày mất (yyyy-mm-dd)"
+          />
+        )}
+
+        <Dropdown
+          label="Tình trạng công việc"
+          options={STATUS_CHOICES}
+          selectedValue={formData.status}
+          onSelect={(value) => setFormData({ ...formData, status: value })}
+          theme={theme}
+        />
+
+        <Dropdown
+          label="Tôn giáo"
+          options={RELIGION_CHOICES}
+          selectedValue={formData.religion}
+          onSelect={(value) => setFormData({ ...formData, religion: value })}
+          theme={theme}
+        />
+
+        <Dropdown
+          label="Quan hệ"
+          options={RELATIONSHIP_CATEGORY_CHOICES}
+          selectedValue={formData.relationship_category}
+          onSelect={(value) =>
+            setFormData({ ...formData, relationship_category: value })
+          }
+          theme={theme}
+        />
+
+        {additionalFormInputs.map((input, index) => (
+          <AppFormInput
+            key={index}
+            title={input.title}
+            value={formData[input.key]}
+            onTextChange={(text) =>
+              setFormData({ ...formData, [input.key]: text })
+            }
+          />
+        ))}
+      </ScrollView>
     </View>
   );
 };
+
 const useStyles = (theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
+    },
+    scrollViewContent: {
       padding: 15,
-      justifyContent: "center",
+      paddingBottom: 300,
+    },
+    imageContainer: {
       alignItems: "center",
-    },
-    header: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      paddingHorizontal: 15,
-      paddingVertical: 10,
-    },
-    headerText: {
-      fontSize: 20,
-      fontWeight: "bold",
-    },
-    headerIcons: {
-      flexDirection: "row",
-    },
-    iconButton: {
-      marginRight: 15,
-    },
-    profileContainer: {
-      alignItems: "center",
-      padding: 15,
-      borderBottomWidth: 1,
-    },
-    imageWrapper: {
-      position: "relative",
-      width: 80,
-      height: 80,
-    },
-    profileImage: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
-      borderWidth: 2,
-      borderColor: "gray",
-      backgroundColor: "gray",
-      resizeMode: "cover",
-    },
-    cameraIcon: {
-      position: "absolute",
-      bottom: 1,
-      right: -1,
-      borderRadius: 15,
-      padding: 2,
-    },
-    emailText: {
-      fontSize: 18,
-      fontWeight: "bold",
-      marginVertical: 10,
-    },
-    settingsContainer: {
-      flex: 1,
-      alignItems: "center",
-      padding: 25,
-    },
-    settingItem: {
-      flexDirection: "row",
-      alignItems: "center",
-      paddingVertical: 15,
-      width: "100%",
-    },
-    settingTitle: {
-      fontSize: 16,
-      fontWeight: "bold",
-      marginLeft: 15,
-    },
-    chevronIcon: {
-      marginLeft: "auto",
-    },
-    crmButton: {
-      marginTop: 20,
-      borderRadius: 10,
-      overflow: "hidden",
-    },
-    crmButtonGradient: {
-      paddingVertical: 20,
-      paddingHorizontal: 80,
-      alignItems: "center",
-    },
-    crmButtonText: {
-      color: "white",
-      fontWeight: "bold",
-      fontSize: 20,
-    },
-    dropdownContainer: {
       marginBottom: 20,
     },
-    dropdownLabel: {
-      fontSize: 16,
-      marginBottom: 5,
-      color: theme.colors.text,
+    profileImage: {
+      width: 150,
+      height: 150,
+      borderRadius: 75,
     },
-    dropdown: {
-      height: 50,
-      width: "100%",
-      backgroundColor: theme.colors.background,
-      borderColor: theme.colors.border,
-      borderWidth: 1,
-      borderRadius: 5,
+    placeholderImage: {
+      width: 150,
+      height: 150,
+      borderRadius: 75,
+      justifyContent: "center",
+      alignItems: "center",
     },
   });
 
