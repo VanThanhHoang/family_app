@@ -3,28 +3,28 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AxiosInstance = (contentType = 'application/json') => {
     const axiosInstance = axios.create({
-        baseURL: 'https://api.lehungba.com/api/'
+        baseURL: 'https://api.lehungba.com/api/',
     });
 
     axiosInstance.interceptors.request.use(
         async (config) => {
             const token = await AsyncStorage.getItem('access');
-            console.log('config', token);
+            console.log('config', config);
             console.log('token', token);
             config.headers = {
                 'Accept': 'application/json',
-                'Content-Type': contentType
-            }
+                'Content-Type': contentType,
+            };
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
             return config;
         },
-        err => Promise.reject(err)
+        (err) => Promise.reject(err)
     );
 
     axiosInstance.interceptors.response.use(
-        res => res.data,
+        (res) => res.data,
         async (err) => {
             const originalConfig = err.config;
 
@@ -36,9 +36,9 @@ const AxiosInstance = (contentType = 'application/json') => {
                     try {
                         const refreshToken = await AsyncStorage.getItem('refresh');
                         const rs = await axiosInstance.post('/token/refresh/', {
-                            refresh: refreshToken
+                            refresh: refreshToken,
                         });
-                        console.log('rs', rs);  
+                        console.log('rs', rs);
                         const { access } = rs;
                         await AsyncStorage.setItem('access', access);
 

@@ -35,10 +35,10 @@ const ProfileScreen = () => {
       const people_id = await AsyncStorage.getItem("people_id");
       let profile_picture = await AsyncStorage.getItem("profile_picture");
       const full_name_vn = await AsyncStorage.getItem("full_name_vn");
-      setProfileImage(profile_picture);
 
       if (profile_picture) {
         profile_picture = `https://api.lehungba.com${profile_picture}`;
+        setProfileImage(profile_picture);
       }
 
       setUserInfo({
@@ -63,18 +63,24 @@ const ProfileScreen = () => {
       };
       const formData = new FormData();
       formData.append("profile_picture", fileData);
-      const data = await AxiosInstance("multipart/form-data").patch(
-        "profile/upload/",
+      const people_id = userInfo.people_id; // Ensure people_id is retrieved from userInfo
+      console.log("Uploading image to:", `profile/upload/${people_id}/`);
+      const axiosInstance = AxiosInstance("multipart/form-data"); // Create Axios instance
+      const response = await axiosInstance.post(
+        `people/upload/${people_id}/`,
         formData
       );
-      if (data.profile_picture) {
-        await AsyncStorage.setItem("profile_picture", data.profile_picture);
+      console.log("Upload response:", response);
+      if (response.image_url) {
+        await AsyncStorage.setItem("profile_picture", response.image_url);
+        setProfileImage(response.image_url); // Update the profileImage state with the new URL
         Alert.alert("Thành công", "Ảnh đã được cập nhật");
       } else {
         Alert.alert("Error", "Upload image failed");
       }
     } catch (err) {
-      console.log({ err });
+      console.log("Upload error:", err);
+      Alert.alert("Error", "Upload image failed");
     }
   };
 
@@ -87,7 +93,7 @@ const ProfileScreen = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 0,
+      quality: 1,
     });
     if (!result.canceled) {
       setSelectedImage(result.assets[0]);
@@ -100,7 +106,7 @@ const ProfileScreen = () => {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <View style={[styles.header]}>
+      <View style={styles.header}>
         <Text style={[styles.headerText, { color: theme.colors.text }]}>
           Tài khoản
         </Text>
@@ -112,7 +118,7 @@ const ProfileScreen = () => {
             <Ionicons name="key" size={30} color={theme.colors.text} />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate("PeopleUpdateSrceen")} // Điều hướng đến PeopleUpdateScreen
+            onPress={() => navigation.navigate("PeopleUpdateSrceen")}
             style={styles.iconButton}
           >
             <Ionicons name="refresh" size={30} color={theme.colors.text} />
@@ -125,6 +131,7 @@ const ProfileScreen = () => {
                 routes: [{ name: "Login" }],
               });
             }}
+            style={styles.iconButton}
           >
             <Ionicons name="log-out" size={30} color={theme.colors.text} />
           </TouchableOpacity>
@@ -140,7 +147,10 @@ const ProfileScreen = () => {
           />
           <TouchableOpacity
             onPress={pickImage}
-            style={[styles.cameraIcon, { backgroundColor: isDarkMode ? theme.colors.card : "white" }]}
+            style={[
+              styles.cameraIcon,
+              { backgroundColor: isDarkMode ? theme.colors.card : "white" },
+            ]}
           >
             <Ionicons name="camera" size={20} color={theme.colors.text} />
           </TouchableOpacity>
