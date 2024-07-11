@@ -64,15 +64,15 @@ const ProfileScreen = () => {
       const formData = new FormData();
       formData.append("profile_picture", fileData);
       const people_id = userInfo.people_id; // Ensure people_id is retrieved from userInfo
-      console.log("Uploading image to:", `profile/upload/${people_id}/`);
+      console.log("Uploading image to:", `people/upload/${people_id}/`);
       const axiosInstance = AxiosInstance("multipart/form-data"); // Create Axios instance
       const response = await axiosInstance.post(
         `people/upload/${people_id}/`,
         formData
       );
       console.log("Upload response:", response);
-      if (response.image_url) {
-        await AsyncStorage.setItem("profile_picture", response.image_url);
+      if (response.profile_picture) {
+        await AsyncStorage.setItem("profile_picture", response.profile_picture);
         setProfileImage(response.image_url); // Update the profileImage state with the new URL
         Alert.alert("Thành công", "Ảnh đã được cập nhật");
       } else {

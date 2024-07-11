@@ -7,7 +7,6 @@ import AppHeader from "../../components/AppHeader";
 import { useNavigation } from "@react-navigation/native";
 import { APP_CONSTANTS } from "../../helper/constant";
 import { Ionicons } from "@expo/vector-icons";
-
 const FamilyTreeNode = ({ person, level, onToggle }) => {
   const navigation = useNavigation();
   const [expanded, setExpanded] = useState(level < 1);
@@ -31,11 +30,13 @@ const FamilyTreeNode = ({ person, level, onToggle }) => {
 
   const maxHeight = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, 10000], // Adjust this value based on your content
+    outputRange: [0, 10000],
   });
 
   return (
-    <View style={[styles.nodeContainer, { marginLeft: level * 20 }]}>
+    <View style={[styles.nodeContainer, { marginLeft: level * 20,
+     
+     }]}>
       <TouchableOpacity onPress={toggleExpand} style={styles.nodeHeader}>
         <View style={styles.personInfo}>
           <Image source={{ uri: person.profile_picture ?? APP_CONSTANTS.defaultAvatar}} style={styles.profileImage} />
@@ -52,12 +53,9 @@ const FamilyTreeNode = ({ person, level, onToggle }) => {
                 id: person.people_id,
               });
             }}
-            style={{
-              ...styles.detailButton,
-              marginRight:!person.children.length > 0 &&24
-            }}
+            style={styles.detailButton}
           >
-            <Text style={styles.detailButtonText}>Chi tiết</Text>
+            <Ionicons name="information-circle-outline" size={24} color="#0a3621" />
           </TouchableOpacity>
         </View>
         {person.children && person.children.length > 0 && (
@@ -65,7 +63,7 @@ const FamilyTreeNode = ({ person, level, onToggle }) => {
             inputRange: [0, 1],
             outputRange: ['0deg', '90deg']
           }) }] }}>
-            <Ionicons name="chevron-forward" size={24} color="#8B4513" />
+            <Ionicons name="chevron-forward" size={24} color="#0a3621" />
           </Animated.View>
         )}
       </TouchableOpacity>
@@ -147,8 +145,7 @@ const FamilyTreeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF8DC',
-    // Beige background for a classic look
+    backgroundColor: 'white',
   },
   scrollView: {
     flex: 1,
@@ -158,11 +155,13 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   nodeContainer: {
+    marginHorizontal: 10,
     marginVertical: 5,
-    backgroundColor: '#FFF8DC',
-    borderWidth:0, // Cornsilk background for nodes
+    backgroundColor: 'white',
+
+    borderWidth: 0,
     borderLeftWidth: 2,
-    borderColor: '#DEB887', // Burlywood border
+    borderColor: '#0a3621',
     minWidth: 250,
   },
   nodeHeader: {
@@ -175,7 +174,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    gap:10
+    gap: 10
   },
   profileImage: {
     width: 50,
@@ -183,7 +182,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginRight: 10,
     borderWidth: 2,
-    borderColor: '#8B4513', // SaddleBrown border for image
+    borderColor: '#0a3621',
   },
   textInfo: {
     flex: 1,
@@ -192,28 +191,22 @@ const styles = StyleSheet.create({
     maxWidth: 150,
     fontSize: 16,
     fontWeight: "bold",
-    color: '#8B4513', // SaddleBrown text
+    color: '#0a3621',
   },
   dateInfo: {
     fontSize: 12,
-    color: '#A0522D', // Sienna text for dates
+    color: '#0a3621',
     marginTop: 5,
   },
   detailButton: {
-    backgroundColor: '#DEB887', // Burlywood background
     padding: 5,
     borderRadius: 5,
-    width: 70,
     justifyContent: 'center',
-    alignItems:'center'
-  },
-  detailButtonText: {
-    color: '#8B4513', // SaddleBrown text
-    fontWeight: "bold",
+    alignItems: 'center'
   },
   loadingText: {
     textAlign: 'center',
-    color: '#8B4513', // SaddleBrown text
+    color: '#0a3621',
     fontSize: 16,
     marginTop: 20,
   },
