@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, StyleSheet, Text, Image } from "react-native";
+import { View, StyleSheet, Text} from "react-native";
 import AxiosInstance from "../network/AxiosInstance";
-import { FlatList } from "react-native";
+import { FlatList,Image } from "react-native";
 import FamilyItem from "./components/FamilyItem";
 import { AppContext } from "../AppContext";
 import SearchBar from "../components/SearchBar";
@@ -57,7 +57,6 @@ const FamilyScreen = () => {
     >
  
       <SearchBar showFamilyTree onChangeText={searchFilter} value={searchText} />
-    
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
         style={{ width: "100%" }}

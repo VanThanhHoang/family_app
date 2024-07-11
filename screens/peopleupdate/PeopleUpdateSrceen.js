@@ -16,6 +16,7 @@ const PeopleUpdateScreen = ({ navigation }) => {
     try {
       const data = await AxiosInstance().get("people/people-detail/");
       setFriendList(data.data);
+      
     } catch (err) {
       console.log(err);
     } finally {
@@ -24,8 +25,11 @@ const PeopleUpdateScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    getFriendList();
-  }, []);
+    const unsubscribe = navigation.addListener("focus", () => {
+      getFriendList();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <View

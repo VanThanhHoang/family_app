@@ -17,13 +17,15 @@ import { AppContext } from "../../AppContext";
 import AxiosInstance from "../../network/AxiosInstance";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
-import { Image } from "react-native";
+import { Image } from 'expo-image';
+
 import { APP_CONSTANTS } from "../../helper/constant";
 import { Ionicons } from "@expo/vector-icons";
 
 const PeopleEditScreen = () => {
   const route = useRoute();
   const { id } = route.params;
+  console.log("id", id);
   const navigation = useNavigation();
   const [selectedImage, setSelectedImage] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
@@ -33,7 +35,6 @@ const PeopleEditScreen = () => {
   const isDarkMode = theme.mode === "dark";
   const styles = useStyles(theme);
   const scrollView = React.useRef(null);
-
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -51,19 +52,24 @@ const PeopleEditScreen = () => {
   const uploadImage = async (file) => {
     setIsLoading(true);
     try {
+      const fileData = {
+        uri: file.uri,
+        type: "image/jpeg",
+        name: `${new Date().getTime()}.jpg`,
+      };
       const formData = new FormData();
       formData.append("profile_picture", fileData);
-      const response = await AxiosInstance("multipart/form-data").post(
-        `people/upload/${id}/`,
+      const response = await AxiosInstance("multipart/form-data").put(
+        `people/people-detail/${id}/`,
         formData
       );
       if (response.data.profile_picture) {
         Alert.alert("Thành công", "Ảnh đã được cập nhật");
-        navigation.goBack();
       } else {
         Alert.alert("Lỗi", "Tải lên ảnh thất bại");
       }
     } catch (error) {
+      console.log("error", error);
       Alert.alert("Lỗi", "Đã xảy ra lỗi khi tải lên ảnh");
     } finally {
       setIsLoading(false);
@@ -85,6 +91,7 @@ const PeopleEditScreen = () => {
       const response = await AxiosInstance().get(`people/people-detail/${id}/`);
       setPersonData(response.data);
       setProfileImage(response.data.profile_picture ?? APP_CONSTANTS.defaultAvatar);
+      console.log("personData", response.data);
     } catch (err) {
       Alert.alert("Error", "Failed to load person data.");
     } finally {
@@ -291,6 +298,7 @@ const PeopleEditScreen = () => {
         `people/people-detail/${id}/`,
         dataUpdate
       );
+      console.log("res", res);
       if (res) {
         Alert.alert("Thành công", "Đã cập nhật thông tin người dùng");
         navigation.goBack();
@@ -331,7 +339,7 @@ const PeopleEditScreen = () => {
         <View style={styles.imageWrapper}>
           <Image
             source={{
-              uri: profileImage ?? APP_CONSTANTS.defaultAvatar,
+              uri:`${profileImage}?timestamp=${new Date().getTime()}` ?? APP_CONSTANTS.defaultAvatar,
             }}
             style={styles.profileImage}
           />
