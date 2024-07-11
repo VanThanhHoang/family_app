@@ -15,7 +15,6 @@ const defaultInfo = {
   unemployed_notes: "",
   death_date: "",
   wedding_day: "",
-  profile_picture: null,
   hobbies_interests: "",
   social_media_links: "",
   cause_of_death: "",

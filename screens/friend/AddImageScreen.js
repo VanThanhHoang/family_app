@@ -41,6 +41,7 @@ const UploadImageScreen = () => {
       Alert.alert("Lỗi", "Vui lòng chọn ảnh trước khi tải lên");
       return;
     }
+    console.log("id_____", id);
     setIsLoading(true);
     try {
       const fileData = {
@@ -52,7 +53,7 @@ const UploadImageScreen = () => {
       formData.append("profile_picture", fileData);
       console.log("formData", id);
       const response = await AxiosInstance("multipart/form-data").put(
-        `people/upload/${id}/`,
+        `/friend/upload/${id}/`,
         formData
       );
       console.log("res", response);

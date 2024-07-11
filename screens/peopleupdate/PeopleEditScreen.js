@@ -57,7 +57,8 @@ const PeopleEditScreen = () => {
       };
       const formData = new FormData();
       formData.append("profile_picture", fileData);
-      const response = await AxiosInstance("multipart/form-data").put(
+      console.log("123",id)
+      const response = await AxiosInstance("multipart/form-data").post(
         `people/upload/${id}/`,
         formData
       );
@@ -220,6 +221,11 @@ const PeopleEditScreen = () => {
       value: personData?.birth_date,
     },
     {
+      title: "Địa chỉ",
+      key: "address",
+      value: personData?.address,
+    },
+    {
       title: "Số điện thoại",
       key: "phone_number",
       value: personData?.phone_number,
@@ -285,6 +291,7 @@ const PeopleEditScreen = () => {
         phone_number: personData.phone_number,
         profile_picture: personData.profile_picture,
         social_media_links: personData.social_media_links,
+        address: personData.address,
       };
       const res = await AxiosInstance().patch(
         `people/people-detail/${id}/`,

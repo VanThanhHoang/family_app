@@ -1,4 +1,4 @@
-import { View, StyleSheet, Alert } from "react-native";
+import { View, StyleSheet, Alert, Text } from "react-native";
 import AppFormInput from "../../components/FormInput";
 import { useTheme } from "@rneui/themed";
 import { ScrollView } from "react-native-gesture-handler";
@@ -13,12 +13,15 @@ import AppFormDateInput from "../../components/FormDateInput";
 import { AppContext } from "../../AppContext";
 import AxiosInstance from "../../network/AxiosInstance";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { Picker } from "@react-native-picker/picker";
+import Dropdown from "./Dropdown";
 const CRFriendScreen = () => {
   const { isAddFamilyMember } = useRoute()?.params ?? {
     isAddFamilyMember: false,
   };
+  const { data } = useRoute()?.params ?? { data: {} };
   const navigation = useNavigation();
-  const [formData, setFormData] = useState(defaultInfo);
+  const [formData, setFormData] = useState(data ?? defaultInfo);
   const { theme } = useThemeContext();
   const styles = useStyles(theme);
   const scrollView = React.useRef(null);
@@ -84,45 +87,27 @@ const CRFriendScreen = () => {
       textUnchecked: "Đã mất",
     },
   ];
-  const radioButtonGroups = [
-    {
-      title: "Tình trạng công việc",
-      options: [
-        { label: "Đang học", value: "Đang học" },
-        { label: "Đi làm", value: "Đi làm" },
-        { label: "Nội trợ", value: "Nội trợ" },
-        { label: "Đi tu", value: "Đi tu" },
-      ],
-      selectedValue: formData.status[0],
-      onSelect: (value) => setFormData({ ...formData, status: [value] }),
-      formKey: "status",
-    },
-    {
-      title: "Tôn giáo",
-      options: [
-        { label: "Công giáo", value: "Công giáo" },
-        { label: "Đạo Phật", value: "Đạo Phật" },
-        { label: "Tin Lành", value: "Tin Lành" },
-        { label: "Đạo khác", value: "Đạo khác" },
-      ],
-      selectedValue: formData.religion[0],
-      onSelect: (value) => setFormData({ ...formData, religion: [value] }),
-      formKey: "religion",
-    },
-    {
-      title: "Quan hệ",
-      options: [
-        { label: "Ân nhân", value: "Ân nhân" },
-        { label: "Giáo viên", value: "Giáo viên" },
-        { label: "Bạn bè", value: "Bạn bè" },
-        { label: "Bạn học", value: "Bạn học" },
-      ],
-      selectedValue: formData.relationship_category[0],
-      onSelect: (value) =>
-        setFormData({ ...formData, relationship_category: [value] }),
-      formKey: "relationship_category",
-    },
+  const RELIGION_CHOICES = [
+    { label: "Công giáo", value: "catholic" },
+    { label: "Phật giáo", value: "buddhist" },
+    { label: "Tin Lành", value: "protestant" },
+    { label: "Đạo khác", value: "other" },
   ];
+
+  const STATUS_CHOICES = [
+    { label: "Đang đi học", value: "student" },
+    { label: "Đã đi làm", value: "employed" },
+    { label: "Thất nghiệp", value: "unemployed" },
+    { label: "Đi tu", value: "monk" },
+  ];
+
+  const RELATIONSHIP_CATEGORY_CHOICES = [
+    { label: "Ân Nhân", value: "benefactor" },
+    { label: "Teacher", value: "teacher" },
+    { label: "Bạn gái cũ", value: "ex_girlfriend" },
+    { label: "Bạn học", value: "classmate" },
+  ];
+
   const formInputs = [
     {
       title: "Họ và tên",
@@ -197,31 +182,43 @@ const CRFriendScreen = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      let data = {
+      let dataF = {
         ...formData,
+      };
+      delete data.place_of_death;
+      if (dataF.is_alive) {
+        delete dataF.address;
+        delete dataF.death_date;
       }
-      delete data.status;
-      delete data.religion;
-      delete data.relationship_category;
-      delete data.death_date;
-      delete data.address;
-      delete data.place_of_birth;
-      delete data.place_of_death
-      console.log("data",data); 
-      const res = await AxiosInstance().post("friend/", data);
-      if(!res){
-        Alert.alert("Lỗi", "Đã xảy ra lỗi khi thêm bạn,email không được trùng", [{ text: "OK" }]);
+      !dataF.religion && delete dataF.religion;
+      !dataF.status && delete dataF.status;
+      !dataF.relationship_category && delete dataF.relationship_category;
+      if (data) {
+        console.log("data", data);
+        const res = await AxiosInstance().put(
+          "friend/" + data.friend_id + "/",
+          dataF
+        );
+        Alert.alert("Thông báo", "Cập nhật thông tin thành công");
+      } else {
+        const res = await AxiosInstance().post("friend/", dataF);
+        if (!res) {
+          Alert.alert(
+            "Lỗi",
+            "Đã xảy ra lỗi khi thêm bạn,email không được trùng",
+            [{ text: "OK" }]
+          );
+        }
+        if (res) {
+          navigation.navigate("UploadImageScreen", { id: res.data.friend_id });
+          setFormData(defaultInfo);
+        }
       }
-      console.log("res",res);
-      // if(res){
-      //   navigation.navigate('UploadImageScreen', { id: res.data.friend_id })
-      // //  setFormData(defaultInfo);
-      // }
     } catch (error) {
-      Alert.alert("Lỗi", "Đã xảy ra lỗi khi thêm bạn,email không được trùng", [{ text: "OK" }]); 
-      console.log("error",{...error});
+      Alert.alert("Lỗi", "Đã xảy ra lỗi khi thêm bạn,email không được trùng", [
+        { text: "OK" },
+      ]);
       console.log(error);
-
     } finally {
       setIsLoading(false);
     }
@@ -311,19 +308,31 @@ const CRFriendScreen = () => {
               title="Ngày mất (yyy-mm-dd)"
             />
           )}
-          {radioButtonGroups.map((group, index) => (
-            <RadioButtonGroup
-              key={index}
-              title={group.title}
-              options={group.options}
-              selectedValue={formData[group.formKey][0]}
-              onSelect={(value) => {
-                setFormData({ ...formData, [group.formKey]: [value] });
-              }}
-              color={theme.colors.text}
-              colorSelected="#1a70ce"
-            />
-          ))}
+          <Dropdown
+            label="Tình trạng công việc"
+            options={STATUS_CHOICES}
+            selectedValue={formData.status}
+            onSelect={(value) => setFormData({ ...formData, status: value })}
+            theme={theme}
+          />
+
+          <Dropdown
+            label="Tôn giáo"
+            options={RELIGION_CHOICES}
+            selectedValue={formData.religion}
+            onSelect={(value) => setFormData({ ...formData, religion: value })}
+            theme={theme}
+          />
+
+          <Dropdown
+            label="Quan hệ"
+            options={RELATIONSHIP_CATEGORY_CHOICES}
+            selectedValue={formData.relationship_category}
+            onSelect={(value) =>
+              setFormData({ ...formData, relationship_category: value })
+            }
+            theme={theme}
+          />
           {additionalFormInputs.map((input, index) => (
             <AppFormInput
               key={index}
@@ -428,6 +437,22 @@ const useStyles = (theme) =>
       color: "white",
       fontWeight: "bold",
       fontSize: 20,
+    },
+    dropdownContainer: {
+      marginBottom: 20,
+    },
+    dropdownLabel: {
+      fontSize: 16,
+      marginBottom: 5,
+      color: theme.colors.text,
+    },
+    dropdown: {
+      height: 50,
+      width: "100%",
+      backgroundColor: theme.colors.background,
+      borderColor: theme.colors.border,
+      borderWidth: 1,
+      borderRadius: 5,
     },
   });
 

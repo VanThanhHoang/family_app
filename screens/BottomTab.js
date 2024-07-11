@@ -8,9 +8,6 @@ import AuthNavigation from "./AuthStack";
 import React from "react";
 import { AppContext } from "../AppContext";
 import { useThemeContext } from '../ThemeContext';
-import { useTheme } from '@rneui/themed';
-import FamilyTreeScreen from "./familyTree/FamilyTreeScreen";
-import FriendScreen from "./friend/FriendScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -18,7 +15,7 @@ const screens = [
   {
     name: "Gia đình",
     component:FamilyScreen,
-    icon: require("../assets/family_tree.png"),
+    icon: require("../assets/family.png"),
   },
   {
     name: "Sinh nhật",

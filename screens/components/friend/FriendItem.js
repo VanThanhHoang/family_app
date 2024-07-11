@@ -1,14 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useThemeContext } from "../../../ThemeContext"; // Cập nhật đường dẫn
-import Icon from 'react-native-vector-icons/MaterialIcons'; // Sử dụng thư viện icon
+import Icon from "react-native-vector-icons/MaterialIcons"; // Sử dụng thư viện icon
+import ConfirmDelete from "../../../components/ComfirmDelete";
 
-const FriendItem = ({ item }) => {
+const FriendItem = ({ item ,onDelete}) => {
   const { theme } = useThemeContext();
   const styles = useStyles(theme);
   const navigation = useNavigation();
-
+  const [visible, setVisible] = useState(false);
   return (
     <TouchableOpacity
       style={styles.memberContainer}
@@ -27,7 +28,12 @@ const FriendItem = ({ item }) => {
         style={styles.profilePicture}
       />
       {item.is_alive && (
-        <Icon name="check-circle" size={20} color="green" style={styles.iconAlive} />
+        <Icon
+          name="check-circle"
+          size={20}
+          color="green"
+          style={styles.iconAlive}
+        />
       )}
       <View style={styles.textContainer}>
         <Text style={styles.memberName}>
@@ -37,10 +43,31 @@ const FriendItem = ({ item }) => {
       </View>
       <TouchableOpacity
         style={styles.editButton}
-        onPress={() => navigation.navigate("EditFriendScreen", { id: item.people_id })}
+        onPress={() => {
+          navigation.navigate("AddFriendScreen", { data: item });
+        }}
       >
         <Icon name="edit" size={20} color="gray" />
       </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.editButton}
+        onPress={() => {
+          setVisible(true);
+        }}
+      >
+        <Icon name="delete" size={20} color="gray" />
+      </TouchableOpacity>
+      <ConfirmDelete
+        name={item.full_name_vn}
+        visible={visible}
+        onConfirm={() => {
+          onDelete();
+          setVisible(false);
+        }}
+        onClose={() => {
+          setVisible(false);
+        }}
+      />
     </TouchableOpacity>
   );
 };
@@ -89,10 +116,8 @@ const useStyles = (theme) =>
       marginTop: 5,
     },
     editButton: {
-      position: "absolute",
-      top: 5,
-      right: 5,
-      padding: 5,
+      alignSelf: "flex-start",
+      marginHorizontal: 5,
     },
   });
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Image } from "react-native";
 import AxiosInstance from "../network/AxiosInstance";
 import { FlatList } from "react-native";
 import FamilyItem from "./components/FamilyItem";
@@ -55,46 +55,9 @@ const FamilyScreen = () => {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <SearchBar onChangeText={searchFilter} value={searchText} />
-     <View style={{
-        flexDirection:'row',
-        justifyContent:'space-between'
-     }}>
-       <TouchableOpacity 
-        onPress={() => {
-            navigation.navigate("FamilyTreeWeb");
-        }}
-      >
-        <Text
-          style={{
-            margin: 15,
-            fontWeight: "bold",
-            fontSize: 18,
-            color: theme.colors.text,
-            textAlign:'right'
-          }}
-        >
-          Xem dạng cây
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity 
-        onPress={() => {
-            navigation.navigate("FamilyTree");
-        }}
-      >
-        <Text
-          style={{
-            margin: 15,
-            fontWeight: "bold",
-            fontSize: 18,
-            color: theme.colors.text,
-            textAlign:'right'
-          }}
-        >
-          Xem gia phả
-        </Text>
-      </TouchableOpacity>
-     </View>
+ 
+      <SearchBar showFamilyTree onChangeText={searchFilter} value={searchText} />
+    
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
         style={{ width: "100%" }}

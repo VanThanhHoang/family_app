@@ -11,7 +11,6 @@ import {
   Image,
   Pressable,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
 import Button from "../components/Button";
 import { AppContext } from "../AppContext";
