@@ -5,7 +5,7 @@ import { useThemeContext } from "../../../ThemeContext"; // Cập nhật đườ
 import Icon from "react-native-vector-icons/MaterialIcons"; // Sử dụng thư viện icon
 import ConfirmDelete from "../../../components/ComfirmDelete";
 
-const FriendItem = ({ item ,onDelete}) => {
+const FriendItem = ({ item, onDelete }) => {
   const { theme } = useThemeContext();
   const styles = useStyles(theme);
   const navigation = useNavigation();
@@ -20,7 +20,11 @@ const FriendItem = ({ item ,onDelete}) => {
       <Image
         source={
           item.profile_picture
-            ? { uri: item.profile_picture }
+            ? {
+                uri:
+                  `${item.profile_picture}?timestamp=${new Date().getTime()}` ??
+                  APP_CONSTANTS.defaultAvatar,
+              }
             : item.gender
             ? require("../../../assets/father.png")
             : require("../../../assets/mother.png")

@@ -32,9 +32,12 @@ const FamilyMap = () => {
         backgroundColor: "white",
       }}
     >
-      <ScrollView>
-        <FamilyTree />
+      <ScrollView
+      
+      >
+         <FamilyTree    />
       </ScrollView>
+     
     </View>
   );
 };

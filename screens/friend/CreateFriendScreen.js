@@ -28,7 +28,7 @@ const CRFriendScreen = () => {
   const navigation = useNavigation();
   const { isAddFamilyMember, data } = route.params ?? {
     isAddFamilyMember: false,
-    data: {},
+    data: null,
   };
   const [formData, setFormData] = useState(data ?? defaultInfo);
   const [selectedImage, setSelectedImage] = useState(
@@ -137,10 +137,11 @@ const CRFriendScreen = () => {
 
     if (!result.canceled) {
       setSelectedImage(result.assets[0].uri);
+      uploadImage(result.assets[0]);
     }
   };
 
-  const uploadImage = async () => {
+  const uploadImage = async (file) => {
     if (!selectedImage) {
       Alert.alert("Lỗi", "Vui lòng chọn ảnh trước khi tải lên");
       return;
@@ -148,7 +149,7 @@ const CRFriendScreen = () => {
     setIsLoading(true);
     try {
       const fileData = {
-        uri: selectedImage,
+        uri: file.uri,
         type: "image/jpeg",
         name: `${new Date().getTime()}.jpg`,
       };
@@ -160,10 +161,6 @@ const CRFriendScreen = () => {
       );
       if (response) {
         Alert.alert("Thành công", "Ảnh đã được cập nhật");
-        setFormData({
-          ...formData,
-          profile_picture: response.data.profile_picture,
-        });
       } else {
         Alert.alert("Lỗi", "Tải lên ảnh thất bại");
       }
@@ -177,6 +174,7 @@ const CRFriendScreen = () => {
 
   const handleSave = async () => {
     const formErrors = validateForm(formData);
+    console.log(formData)
     if (formErrors.length > 0) {
       Alert.alert("Lỗi", formErrors.join("\n"), [{ text: "OK" }]);
     } else {
@@ -197,15 +195,10 @@ const CRFriendScreen = () => {
             `friend/${data.friend_id}/`,
             dataF
           );
-          if (selectedImage !== data?.profile_picture) {
-            await uploadImage();
-          }
+          Alert.alert("Thành công", "Thông tin đã được cập nhật")
         } else {
           const res = await AxiosInstance().post("friend/", dataF);
           if (res) {
-            if (selectedImage) {
-              await uploadImage();
-            }
             navigation.goBack();
           }
         }
