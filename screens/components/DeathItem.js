@@ -8,7 +8,7 @@ const DeathItem = ({ ...props }) => {
   const navigation = useNavigation();
   const { theme } = useThemeContext();
   const isDarkMode = theme.mode === "dark";
-
+  console.log(props.data);
   return (
     <TouchableOpacity
       onPress={() => {
@@ -39,11 +39,11 @@ const DeathItem = ({ ...props }) => {
             ]}
           />
           <Text style={[styles.ageText, { color: theme.colors.text }]}>
-            {props.data.death_info.age_at_death ?? "Chưa rõ"}
+            {props.data.current_age ?? "Chưa rõ"}
           </Text>
         </View>
         <Text style={[styles.totalText, { color: theme.colors.text }]}>
-          {props.data.death_info.years_since_death}
+          {props.data.years_since_death}
         </Text>
       </View>
       <View style={styles.infoContainer}>

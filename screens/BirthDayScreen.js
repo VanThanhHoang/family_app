@@ -1,13 +1,10 @@
 import { View, StyleSheet, FlatList } from "react-native";
-import AppHeader from "../components/AppHeader";
 import SearchBar from "../components/SearchBar";
 import React, { useState } from "react";
 import { AppContext } from "../AppContext";
 import BirthDayItem from "./components/BirthDayItem";
 import { removeDiacritics } from "../helper/string_format";
 import { useThemeContext } from "../ThemeContext";
-import { useTheme } from '@rneui/themed';
-import { StatusBar } from "expo-status-bar";
 
 const BirthDayScreen = () => {
   const { birhdayData } = React.useContext(AppContext);
