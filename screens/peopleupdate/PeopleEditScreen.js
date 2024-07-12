@@ -1,3 +1,6 @@
+
+
+
 import React, { useContext, useEffect, useState } from "react";
 import {
   View,
@@ -18,6 +21,7 @@ import AxiosInstance from "../../network/AxiosInstance";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "expo-image";
+import * as ImageManipulator from "expo-image-manipulator";
 
 import { APP_CONSTANTS } from "../../helper/constant";
 import { Ionicons } from "@expo/vector-icons";
@@ -36,6 +40,7 @@ const PeopleEditScreen = () => {
   const isDarkMode = theme.mode === "dark";
   const styles = useStyles(theme);
   const scrollView = React.useRef(null);
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -44,9 +49,14 @@ const PeopleEditScreen = () => {
       quality: 1,
     });
     if (!result.canceled) {
-      setSelectedImage(result.assets[0]);
-      setProfileImage(result.assets[0].uri);
-      uploadImage(result.assets[0]);
+      const compressedImage = await ImageManipulator.manipulateAsync(
+        result.assets[0].uri,
+        [{ resize: { width: 566, height: 586 } }],
+        { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
+      );
+      setSelectedImage(compressedImage);
+      setProfileImage(compressedImage.uri);
+      uploadImage(compressedImage);
     }
   };
 
@@ -160,6 +170,47 @@ const PeopleEditScreen = () => {
       textUnchecked: "Đã mất",
     },
   ];
+
+  const radioButtonGroups = [
+    {
+      title: "Tình trạng công việc",
+      options: [
+        { label: "Đang học", value: "Đang học" },
+        { label: "Đi làm", value: "Đi làm" },
+        { label: "Nội trợ", value: "Nội trợ" },
+        { label: "Đi tu", value: "Đi tu" },
+      ],
+      selectedValue: personData?.status,
+      onSelect: (value) => setPersonData({ ...personData, status: [value] }),
+      formKey: "status",
+    },
+    {
+      title: "Tôn giáo",
+      options: [
+        { label: "Công giáo", value: "Công giáo" },
+        { label: "Đạo Phật", value: "Đạo Phật" },
+        { label: "Tin Lành", value: "Tin Lành" },
+        { label: "Đạo khác", value: "Đạo khác" },
+      ],
+      selectedValue: personData?.religion,
+      onSelect: (value) => setPersonData({ ...personData, religion: [value] }),
+      formKey: "religion",
+    },
+    {
+      title: "Quan hệ",
+      options: [
+        { label: "Ân nhân", value: "Ân nhân" },
+        { label: "Giáo viên", value: "Giáo viên" },
+        { label: "Bạn bè", value: "Bạn bè" },
+        { label: "Bạn học", value: "Bạn học" },
+      ],
+      selectedValue: personData?.relationship_category,
+      onSelect: (value) =>
+        setPersonData({ ...personData, relationship_category: [value] }),
+      formKey: "relationship_category",
+    },
+  ];
+
   const formInputs = [
     {
       title: "Họ và tên",
@@ -286,7 +337,7 @@ const PeopleEditScreen = () => {
       Alert.alert("Thành công", "Đã cập nhật thông tin người dùng");
       navigation.goBack();
     } catch (error) {
-      console.log("error", {...error});
+      console.log("error", { ...error });
       Alert.alert("Lỗi", "Đã xảy ra lỗi khi cập nhật thông tin");
     } finally {
       setIsLoading(false);
@@ -394,7 +445,7 @@ const PeopleEditScreen = () => {
             title="Ngày mất (yyy-mm-dd)"
           />
         )}
-          <Dropdown
+        <Dropdown
           label="Tình trạng công việc"
           options={STATUS_CHOICES}
           selectedValue={personData.status}
@@ -466,3 +517,4 @@ const useStyles = (theme) =>
   });
 
 export default PeopleEditScreen;
+
