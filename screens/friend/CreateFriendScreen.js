@@ -142,10 +142,6 @@ const CRFriendScreen = () => {
   };
 
   const uploadImage = async (file) => {
-    if (!selectedImage) {
-      Alert.alert("Lỗi", "Vui lòng chọn ảnh trước khi tải lên");
-      return;
-    }
     setIsLoading(true);
     try {
       const fileData = {
@@ -174,7 +170,7 @@ const CRFriendScreen = () => {
 
   const handleSave = async () => {
     const formErrors = validateForm(formData);
-    console.log(formData)
+    console.log(formData);
     if (formErrors.length > 0) {
       Alert.alert("Lỗi", formErrors.join("\n"), [{ text: "OK" }]);
     } else {
@@ -195,14 +191,19 @@ const CRFriendScreen = () => {
             `friend/${data.friend_id}/`,
             dataF
           );
-          Alert.alert("Thành công", "Thông tin đã được cập nhật")
+          Alert.alert("Thành công", "Thông tin đã được cập nhật");
         } else {
           const res = await AxiosInstance().post("friend/", dataF);
           if (res) {
-            navigation.goBack();
+            console.log(res.data.friend_id);
+            navigation.navigate("UploadImageScreen",{
+              id: res.data.friend_id
+            })
+            Alert.alert("Thành công", "Thông tin đã được lưu");
           }
         }
       } catch (error) {
+        console.log(formData)
         Alert.alert("Lỗi", "Đã xảy ra lỗi khi lưu thông tin", [{ text: "OK" }]);
         console.log(error);
       } finally {
@@ -210,7 +211,6 @@ const CRFriendScreen = () => {
       }
     }
   };
-
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
@@ -228,25 +228,27 @@ const CRFriendScreen = () => {
         contentContainerStyle={styles.scrollViewContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.imageContainer}>
-          <TouchableOpacity onPress={pickImage}>
-            {selectedImage ? (
-              <Image
-                source={{ uri: selectedImage }}
-                style={styles.profileImage}
-              />
-            ) : (
-              <View
-                style={[
-                  styles.placeholderImage,
-                  { backgroundColor: theme.colors.card },
-                ]}
-              >
-                <Ionicons name="camera" size={50} color={theme.colors.text} />
-              </View>
-            )}
-          </TouchableOpacity>
-        </View>
+        {data != null && (
+          <View style={styles.imageContainer}>
+            <TouchableOpacity onPress={pickImage}>
+              {selectedImage ? (
+                <Image
+                  source={{ uri: selectedImage }}
+                  style={styles.profileImage}
+                />
+              ) : (
+                <View
+                  style={[
+                    styles.placeholderImage,
+                    { backgroundColor: theme.colors.card },
+                  ]}
+                >
+                  <Ionicons name="camera" size={50} color={theme.colors.text} />
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
+        )}
 
         {formInputs.map((input, index) =>
           input.isDate ? (

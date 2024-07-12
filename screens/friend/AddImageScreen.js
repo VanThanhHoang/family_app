@@ -41,7 +41,6 @@ const UploadImageScreen = () => {
       Alert.alert("Lỗi", "Vui lòng chọn ảnh trước khi tải lên");
       return;
     }
-    console.log("id_____", id);
     setIsLoading(true);
     try {
       const fileData = {

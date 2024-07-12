@@ -6,7 +6,7 @@ const defaultInfo = {
   nationality: "Việt Nam",
   marital_status: false, // false là độc thân, true là đã kết hôn
   history: "",
-  status: ["employed"], // mặc định là "Đi Làm"
+  status: "employed", // mặc định là "Đi Làm"
   gender: true, // true là nam, false là nữ
   is_alive: true, // true là còn sống, false là đã mất
   education_level: "",
@@ -18,33 +18,12 @@ const defaultInfo = {
   hobbies_interests: "",
   social_media_links: "",
   cause_of_death: "",
-  religion: ["catholic"], // mặc định là "Công giáo"
+  religion: "catholic", // mặc định là "Công giáo"
   achievement: "",
-  relationship_category: ["ex_girlfriend"], // mặc định là "Bạn"
-  address: {
-    country: "",
-    postal_code: "",
-    city: "",
-    state_or_province: "",
-    district_or_county: "",
-    address_line: "",
-  },
-  place_of_birth: {
-    country: "",
-    postal_code: "",
-    city: "",
-    state_or_province: "",
-    district_or_county: "",
-    address_line: "",
-  },
-  place_of_death: {
-    country: "",
-    postal_code: "",
-    city: "",
-    state_or_province: "",
-    district_or_county: "",
-    address_line: "",
-  },
+  relationship_category: "classmate", // mặc định là "Bạn"
+  address: null,
+  place_of_birth: null,
+  place_of_death:null,
 };
 const validateForm = (data) => {
   let errors = [];

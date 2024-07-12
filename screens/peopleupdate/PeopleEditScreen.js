@@ -160,47 +160,6 @@ const PeopleEditScreen = () => {
       textUnchecked: "Đã mất",
     },
   ];
-
-  const radioButtonGroups = [
-    {
-      title: "Tình trạng công việc",
-      options: [
-        { label: "Đang học", value: "Đang học" },
-        { label: "Đi làm", value: "Đi làm" },
-        { label: "Nội trợ", value: "Nội trợ" },
-        { label: "Đi tu", value: "Đi tu" },
-      ],
-      selectedValue: personData?.status,
-      onSelect: (value) => setPersonData({ ...personData, status: [value] }),
-      formKey: "status",
-    },
-    {
-      title: "Tôn giáo",
-      options: [
-        { label: "Công giáo", value: "Công giáo" },
-        { label: "Đạo Phật", value: "Đạo Phật" },
-        { label: "Tin Lành", value: "Tin Lành" },
-        { label: "Đạo khác", value: "Đạo khác" },
-      ],
-      selectedValue: personData?.religion,
-      onSelect: (value) => setPersonData({ ...personData, religion: [value] }),
-      formKey: "religion",
-    },
-    {
-      title: "Quan hệ",
-      options: [
-        { label: "Ân nhân", value: "Ân nhân" },
-        { label: "Giáo viên", value: "Giáo viên" },
-        { label: "Bạn bè", value: "Bạn bè" },
-        { label: "Bạn học", value: "Bạn học" },
-      ],
-      selectedValue: personData?.relationship_category,
-      onSelect: (value) =>
-        setPersonData({ ...personData, relationship_category: [value] }),
-      formKey: "relationship_category",
-    },
-  ];
-
   const formInputs = [
     {
       title: "Họ và tên",
