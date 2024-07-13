@@ -24,7 +24,9 @@ const AddFamilyCenterScreen = () => {
     setSearchQuery(query);
     if (query) {
       try {
-        const response = await AxiosInstace().get(`/people/search-spouse/?search=${query}`)
+        const response = await AxiosInstace().get(
+          `/people/search-spouse/?search=${query}`
+        );
         setSearchResults(response.results);
       } catch (error) {
         console.error(error);
@@ -55,10 +57,16 @@ const AddFamilyCenterScreen = () => {
 
   return (
     <View style={styles.container}>
-      <AppHeader back title={"Thêm thành viên gia đình"} />
+      <AppHeader
+        right={{
+          icon: "plus-circle",
+          onPress: () => navigation.navigate("AddFamilyCenterScreen"),
+        }}
+        back
+        title={"Thêm thành viên gia đình"}
+      />
       <View style={styles.familyContainer}>
         <CurrentUser name="Lê Nguyên Kim Sa" birthDate="02-04-1982" />
-
         {familyMembers.map((member, index) => (
           <FamilyMember
             key={index}
@@ -82,8 +90,7 @@ const AddFamilyCenterScreen = () => {
             onChangeText={handleSearch}
           />
           <FlatList
-          contentContainerStyle={{
-          }}
+            contentContainerStyle={{}}
             data={searchResults}
             keyExtractor={(item) => item.people_id.toString()}
             renderItem={({ item }) => (
@@ -192,8 +199,7 @@ const styles = StyleSheet.create({
   resultsList: {
     width: "100%",
     paddingBottom: 130,
-    height:300
-
+    height: 300,
   },
   resultItem: {
     padding: 10,
