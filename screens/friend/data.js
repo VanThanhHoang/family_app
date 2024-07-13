@@ -54,6 +54,45 @@ const validateForm = (data) => {
   }
   return errors;
 };
+export const RELIGION_CHOICES = [
+  { label: "Công giáo", value: "catholic" },
+  { label: "Phật giáo", value: "buddhist" },
+  { label: "Tin Lành", value: "protestant" },
+  { label: "Đạo khác", value: "other" },
+];
 
+export const STATUS_CHOICES = [
+  { label: "Đang đi học", value: "student" },
+  { label: "Đã đi làm", value: "employed" },
+  { label: "Thất nghiệp", value: "unemployed" },
+  { label: "Đi tu", value: "monk" },
+];
 
+export const RELATIONSHIP_CATEGORY_CHOICES = [
+  { label: "Ân Nhân", value: "benefactor" },
+  { label: "Teacher", value: "teacher" },
+  { label: "Bạn gái cũ", value: "ex_girlfriend" },
+  { label: "Bạn học", value: "classmate" },
+];
+export const formInputs = [
+  { title: "Họ và tên", key: "full_name_vn" },
+  { title: "Email", key: "email" },
+  {
+    title: "Ngày tháng năm sinh (yyyy-mm-dd)",
+    key: "birth_date",
+    isDate: true,
+    onChangeDate: (date) =>
+      setFormData({ ...formData, birth_date: formatDate2(date) }),
+  },
+  { title: "Số điện thoại", key: "phone_number" },
+  { title: "Quốc tịch", key: "nationality" },
+  { title: "Tiểu sử", key: "history" },
+];
+
+export const additionalFormInputs = [
+  { title: "Trình độ học vấn", key: "education_level" },
+  { title: "Ghi chú tu hành", key: "monk_notes" },
+  { title: "Nghề nghiệp", key: "occupation" },
+  { title: "Liên kết mạng xã hội", key: "social_media_links" },
+];
 export { defaultInfo, validateForm };

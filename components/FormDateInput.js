@@ -28,7 +28,7 @@ const AppFormDateInput = ({ title, onSaveText, value }) => {
         <Text style={{...styles.title,
         color:theme.colors.placeHolder,
         fontWeight:"600"
-        }}>{value ?? `Chọn ${title}`}</Text>
+        }}>{value || `Chọn ${title}`}</Text>
       </TouchableOpacity>
       <DateTimePickerModal
         date={value ? new Date(value):undefined}

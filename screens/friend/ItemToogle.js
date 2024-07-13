@@ -57,8 +57,6 @@ const useStyles = (theme) =>
     container: {
       padding: 10,
       gap: 10,
-      flexDirection: "row",
-      alignItems: "center",
     },
     title: {
       fontSize: 16,

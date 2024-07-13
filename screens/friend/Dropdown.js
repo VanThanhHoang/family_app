@@ -7,7 +7,7 @@ const Dropdown = ({ label, options, selectedValue, onSelect, theme }) => {
     const styles = useStyles(theme);
   return (
     <View style={styles.container}>
-      <Text style={[styles.label, { color: theme.colors.text }]}>{label}</Text>
+      <Text style={[styles.label, { color: theme.colors.text }]}>{`${label}:`}</Text>
       <TouchableOpacity
         style={[styles.dropdown, { backgroundColor: theme.colors.background, borderColor: theme.colors.border }]}
         onPress={() => setIsOpen(!isOpen)}
@@ -61,10 +61,11 @@ const useStyles = theme=> StyleSheet.create({
   selectedText: {
     fontSize: 16,
   },
+  //cho view đè lên các view khác
   optionsContainer: {
     borderWidth: 1,
     borderRadius: 5,
-    marginTop: 5,
+    marginTop:10
   },
   option: {
     padding: 10,
