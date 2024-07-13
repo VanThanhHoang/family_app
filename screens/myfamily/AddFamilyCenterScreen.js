@@ -9,28 +9,23 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
 import Modal from "react-native-modal";
 import AppHeader from "../../components/AppHeader";
-
+import AxiosInstace from "../../network/AxiosInstance";
 const AddFamilyCenterScreen = () => {
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
+  const toggleModal = () => setModalVisible(!isModalVisible);
 
   const handleSearch = async (query) => {
     setSearchQuery(query);
     if (query) {
       try {
-        const response = await axios.get(
-          `https://api.lehungba.com/api/people/search-spouse/?search=${query}`
-        );
-        setSearchResults(response.data.results);
+        const response = await AxiosInstace().get(`/people/search-spouse/?search=${query}`)
+        setSearchResults(response.results);
       } catch (error) {
         console.error(error);
       }
@@ -40,55 +35,43 @@ const AddFamilyCenterScreen = () => {
   };
 
   const handleSelectParent = (parent) => {
-    const father = parent;
-    const mother = parent.spouse;
-    const marriageDate = parent.marriage_date;
     navigation.navigate("AddFatherMotherScreen", {
-      father,
-      mother,
-      marriageDate,
+      father: parent,
+      mother: parent.spouse,
+      marriageDate: parent.marriage_date,
     });
     toggleModal();
   };
 
-  const handleFatherMotherPress = () => {
-    toggleModal();
-  };
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.resultItem}
-      onPress={() => handleSelectParent(item)}
-    >
-      <Text style={styles.resultText}>{item.full_name_vn}</Text>
-    </TouchableOpacity>
-  );
+  const familyMembers = [
+    {
+      label: "GrandFather & GrandMother",
+      screen: "AddGrandFatherMotherScreen",
+    },
+    { label: "Father & Mother", onPress: toggleModal },
+    { label: "Your Wife", screen: "AddspouseScreen" },
+    { label: "Your Child", screen: "AddChildScreen" },
+  ];
 
   return (
     <View style={styles.container}>
-      <View style={{ width: "100%" }}>
-        <AppHeader back title={"Thêm thành viên gia đình"} />
+      <AppHeader back title={"Thêm thành viên gia đình"} />
+      <View style={styles.familyContainer}>
+        <CurrentUser name="Lê Nguyên Kim Sa" birthDate="02-04-1982" />
+
+        {familyMembers.map((member, index) => (
+          <FamilyMember
+            key={index}
+            label={member.label}
+            onPress={() =>
+              member.screen
+                ? navigation.navigate(member.screen)
+                : member.onPress()
+            }
+          />
+        ))}
       </View>
 
-      <View style={styles.familyContainer}>
-        <FamilyMember
-          label="GrandFather & GrandMother"
-          onPress={() => navigation.navigate("AddGrandFatherMotherScreen")}
-        />
-        <FamilyMember
-          label="Father & Mother"
-          onPress={handleFatherMotherPress}
-        />
-        <CurrentUser name="Lê Nguyên Kim Sa" birthDate="02-04-1982" />
-        <FamilyMember
-          label="Your Wife"
-          onPress={() => navigation.navigate("AddspouseScreen")}
-        />
-        <FamilyMember
-          label="Your Child"
-          onPress={() => navigation.navigate("AddChildScreen")}
-        />
-      </View>
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Search Father or Mother</Text>
@@ -99,9 +82,18 @@ const AddFamilyCenterScreen = () => {
             onChangeText={handleSearch}
           />
           <FlatList
+          contentContainerStyle={{
+          }}
             data={searchResults}
             keyExtractor={(item) => item.people_id.toString()}
-            renderItem={renderItem}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.resultItem}
+                onPress={() => handleSelectParent(item)}
+              >
+                <Text style={styles.resultText}>{item.full_name_vn}</Text>
+              </TouchableOpacity>
+            )}
             style={styles.resultsList}
           />
           <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
@@ -129,7 +121,6 @@ const CurrentUser = ({ name, birthDate }) => (
     </View>
   </View>
 );
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -200,6 +191,9 @@ const styles = StyleSheet.create({
   },
   resultsList: {
     width: "100%",
+    paddingBottom: 130,
+    height:300
+
   },
   resultItem: {
     padding: 10,

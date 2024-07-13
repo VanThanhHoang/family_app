@@ -59,6 +59,7 @@ const useStyles = (theme) =>
       borderBottomWidth: 0.5,
       flexDirection: "row",
       gap: 10,
+      width: "100%",
     },
     text: {
       fontSize: 20,
