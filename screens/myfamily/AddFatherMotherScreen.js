@@ -59,6 +59,15 @@ const AddFatherMotherScreen = () => {
           isAlive={fatherAlive}
           setIsAlive={setFatherAlive}
         />
+        <View style={styles.marriageDateSection}>
+          <Text style={styles.sectionTitle}>Thông tin ngày cưới</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Nhập ngày cưới"
+            value={marriageDate}
+            onChangeText={setMarriageDate}
+          />
+        </View>
         <PersonInfoForm
           title={"Thông tin về mẹ"}
           person={mother}
@@ -76,6 +85,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: "#E0E0E0",
+    padding: 16,
   },
   header: {
     flexDirection: "row",
@@ -100,7 +110,6 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginBottom: 20,
-    alignItems: "center",
   },
   sectionTitle: {
     fontSize: 18,
@@ -140,6 +149,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
+    width: '100%',
   },
   button: {
     padding: 10,
