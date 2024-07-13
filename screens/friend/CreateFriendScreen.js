@@ -19,7 +19,6 @@ import AppFormDateInput from "../../components/FormDateInput";
 import Dropdown from "./Dropdown";
 import { useThemeContext } from "../../ThemeContext";
 import { AppContext } from "../../AppContext";
-import AxiosInstance from "../../network/AxiosInstance";
 import {
   additionalFormInputs,
   defaultInfo,

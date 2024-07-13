@@ -113,6 +113,7 @@ const FamilyTreeScreen = () => {
     setIsLoading(true);
     try {
       const res = await AxiosInstance().get("/relationships/");
+      console.log(res)
       setData(res);
     } catch (error) {
       console.log(error);

@@ -10,8 +10,9 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+import axios, { Axios } from "axios";
 import AppHeader from "../../components/AppHeader";
+import AxiosInstance from "../../network/AxiosInstance";
 
 const MyfamilyScreen = () => {
   const navigation = useNavigation();
@@ -27,19 +28,9 @@ const MyfamilyScreen = () => {
         console.log("People ID:", peopleId);
 
         if (token && peopleId) {
-          const response = await axios.get(
-            "https://api.lehungba.com/api/user/user-detail/",
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          console.log("API Response:", response.data);
-
+          const response = await AxiosInstance().get('user/user-detail/')
           // Kết hợp các mảng parents và siblings lại thành một mảng duy nhất
-          const parents = response.data.parent_relationships
+          const parents = response.parent_relationships
             .map((rel) => {
               return {
                 ...rel.father,
@@ -47,7 +38,7 @@ const MyfamilyScreen = () => {
               };
             })
             .concat(
-              response.data.parent_relationships.map((rel) => {
+              response.parent_relationships.map((rel) => {
                 return {
                   ...rel.mother,
                   relation: "Mẹ",
@@ -56,18 +47,18 @@ const MyfamilyScreen = () => {
             );
 
           const siblings = [
-            ...(response.data.siblings.older_brothers || []).map((sibling) => ({
+            ...(response.siblings.older_brothers || []).map((sibling) => ({
               ...sibling,
               relation: "Anh trai",
             })),
-            ...(response.data.siblings.younger_brothers || []).map(
+            ...(response.siblings.younger_brothers || []).map(
               (sibling) => ({ ...sibling, relation: "Em trai" })
             ),
-            ...(response.data.siblings.older_sisters || []).map((sibling) => ({
+            ...(response.siblings.older_sisters || []).map((sibling) => ({
               ...sibling,
               relation: "Chị gái",
             })),
-            ...(response.data.siblings.younger_sisters || []).map(
+            ...(response.siblings.younger_sisters || []).map(
               (sibling) => ({ ...sibling, relation: "Em gái" })
             ),
           ];

@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
-import Modal from 'react-native-modal';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  FlatList,
+} from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import Modal from "react-native-modal";
+import AppHeader from "../../components/AppHeader";
 
 const AddFamilyCenterScreen = () => {
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
   const toggleModal = () => {
@@ -19,7 +27,9 @@ const AddFamilyCenterScreen = () => {
     setSearchQuery(query);
     if (query) {
       try {
-        const response = await axios.get(`https://api.lehungba.com/api/people/search-spouse/?search=${query}`);
+        const response = await axios.get(
+          `https://api.lehungba.com/api/people/search-spouse/?search=${query}`
+        );
         setSearchResults(response.data.results);
       } catch (error) {
         console.error(error);
@@ -33,7 +43,11 @@ const AddFamilyCenterScreen = () => {
     const father = parent;
     const mother = parent.spouse;
     const marriageDate = parent.marriage_date;
-    navigation.navigate('AddFatherMotherScreen', { father, mother, marriageDate });
+    navigation.navigate("AddFatherMotherScreen", {
+      father,
+      mother,
+      marriageDate,
+    });
     toggleModal();
   };
 
@@ -42,23 +56,38 @@ const AddFamilyCenterScreen = () => {
   };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.resultItem} onPress={() => handleSelectParent(item)}>
+    <TouchableOpacity
+      style={styles.resultItem}
+      onPress={() => handleSelectParent(item)}
+    >
       <Text style={styles.resultText}>{item.full_name_vn}</Text>
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Icon name="arrow-left" size={24} color="#000" />
-      </TouchableOpacity>
-      <Text style={styles.title}>ADD YOUR FAMILY</Text>
+      <View style={{ width: "100%" }}>
+        <AppHeader back title={"Thêm thành viên gia đình"} />
+      </View>
+
       <View style={styles.familyContainer}>
-        <FamilyMember label="GrandFather & GrandMother" onPress={() => navigation.navigate('AddGrandFatherMotherScreen')} />
-        <FamilyMember label="Father & Mother" onPress={handleFatherMotherPress} />
+        <FamilyMember
+          label="GrandFather & GrandMother"
+          onPress={() => navigation.navigate("AddGrandFatherMotherScreen")}
+        />
+        <FamilyMember
+          label="Father & Mother"
+          onPress={handleFatherMotherPress}
+        />
         <CurrentUser name="Lê Nguyên Kim Sa" birthDate="02-04-1982" />
-        <FamilyMember label="Your Wife" onPress={() => navigation.navigate('AddSpouseScreen')} />
-        <FamilyMember label="Your Child" onPress={() => navigation.navigate('AddChildScreen')} />
+        <FamilyMember
+          label="Your Wife"
+          onPress={() => navigation.navigate("AddspouseScreen")}
+        />
+        <FamilyMember
+          label="Your Child"
+          onPress={() => navigation.navigate("AddChildScreen")}
+        />
       </View>
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
@@ -104,28 +133,27 @@ const CurrentUser = ({ name, birthDate }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E0E0E0',
-    alignItems: 'center',
-    paddingTop: 50,
+    backgroundColor: "#E0E0E0",
+    alignItems: "center",
   },
   backButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     left: 10,
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   familyContainer: {
-    width: '100%',
+    width: "100%",
     paddingHorizontal: 20,
   },
   familyMember: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     padding: 15,
     marginVertical: 5,
     borderRadius: 10,
@@ -135,9 +163,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   currentUser: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     padding: 15,
     marginVertical: 5,
     borderRadius: 10,
@@ -149,46 +177,46 @@ const styles = StyleSheet.create({
   birthDate: {
     marginLeft: 15,
     fontSize: 14,
-    color: '#757575',
+    color: "#757575",
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     padding: 10,
     borderRadius: 5,
-    width: '80%',
+    width: "80%",
     marginBottom: 10,
   },
   resultsList: {
-    width: '100%',
+    width: "100%",
   },
   resultItem: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: "#ccc",
   },
   resultText: {
     fontSize: 16,
   },
   closeButton: {
-    backgroundColor: '#f44336',
+    backgroundColor: "#f44336",
     padding: 10,
     borderRadius: 5,
     marginTop: 10,
   },
   closeButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
   },
 });

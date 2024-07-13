@@ -21,7 +21,7 @@ const AppFormInput = ({ title, onTextChange, value }) => {
 const useStyle = (theme) => {
   return StyleSheet.create({
     container: {
-      width: "100%",
+      flex: 1,
       padding: 10,
       backgroundColor: theme.colors.backgroundColor,
       gap: 10,
@@ -30,7 +30,6 @@ const useStyle = (theme) => {
       fontSize: 16,
       fontWeight: "bold",
       color: theme.colors.text,
-
     },
     input: {
       borderWidth: 1,

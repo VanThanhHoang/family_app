@@ -10,28 +10,33 @@ const AppFormDateInput = ({ title, onSaveText, value }) => {
   const styles = useStyle(theme);
   const [showModal, setShowModal] = React.useState(false);
 
-  const onPress =  () => {
+  const onPress = () => {
     setShowModal(true);
-  }
+  };
 
   const handleConfirm = (date) => {
     onSaveText(date);
     hideDatePicker();
-  }
+  };
   const hideDatePicker = () => {
     setShowModal(false);
-  }
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <TouchableOpacity onPress={onPress} style={styles.input}>
-        <Text style={{...styles.title,
-        color:theme.colors.placeHolder,
-        fontWeight:"600"
-        }}>{value || `Chọn ${title}`}</Text>
+        <Text
+          style={{
+            ...styles.title,
+            color: theme.colors.placeHolder,
+            fontWeight: "600",
+          }}
+        >
+          {value || `Chọn ${title}`}
+        </Text>
       </TouchableOpacity>
       <DateTimePickerModal
-        date={value ? new Date(value):undefined}
+        date={value ? new Date(value) : undefined}
         isVisible={showModal}
         mode="date"
         onConfirm={handleConfirm}
@@ -43,7 +48,7 @@ const AppFormDateInput = ({ title, onSaveText, value }) => {
 const useStyle = (theme) => {
   return StyleSheet.create({
     container: {
-      width: "100%",
+      flex:1,
       backgroundColor: theme.colors.backgroundColor,
       gap: 10,
       padding: 10,
@@ -53,7 +58,6 @@ const useStyle = (theme) => {
       fontSize: 16,
       fontWeight: "bold",
       color: theme.colors.text,
-
     },
     input: {
       borderWidth: 1,

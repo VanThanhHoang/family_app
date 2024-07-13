@@ -12,12 +12,17 @@ const ItemToogle = ({
   isChecked,
   textChecked,
   textUnchecked,
+  row
 }) => {
   const { theme } = useThemeContext();
   const styles = useStyles(theme);
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{title + " :"}</Text>
+    <View style={{
+      ...styles.container,
+      flexDirection: row ? "row" : "column",
+      alignItems: row ? "center" : "flex-start",
+    }}>
+      {title && <Text style={styles.title}>{title + " :"}</Text>}
       <View
         style={{
           flexDirection: "row",
