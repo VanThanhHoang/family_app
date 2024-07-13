@@ -27,6 +27,11 @@ import PeopleUpdateSrceen from "./screens/peopleupdate/PeopleUpdateSrceen";
 import PeopleEditScreen from "./screens/peopleupdate/PeopleEditScreen";
 import DetailWedding from "./screens/details/DetailWedding";
 import FamilyTreeScreen from "./screens/familyTree/FamilyTreeScreen";
+import AddFamilyCenterScreen from "./screens/myfamily/AddFamilyCenterScreen";
+import AddGrandFatherMotherScreen from "./screens/myfamily/AddGrandFatherMotherScreen";
+import AddspouseScreen from "./screens/myfamily/AddspouseScreen";
+import AddChildScreen from "./screens/myfamily/AddChildScreen";
+import AddFatherMotherScreen from "./screens/myfamily/AddFatherMotherScreen";
 import FamilyTree from "./web-view/FMLTree";
 const AppNavigation = () => {
   const AppStack = createStackNavigator();
@@ -95,6 +100,11 @@ const AppNavigation = () => {
           component={PeopleUpdateSrceen}
         />
         <AppStack.Screen name="PeopleEditScreen" component={PeopleEditScreen} />
+        <AppStack.Screen name="AddFamilyCenterScreen" component={AddFamilyCenterScreen} />
+        <AppStack.Screen name="AddGrandFatherMotherScreen" component={AddGrandFatherMotherScreen} />   
+        <AppStack.Screen name="AddspouseScreen" component={AddspouseScreen} />  
+        <AppStack.Screen name="AddChildScreen" component={AddChildScreen} />  
+        <AppStack.Screen name="AddFatherMotherScreen" component={AddFatherMotherScreen} />     
       </AppStack.Navigator>
       <LoadingDialog open={isLoading} />
       <View

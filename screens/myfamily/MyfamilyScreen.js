@@ -12,6 +12,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import AppHeader from "../../components/AppHeader";
+
 const MyfamilyScreen = () => {
   const navigation = useNavigation();
   const [familyMembers, setFamilyMembers] = useState([]);
@@ -119,9 +120,7 @@ const MyfamilyScreen = () => {
         title="Thành viên gia đình"
         right={{
           icon: "add",
-          onPress: () => navigation.navigate("AddFriendScreen",{
-            isAddFamilyMember: true,
-          }),
+          onPress: () => navigation.navigate("AddFamilyCenterScreen"), // Navigate to AddFamilyCenterScreen
         }}
       />
       <FlatList

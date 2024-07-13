@@ -1,6 +1,3 @@
-
-
-
 import React, { useContext, useEffect, useState } from "react";
 import {
   View,
@@ -517,4 +514,3 @@ const useStyles = (theme) =>
   });
 
 export default PeopleEditScreen;
-
