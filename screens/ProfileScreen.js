@@ -17,7 +17,7 @@ import { APP_CONSTANTS } from "../helper/constant";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "@rneui/themed";
 import { useThemeContext } from "../ThemeContext";
-
+import * as ImageManipulator from "expo-image-manipulator";
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({});
@@ -55,10 +55,15 @@ const ProfileScreen = () => {
   };
 
   const uploadImage = async (image) => {
+    const compressedImage = await ImageManipulator.manipulateAsync(
+      image.uri,
+      [{ resize: { width: 566, height: 586 } }],
+      { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
+    );
     try {
       const fileData = {
-        uri: image.uri,
-        type: image.type,
+        uri: compressedImage.uri,
+        type: compressedImage.type,
         name: `${new Date().getTime()}.jpg`,
       };
       const formData = new FormData();
@@ -70,10 +75,9 @@ const ProfileScreen = () => {
         `people/upload/${people_id}/`,
         formData
       );
-      console.log("Upload response:", response);
       if (response.profile_picture) {
         await AsyncStorage.setItem("profile_picture", response.profile_picture);
-        setProfileImage(response.image_url); // Update the profileImage state with the new URL
+        setProfileImage(response.profile_picture); // Update the profileImage state with the new URL
         Alert.alert("Thành công", "Ảnh đã được cập nhật");
       } else {
         Alert.alert("Error", "Upload image failed");
@@ -98,6 +102,7 @@ const ProfileScreen = () => {
     if (!result.canceled) {
       setSelectedImage(result.assets[0]);
       setProfileImage(result.assets[0].uri);
+
       uploadImage(result.assets[0]);
     }
   };

@@ -15,7 +15,6 @@ const AddspouseScreen = () => {
     </Provider>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,

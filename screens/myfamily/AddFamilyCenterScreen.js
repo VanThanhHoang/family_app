@@ -58,10 +58,6 @@ const AddFamilyCenterScreen = () => {
   return (
     <View style={styles.container}>
       <AppHeader
-        right={{
-          icon: "plus-circle",
-          onPress: () => navigation.navigate("AddFamilyCenterScreen"),
-        }}
         back
         title={"Thêm thành viên gia đình"}
       />
