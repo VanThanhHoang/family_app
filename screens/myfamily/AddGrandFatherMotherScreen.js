@@ -1,31 +1,14 @@
-import React, { useState } from "react";
 import {
-  View,
-  Text,
+
   StyleSheet,
-  TextInput,
   ScrollView,
-  TouchableOpacity,
 } from "react-native";
-import { Checkbox, Button, Menu, Provider } from "react-native-paper";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { useNavigation } from "@react-navigation/native";
+import { Provider } from "react-native-paper";
 import AppHeader from "../../components/AppHeader";
 import PersonInfoForm from "../components/PersonInfoForm";
 import RegisterMemberForm from "./RegisForm";
 
 const AddGrandFatherMotherScreen = () => {
-  const navigation = useNavigation();
-  const [grandFatherAlive, setGrandFatherAlive] = useState(true);
-  const [grandMotherAlive, setGrandMotherAlive] = useState(true);
-
-  const [religionVisible, setReligionVisible] = useState(false);
-  const [religion, setReligion] = useState("");
-  const [saintVisible, setSaintVisible] = useState(false);
-  const [saint, setSaint] = useState("");
-
-  const [registerMember, setRegisterMember] = useState(false);
-
   return (
     <Provider>
       <AppHeader back title={"Thêm thông tin ông, bà nội"} />
