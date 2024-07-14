@@ -10,7 +10,7 @@ import {
 import { Checkbox, Button, Menu, Provider } from "react-native-paper";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
-import PersonInfoForm from "../components/PersonInfoForm";
+import ChildForm from "../components/ChildForm";
 import AppHeader from "../../components/AppHeader";
 import RegisterMemberForm from "./RegisForm";
 
@@ -28,7 +28,7 @@ const AddChildScreen = () => {
     <Provider>
       <AppHeader back title={"Thêm thông tin về con"} />
       <ScrollView contentContainerStyle={styles.container}>
-        <PersonInfoForm title={"Con"} />
+        <ChildForm title={"Con"} />
         <RegisterMemberForm />
       </ScrollView>
     </Provider>

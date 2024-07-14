@@ -7,10 +7,9 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { Checkbox, Button, Menu, Provider } from "react-native-paper";
-import Icon from "react-native-vector-icons/FontAwesome";
+import { Provider } from "react-native-paper";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import PersonInfoForm from "../components/PersonInfoForm";
+import PersonInfoForm from "../components/FatherMotherForm";
 import RegisterMemberForm from "./RegisForm";
 import AppHeader from "../../components/AppHeader";
 
@@ -23,13 +22,6 @@ const AddFatherMotherScreen = () => {
   const [father, setFather] = useState({});
   const [mother, setMother] = useState({});
   const [marriageDate, setMarriageDate] = useState("");
-
-  const [religionVisible, setReligionVisible] = useState(false);
-  const [religion, setReligion] = useState("");
-  const [saintVisible, setSaintVisible] = useState(false);
-  const [saint, setSaint] = useState("");
-
-  const [registerMember, setRegisterMember] = useState(false);
 
   useEffect(() => {
     if (route.params) {
@@ -50,7 +42,7 @@ const AddFatherMotherScreen = () => {
 
   return (
     <Provider>
-      <AppHeader back title={'Thêm thông tin về cha mẹ'}/>
+      <AppHeader back title={"Thêm thông tin về cha mẹ"} />
       <ScrollView contentContainerStyle={styles.container}>
         <PersonInfoForm
           title={"Thông tin về ba"}
@@ -75,7 +67,7 @@ const AddFatherMotherScreen = () => {
           isAlive={motherAlive}
           setIsAlive={setMotherAlive}
         />
-        <RegisterMemberForm/>
+        <RegisterMemberForm />
       </ScrollView>
     </Provider>
   );
@@ -149,7 +141,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
-    width: '100%',
+    width: "100%",
   },
   button: {
     padding: 10,

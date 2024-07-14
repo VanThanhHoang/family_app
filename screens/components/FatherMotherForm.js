@@ -1,5 +1,4 @@
-// PersonInfoForm.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Menu } from "react-native-paper";
@@ -10,14 +9,19 @@ import { RELIGION_CHOICES } from "../friend/data";
 import { Image } from "react-native";
 import { APP_CONSTANTS } from "../../helper/constant";
 import AppFormDateInput from "../../components/FormDateInput";
-const PersonInfoForm = ({ title }) => {
-  const [isAlive, setIsAlive] = useState(true);
-  const [religion, setReligion] = useState("");
-  const [gender, setGender]=useState(false);
-  const [saint, setSaint] = useState("");
+
+const PersonInfoForm = ({ title, person, setPerson, isAlive, setIsAlive }) => {
+  const { theme } = useThemeContext();
   const [religionVisible, setReligionVisible] = useState(false);
   const [saintVisible, setSaintVisible] = useState(false);
-  const { theme } = useThemeContext();
+  const [religion, setReligion] = useState(person.religion || "");
+  const [saint, setSaint] = useState(person.saint || "");
+
+  useEffect(() => {
+    setReligion(person.religion || "");
+    setSaint(person.saint || "");
+  }, [person]);
+
   const getReigion = () => {
     if (religion === "") return "Tôn giáo *";
     if (religion === "catholic") return "Công giáo";
@@ -26,6 +30,7 @@ const PersonInfoForm = ({ title }) => {
     if (religion === "other") return "Đạo khác";
     return religion;
   };
+
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
@@ -39,7 +44,7 @@ const PersonInfoForm = ({ title }) => {
               marginRight: 10,
             }}
             source={{
-              uri: APP_CONSTANTS.defaultAvatar,
+              uri: person.profile_picture || APP_CONSTANTS.defaultAvatar,
             }}
           />
           <View
@@ -65,18 +70,6 @@ const PersonInfoForm = ({ title }) => {
           textChecked="Còn sống"
           textUnchecked="Đã mất"
         />
-        {
-          title === "Con" &&   <ItemToggle
-          title=""
-          onPress={() => setGender(!gender)}
-          icon={"transgender"}
-          color={'#ff1694'}
-          colorChecked="#1a70ce"
-          isChecked={gender}
-          textChecked="Nam"
-          textUnchecked="Nữ"
-        />
-        }
       </View>
 
       <View style={styles.dropdownContainer}>
@@ -88,16 +81,18 @@ const PersonInfoForm = ({ title }) => {
               onPress={() => setReligionVisible(true)}
               style={styles.dropdown}
             >
-              <Text>{getReigion(religion) || "Tôn giáo *"}</Text>
+              <Text>{getReigion() || "Tôn giáo *"}</Text>
               <Icon name="caret-down" size={20} />
             </TouchableOpacity>
           }
         >
           {RELIGION_CHOICES.map((item, index) => (
             <Menu.Item
+              key={index}
               title={item.label}
               onPress={() => {
                 setReligion(item.value);
+                setPerson({ ...person, religion: item.value });
                 setReligionVisible(false);
               }}
             />
@@ -131,31 +126,67 @@ const PersonInfoForm = ({ title }) => {
         </Menu>
       </View>
 
-      <AppFormInput title="Họ và tên" onTextChange={() => {}} value="" />
+      <AppFormInput
+        title="Họ và tên"
+        onTextChange={(value) => setPerson({ ...person, full_name_vn: value })}
+        value={person.full_name_vn || ""}
+      />
       <View
         style={{
           flexDirection: "row",
           alignItems: "center",
         }}
       >
-        <AppFormDateInput onSaveText={() => {}} title={"Ngày sinh"} />
-        <AppFormInput title="Quốc tịch" onTextChange={() => {}} value="" />
+        <AppFormDateInput
+          onSaveText={(value) => setPerson({ ...person, birth_date: value })}
+          title={"Ngày sinh"}
+          value={person.birth_date || ""}
+        />
+        <AppFormInput
+          title="Quốc tịch"
+          onTextChange={(value) => setPerson({ ...person, nationality: value })}
+          value={person.nationality || ""}
+        />
       </View>
       <View
         style={{
           flexDirection: "row",
         }}
       >
-        <AppFormInput title="Sở thích" onTextChange={() => {}} value="" />
-        <AppFormInput title="Nghề nghiệp" onTextChange={() => {}} value="" />
+        <AppFormInput
+          title="Sở thích"
+          onTextChange={(value) => setPerson({ ...person, hobby: value })}
+          value={person.hobby || ""}
+        />
+        <AppFormInput
+          title="Nghề nghiệp"
+          onTextChange={(value) => setPerson({ ...person, occupation: value })}
+          value={person.occupation || ""}
+        />
       </View>
-      <AppFormInput title="Địa chỉ" onTextChange={() => {}} value="" />
+      <AppFormInput
+        title="Địa chỉ"
+        onTextChange={(value) => setPerson({ ...person, address: value })}
+        value={person.address || ""}
+      />
 
       {!isAlive && (
         <>
-          <AppFormDateInput onSaveText={() => {}} title={"Ngày mất"} />
-          <AppFormInput title="Lý do" onTextChange={() => {}} value="" />
-          <AppFormInput title="Địa chỉ mất" onTextChange={() => {}} value="" />
+          <AppFormDateInput
+            onSaveText={(value) => setPerson({ ...person, death_date: value })}
+            title={"Ngày mất"}
+            value={person.death_date || ""}
+          />
+          <AppFormInput
+            title="Lý do"
+            onTextChange={(value) => setPerson({ ...person, death_reason: value })}
+            value={person.death_reason || ""}
+          />
+          <AppFormInput
+            title="Địa chỉ mất"
+            onTextChange={(value) => setPerson({ ...person, death_place: value })}
+            value={person.death_place || ""}
+          />
         </>
       )}
     </View>

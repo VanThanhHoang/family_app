@@ -1,20 +1,26 @@
+import React from "react";
 import { StyleSheet, ScrollView } from "react-native";
 import { Provider } from "react-native-paper";
 import RegisterMemberForm from "./RegisForm";
 import AppHeader from "../../components/AppHeader";
-import PersonInfoForm from "../components/PersonInfoForm";
+import SpouseForm from "../components/SpouseForm";
+import { useRoute } from "@react-navigation/native";
 
 const AddspouseScreen = () => {
+  const route = useRoute();
+  const { gender, nationality } = route.params;
+
   return (
     <Provider>
-      <AppHeader back title={"Thêm thông tin về vợ"} />
+      <AppHeader back title={"Thêm thông tin về vợ/chồng"} />
       <ScrollView contentContainerStyle={styles.container}>
-        <PersonInfoForm title={"Vợ"} />
+        <SpouseForm title={"Vợ/Chồng"} defaultGender={gender} defaultNationality={nationality} />
         <RegisterMemberForm />
       </ScrollView>
     </Provider>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,

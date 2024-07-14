@@ -32,6 +32,7 @@ import AddGrandFatherMotherScreen from "./screens/myfamily/AddGrandFatherMotherS
 import AddspouseScreen from "./screens/myfamily/AddspouseScreen";
 import AddChildScreen from "./screens/myfamily/AddChildScreen";
 import AddFatherMotherScreen from "./screens/myfamily/AddFatherMotherScreen";
+
 import FamilyTree from "./web-view/FMLTree";
 const AppNavigation = () => {
   const AppStack = createStackNavigator();
