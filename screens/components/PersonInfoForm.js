@@ -5,7 +5,6 @@ import { Menu } from "react-native-paper";
 import AppFormInput from "../../components/FormInput";
 import ItemToggle from "../friend/ItemToogle";
 import { useThemeContext } from "../../ThemeContext";
-import { RELIGION_CHOICES } from "../friend/data";
 import { Image } from "react-native";
 import { APP_CONSTANTS } from "../../helper/constant";
 import AppFormDateInput from "../../components/FormDateInput";
@@ -63,6 +62,18 @@ const PersonInfoForm = ({ title, person, setPerson }) => {
           textChecked="Còn sống"
           textUnchecked="Đã mất"
         />
+        {title === "Con" && (
+          <ItemToggle
+            title=""
+            onPress={() => setPerson({ ...person, gender: !person.gender })}
+            icon={"transgender"}
+            color={"#ff1694"}
+            colorChecked="blue"
+            isChecked={person.gender}
+            textChecked="Nam"
+            textUnchecked="Nữ"
+          />
+        )}
       </View>
 
       <View style={styles.dropdownContainer}>
@@ -131,7 +142,7 @@ const PersonInfoForm = ({ title, person, setPerson }) => {
         <AppFormDateInput
           onSaveText={(value) => {
             console.log(value);
-            setPerson({ ...person, birth_date: value })
+            setPerson({ ...person, birth_date: value });
           }}
           title={"Ngày sinh"}
           value={person.birth_date || ""}
@@ -164,7 +175,7 @@ const PersonInfoForm = ({ title, person, setPerson }) => {
         value={person.address || ""}
       />
 
-      {!person?.isAlive && (
+      {!person?.is_alive && (
         <>
           <AppFormDateInput
             onSaveText={(value) => setPerson({ ...person, death_date: value })}

@@ -12,13 +12,20 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import AppHeader from "../../components/AppHeader";
 import RegisterMemberForm from "./RegisForm";
+import PersonInfoForm from "../components/PersonInfoForm";
+import { defaultPeople } from "./Data";
+
 
 const AddChildScreen = () => {
+  const [childInfo, setChildInfo] = useState(defaultPeople)
   return (
     <Provider>
       <AppHeader back title={"Thêm thông tin về con"} />
       <ScrollView contentContainerStyle={styles.container}>
-        <Persn title={"Con"} />
+        <PersonInfoForm 
+        person={childInfo}
+setPerson={setChildInfo}
+title={"Con"} />
         <RegisterMemberForm />
       </ScrollView>
     </Provider>

@@ -4,7 +4,7 @@ export const defaultPeople = {
   education_level: "",
   full_name_vn: "",
   gender: false,
-  is_alive: false,
+  is_alive: true,
   marital_status: false,
   nationality:"",
   phone_number: "",
