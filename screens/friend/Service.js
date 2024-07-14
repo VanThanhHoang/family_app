@@ -1,5 +1,6 @@
 import { Alert } from "react-native";
 import { validateForm } from "./data";
+import AxiosInstance from "../../network/AxiosInstance";
 
 export const uploadImage = async (file, setIsLoading) => {
   setIsLoading(true);
@@ -27,7 +28,7 @@ export const uploadImage = async (file, setIsLoading) => {
     setIsLoading(false);
   }
 };
-export const handleSave = async (formData, setIsLoading, data) => {
+export const handleSave = async (formData, setIsLoading, data,navigation) => {
   const formErrors = validateForm(formData);
   if (formErrors.length > 0) {
     Alert.alert("Lỗi", formErrors.join("\n"), [{ text: "OK" }]);
@@ -54,6 +55,7 @@ export const handleSave = async (formData, setIsLoading, data) => {
         const res = await AxiosInstance().post("friend/", dataF);
         if (res) {
           console.log(res.data.friend_id);
+          console.log("UploadImageScreen");
           navigation.navigate("UploadImageScreen", {
             id: res.data.friend_id,
           });
@@ -61,9 +63,7 @@ export const handleSave = async (formData, setIsLoading, data) => {
         }
       }
     } catch (error) {
-      console.log(formData);
-      Alert.alert("Lỗi", "Đã xảy ra lỗi khi lưu thông tin", [{ text: "OK" }]);
-      console.log(error);
+      Alert.alert("Lỗi", "Đã xảy ra lỗi khi lưu thông tin,Email không được trùng", [{ text: "OK" }]);
     } finally {
       setIsLoading(false);
     }

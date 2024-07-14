@@ -114,7 +114,7 @@ const CRFriendScreen = () => {
         right={{
           icon: "save",
           onPress: () => {
-            handleSave(formData, setIsLoading, data);
+            handleSave(formData, setIsLoading, data,navigation);
           },
         }}
         back
