@@ -18,10 +18,10 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "@rneui/themed";
 import { useThemeContext } from "../ThemeContext";
 import * as ImageManipulator from "expo-image-manipulator";
+
 const ProfileScreen = () => {
   const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({});
-  const [selectedImage, setSelectedImage] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
   const { setIsLoading } = useContext(AppContext);
   const { theme } = useThemeContext();
@@ -33,11 +33,10 @@ const ProfileScreen = () => {
       const email = await AsyncStorage.getItem("email");
       const id = await AsyncStorage.getItem("id");
       const people_id = await AsyncStorage.getItem("people_id");
-      let profile_picture = await AsyncStorage.getItem("profile_picture");
+      const profile_picture = await AsyncStorage.getItem("profile_picture");
       const full_name_vn = await AsyncStorage.getItem("full_name_vn");
 
       if (profile_picture) {
-        profile_picture = `https://api.lehungba.com${profile_picture}`;
         setProfileImage(profile_picture);
       }
 
@@ -55,29 +54,40 @@ const ProfileScreen = () => {
   };
 
   const uploadImage = async (image) => {
-    const compressedImage = await ImageManipulator.manipulateAsync(
-      image.uri,
-      [{ resize: { width: 566, height: 586 } }],
-      { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
-    );
     try {
+      console.log("Image object:", image); // Log the image object for debugging
+
+      if (!image || !image.uri) {
+        throw new Error("Invalid image URI");
+      }
+
+      const compressedImage = await ImageManipulator.manipulateAsync(
+        image.uri,
+        [{ resize: { width: 566, height: 586 } }],
+        { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
+      );
+
       const fileData = {
         uri: compressedImage.uri,
-        type: compressedImage.type,
+        type: "image/jpeg",
         name: `${new Date().getTime()}.jpg`,
       };
+
       const formData = new FormData();
       formData.append("profile_picture", fileData);
+
       const people_id = userInfo.people_id; // Ensure people_id is retrieved from userInfo
-      console.log("Uploading image to:", `people/upload/${people_id}/`);
+      console.log("Uploading image to:", `people/people-detail/${people_id}/`);
       const axiosInstance = AxiosInstance("multipart/form-data"); // Create Axios instance
-      const response = await axiosInstance.post(
-        `people/upload/${people_id}/`,
+      const response = await axiosInstance.put(
+        `people/people-detail/${people_id}/`,
         formData
       );
-      if (response.profile_picture) {
-        await AsyncStorage.setItem("profile_picture", response.profile_picture);
-        setProfileImage(response.profile_picture); // Update the profileImage state with the new URL
+
+      if (response.data.profile_picture) {
+        await AsyncStorage.setItem("profile_picture", response.data.profile_picture);
+        setProfileImage(response.data.profile_picture); // Update the profileImage state with the new URL
+        console.log("New profile picture URL:", response.data.profile_picture); // Log the new profile picture URL
         Alert.alert("Thành công", "Ảnh đã được cập nhật");
       } else {
         Alert.alert("Error", "Upload image failed");
@@ -99,11 +109,17 @@ const ProfileScreen = () => {
       aspect: [1, 1],
       quality: 1,
     });
-    if (!result.canceled) {
-      setSelectedImage(result.assets[0]);
-      setProfileImage(result.assets[0].uri);
 
-      uploadImage(result.assets[0]);
+    console.log("ImagePicker result:", result); // Log the result for debugging
+
+    if (!result.canceled) {
+      const selectedImage = result.assets[0];
+      if (selectedImage && selectedImage.uri) {
+        setProfileImage(selectedImage.uri);
+        uploadImage(selectedImage);
+      } else {
+        console.log("No valid image URI found.");
+      }
     }
   };
 
@@ -149,6 +165,7 @@ const ProfileScreen = () => {
               uri: profileImage ?? APP_CONSTANTS.defaultAvatar,
             }}
             style={styles.profileImage}
+            onError={(error) => console.log("Image load error:", error.nativeEvent.error)} // Log image load errors
           />
           <TouchableOpacity
             onPress={pickImage}

@@ -7,7 +7,6 @@ import {
   TouchableWithoutFeedback,
   View,
   TextInput,
-  Modal,
   TouchableOpacity,
 } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
@@ -27,6 +26,8 @@ const OTPScreen = ({ navigation }) => {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordModalVisible, setPasswordModalVisible] = useState(type === "phone");
+
   const makeHiddenInfo = (string) => {
     if (string.length <= 5) {
       return string;
@@ -55,7 +56,6 @@ const OTPScreen = ({ navigation }) => {
       return;
     }
     setPasswordModalVisible(false);
-    setOtpModalVisible(true);
   };
 
   const handleOtpSubmit = async () => {
@@ -65,28 +65,26 @@ const OTPScreen = ({ navigation }) => {
       setIsLoading(true);
       const link = `https://api.lehungba.com/activate/${type}/`;
     
-      if (type === "phone") {
-        data =  {
-          phone_number: dataReg,
-          activation_code: otp,
-          new_password: newPassword,
-          confirm_password: confirmPassword,
-        }
-      }else{
-        data = {
-          email: dataReg,
-          activation_code: otp,
-        };
-      }
-      const response = await axios.post(link,data);
+      const data = type === "phone" 
+        ? {
+            phone_number: dataReg,
+            activation_code: otp,
+            new_password: newPassword,
+            confirm_password: confirmPassword,
+          }
+        : {
+            email: dataReg,
+            activation_code: otp,
+          };
+
+      const response = await axios.post(link, data);
       Alert.alert("Kích hoạt tài khoản thành công");
-      setOtpModalVisible(false);
       setTimeout(() => {
         navigation.navigate("Login");
       }, 1000);
     } catch (error) {
       Alert.alert("Có lỗi xảy ra", "Vui lòng thử lại");
-      console.log({ ...error });
+      console.log(error.response?.data || error.message);
     } finally {
       setIsLoading(false);
     }
@@ -98,7 +96,7 @@ const OTPScreen = ({ navigation }) => {
         <AppHeader back title="Xác minh OTP" />
       </View>
 
-      {type === "phone" && (
+      {type === "phone" && passwordModalVisible && (
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>Nhập mật khẩu mới</Text>
@@ -126,12 +124,12 @@ const OTPScreen = ({ navigation }) => {
         </View>
       )}
 
-      {type === "email" && (
+      {!passwordModalVisible && (
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>Nhập mã OTP</Text>
             <Text style={styles.infoText}>
-              {`Chúng tôi đã gửi mã xác thực về ${makeHiddenInfo(dataReg)}  `}
+              {`Chúng tôi đã gửi mã xác thực về ${makeHiddenInfo(dataReg)}`}
             </Text>
             <OtpInput
               theme={styles.otpInputTheme}
