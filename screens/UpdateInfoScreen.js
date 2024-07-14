@@ -1,4 +1,4 @@
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Text, View, TextInput, StyleSheet, Alert } from "react-native";
 import UpdateHeader from "../components/UpdateHeader";
 import { AppContext } from "../AppContext";
@@ -6,23 +6,24 @@ import AxiosInstance from "../network/AxiosInstance";
 import React from "react";
 const UpdateProfileScreen = ({ navigation }) => {
   const { type, label, value } = useRoute().params;
-  const { userData,setUserData, setIsLoading } = React.useContext(AppContext);
+  const { userData, setUserData, setIsLoading } = React.useContext(AppContext);
   const [newInfo, setNewInfo] = React.useState(value);
   const updateInfo = async (info, value) => {
     try {
       setIsLoading(true);
-      console.log({[info]:newInfo})
+      console.log({ [info]: newInfo });
       const data = await AxiosInstance().patch("user-detail/update/", {
-       [info]: newInfo,
+        [info]: newInfo,
       });
 
       setUserData({
         ...userData,
-        [info]:newInfo
-      })
+        [info]: newInfo,
+      });
       Alert.alert("Thành công", "Cập nhật thông tin của bạn thành công");
+      navigation.goBack();
     } catch (err) {
-        console.log(err)
+      console.log(err);
       Alert.alert(
         "Lỗi",
         "Có lỗi xảy ra khi cập nhật thông tin của bạn, vui lòng thử lại sau"

@@ -106,7 +106,7 @@ const Login = () => {
       navigation.reset({
         index: 0,
         routes: [{ name: "Profile" }],
-      });
+      }); 
     } catch (error) {
       Alert.alert(
         "Đăng nhập không thành công\n Tài khoản hoặc mật khẩu không đúng"

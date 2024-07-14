@@ -24,6 +24,7 @@ const UpdateProfileScreen = ({ navigation }) => {
         [info]: selectedValue,
       });
       Alert.alert("Thành công", "Cập nhật thông tin của bạn thành công");
+      navigation.goBack();
     } catch (err) {
       Alert.alert(
         "Lỗi",

@@ -8,7 +8,7 @@ import { AppContext } from "../AppContext";
 import { ScrollView } from "react-native-gesture-handler";
 import { useThemeContext } from "../ThemeContext";
 
-const DetailProfileScreen = () => {
+const DetailProfileScreen = ({navigation}) => {
   const {theme}=useThemeContext();
   const [userData, setUserData] = useState({}); //[{},{}
   
@@ -47,6 +47,12 @@ const DetailProfileScreen = () => {
   //   "postal_code": null,
   //   "state_or_province": null
   // }
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      getUserInfo();
+    });
+    return unsubscribe;
+  }, [navigation]);
   const getAddressString = (address) => {
     if (address.address_line) {
       return `${address.address_line}, ${address.district_or_county}, ${address.city}, ${address.state_or_province}, ${address.country}`;
