@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Menu } from "react-native-paper";
@@ -9,28 +9,21 @@ import { RELIGION_CHOICES } from "../friend/data";
 import { Image } from "react-native";
 import { APP_CONSTANTS } from "../../helper/constant";
 import AppFormDateInput from "../../components/FormDateInput";
+import { AppContext } from "../../AppContext";
 
-const PersonInfoForm = ({ title, person, setPerson, isAlive, setIsAlive }) => {
+const PersonInfoForm = ({ title, person, setPerson }) => {
   const { theme } = useThemeContext();
   const [religionVisible, setReligionVisible] = useState(false);
   const [saintVisible, setSaintVisible] = useState(false);
-  const [religion, setReligion] = useState(person.religion || "");
-  const [saint, setSaint] = useState(person.saint || "");
-
-  useEffect(() => {
-    setReligion(person.religion || "");
-    setSaint(person.saint || "");
-  }, [person]);
 
   const getReigion = () => {
-    if (religion === "") return "Tôn giáo *";
-    if (religion === "catholic") return "Công giáo";
-    if (religion === "buddhist") return "Phật giáo";
-    if (religion === "protestant") return "Tin Lành";
-    if (religion === "other") return "Đạo khác";
-    return religion;
+    if (person.religion === "") return "Tôn giáo *";
+    if (person.religion === "catholic") return "Công giáo";
+    if (person.religion === "buddhist") return "Phật giáo";
+    if (person.religion === "protestant") return "Tin Lành";
+    if (person.religion === "other") return "Đạo khác";
   };
-
+  const { dropdownData } = useContext(AppContext);
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
@@ -62,11 +55,11 @@ const PersonInfoForm = ({ title, person, setPerson, isAlive, setIsAlive }) => {
         </TouchableOpacity>
         <ItemToggle
           title=""
-          onPress={() => setIsAlive(!isAlive)}
+          onPress={() => setPerson({ ...person, is_alive: !person.is_alive })}
           icon={"pulse"}
           color={theme.colors.text}
           colorChecked="#ff1694"
-          isChecked={isAlive}
+          isChecked={person.is_alive}
           textChecked="Còn sống"
           textUnchecked="Đã mất"
         />
@@ -86,12 +79,11 @@ const PersonInfoForm = ({ title, person, setPerson, isAlive, setIsAlive }) => {
             </TouchableOpacity>
           }
         >
-          {RELIGION_CHOICES.map((item, index) => (
+          {dropdownData?.religions_people?.map((item, index) => (
             <Menu.Item
               key={index}
               title={item.label}
               onPress={() => {
-                setReligion(item.value);
                 setPerson({ ...person, religion: item.value });
                 setReligionVisible(false);
               }}
@@ -106,23 +98,22 @@ const PersonInfoForm = ({ title, person, setPerson, isAlive, setIsAlive }) => {
               onPress={() => setSaintVisible(true)}
               style={styles.dropdown}
             >
-              <Text>{saint || "Tên Thánh"}</Text>
+              <Text>{person?.saint || "Tên Thánh"}</Text>
               <Icon name="caret-down" size={20} />
             </TouchableOpacity>
           }
         >
-          <Menu.Item
-            onPress={() => setSaint("Tên Thánh 1")}
-            title="Tên Thánh 1"
-          />
-          <Menu.Item
-            onPress={() => setSaint("Tên Thánh 2")}
-            title="Tên Thánh 2"
-          />
-          <Menu.Item
-            onPress={() => setSaint("Tên Thánh 3")}
-            title="Tên Thánh 3"
-          />
+          {dropdownData?.saints?.map((item, index) => (
+            <Menu.Item
+              key={index}
+              title={item.name}
+              onPress={() => {
+                setPerson({ ...person, saint: item.name });
+                setSaintVisible(false);
+              }}
+            />
+          ))}
+          <View style={{ height: 200 }} />
         </Menu>
       </View>
 
@@ -138,7 +129,10 @@ const PersonInfoForm = ({ title, person, setPerson, isAlive, setIsAlive }) => {
         }}
       >
         <AppFormDateInput
-          onSaveText={(value) => setPerson({ ...person, birth_date: value })}
+          onSaveText={(value) => {
+            console.log(value);
+            setPerson({ ...person, birth_date: value })
+          }}
           title={"Ngày sinh"}
           value={person.birth_date || ""}
         />
@@ -170,7 +164,7 @@ const PersonInfoForm = ({ title, person, setPerson, isAlive, setIsAlive }) => {
         value={person.address || ""}
       />
 
-      {!isAlive && (
+      {!person?.isAlive && (
         <>
           <AppFormDateInput
             onSaveText={(value) => setPerson({ ...person, death_date: value })}
@@ -179,12 +173,16 @@ const PersonInfoForm = ({ title, person, setPerson, isAlive, setIsAlive }) => {
           />
           <AppFormInput
             title="Lý do"
-            onTextChange={(value) => setPerson({ ...person, death_reason: value })}
+            onTextChange={(value) =>
+              setPerson({ ...person, death_reason: value })
+            }
             value={person.death_reason || ""}
           />
           <AppFormInput
             title="Địa chỉ mất"
-            onTextChange={(value) => setPerson({ ...person, death_place: value })}
+            onTextChange={(value) =>
+              setPerson({ ...person, death_place: value })
+            }
             value={person.death_place || ""}
           />
         </>

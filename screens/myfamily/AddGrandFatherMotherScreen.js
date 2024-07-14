@@ -5,7 +5,7 @@ import {
 } from "react-native";
 import { Provider } from "react-native-paper";
 import AppHeader from "../../components/AppHeader";
-import PersonInfoForm from "../components/FatherMotherForm";
+import PersonInfoForm from "../components/PersonInfoForm";
 import RegisterMemberForm from "./RegisForm";
 
 const AddGrandFatherMotherScreen = () => {

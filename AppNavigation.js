@@ -108,12 +108,6 @@ const AppNavigation = () => {
         <AppStack.Screen name="AddFatherMotherScreen" component={AddFatherMotherScreen} />     
       </AppStack.Navigator>
       <LoadingDialog open={isLoading} />
-      <View
-        style={{
-          height: 20,
-          backgroundColor: theme.mode === "light" ? "#ffffff" : "#808080",
-        }}
-      />
     </SafeAreaProvider>
   );
 };

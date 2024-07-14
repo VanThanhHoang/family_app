@@ -10,25 +10,15 @@ import {
 import { Checkbox, Button, Menu, Provider } from "react-native-paper";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
-import ChildForm from "../components/ChildForm";
 import AppHeader from "../../components/AppHeader";
 import RegisterMemberForm from "./RegisForm";
 
 const AddChildScreen = () => {
-  const navigation = useNavigation();
-  const [childAlive, setChildAlive] = useState(true);
-  const [gender, setGender] = useState("male");
-  const [religionVisible, setReligionVisible] = useState(false);
-  const [religion, setReligion] = useState("");
-  const [saintVisible, setSaintVisible] = useState(false);
-  const [saint, setSaint] = useState("");
-  const [registerMember, setRegisterMember] = useState(false);
-
   return (
     <Provider>
       <AppHeader back title={"Thêm thông tin về con"} />
       <ScrollView contentContainerStyle={styles.container}>
-        <ChildForm title={"Con"} />
+        <Persn title={"Con"} />
         <RegisterMemberForm />
       </ScrollView>
     </Provider>

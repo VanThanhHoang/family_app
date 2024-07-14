@@ -6,6 +6,11 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import React, { useEffect } from "react";
 
 const AppFormDateInput = ({ title, onSaveText, value }) => {
+  //2024-07-14T09:17:57.633Z to yyyy-mm-dd
+  const formatTime = (time) => {
+    const date = new Date(time);
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+  }
   const { theme } = useThemeContext();
   const styles = useStyle(theme);
   const [showModal, setShowModal] = React.useState(false);
@@ -15,7 +20,7 @@ const AppFormDateInput = ({ title, onSaveText, value }) => {
   };
 
   const handleConfirm = (date) => {
-    onSaveText(date);
+    onSaveText(formatTime(date));
     hideDatePicker();
   };
   const hideDatePicker = () => {

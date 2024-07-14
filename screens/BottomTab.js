@@ -8,13 +8,14 @@ import AuthNavigation from "./AuthStack";
 import React from "react";
 import { AppContext } from "../AppContext";
 import { useThemeContext } from '../ThemeContext';
+import AddFatherMotherScreen from "./myfamily/AddFatherMotherScreen";
 
 const Tab = createBottomTabNavigator();
 
 const screens = [
   {
     name: "Gia đình",
-    component:FamilyScreen,
+    component:AddFatherMotherScreen,
     icon: require("../assets/family.png"),
   },
   {

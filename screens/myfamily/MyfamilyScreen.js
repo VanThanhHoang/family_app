@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,24 +6,27 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
-  TextInput
+  TextInput,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AxiosInstance from "../../network/AxiosInstance";
 import AppHeader from "../../components/AppHeader";
-import Modal from 'react-native-modal';
-import axios from 'axios';
+import Modal from "react-native-modal";
+import axios from "axios";
+import { AppContext } from "../../AppContext";
 
 const MyfamilyScreen = () => {
   const navigation = useNavigation();
+  const { isLoading, setIsLoading } = useContext(AppContext);
   const [familyMembers, setFamilyMembers] = useState([]);
   const [parentsEmpty, setParentsEmpty] = useState(false);
   const [userGender, setUserGender] = useState(null);
   const [userMaritalStatus, setUserMaritalStatus] = useState(false);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showNoResults, setShowNoResults] = useState(false);
 
@@ -37,9 +40,11 @@ const MyfamilyScreen = () => {
     setShowNoResults(false);
     if (query.length >= 3) {
       try {
-        const response = await axios.get(`https://api.lehungba.com/api/people/search-spouse/?search=${query}`);
-        setSearchResults(response.data.results.data);
-        if (response.data.results.data.length === 0) {
+        const response = await AxiosInstance().get(
+          `people/search-spouse/?search=${query}`
+        );
+        setSearchResults(response.results.data);
+        if (response.results.data.length === 0) {
           setTimeout(() => {
             setShowNoResults(true);
           }, 1000);
@@ -56,85 +61,107 @@ const MyfamilyScreen = () => {
     const father = parent.husband;
     const mother = parent.wife;
     const marriageDate = parent.marriage_date;
-    navigation.navigate('AddFatherMotherScreen', { father, mother, marriageDate });
+    navigation.navigate("AddFatherMotherScreen", {
+      father,
+      mother,
+      marriageDate,
+    });
     toggleModal();
   };
 
   const handleFatherMotherPress = () => {
     toggleModal();
   };
-
-  useEffect(() => {
-    const fetchFamilyData = async () => {
-      try {
-        const token = await AsyncStorage.getItem("access");
-        const peopleId = await AsyncStorage.getItem("people_id");
-
-        if (token && peopleId) {
-          const response = await AxiosInstance().get('user/myfamily/');
-          
-          setUserGender(response.gender);
-          setUserMaritalStatus(response.marital_status);
-
-          const parents = response.parent_relationships
-            .map((rel) => {
+  const fetchFamilyData = async () => {
+    try {
+      const token = await AsyncStorage.getItem("access");
+      const peopleId = await AsyncStorage.getItem("people_id");
+      if (token && peopleId) {
+        const response = await AxiosInstance().get("user/myfamily/");
+        setUserGender(response.gender);
+        setUserMaritalStatus(response.marital_status);
+        const parents = response.parent_relationships
+          .map((rel) => {
+            return {
+              ...rel.father,
+              relation: "Ba",
+            };
+          })
+          .concat(
+            response.parent_relationships.map((rel) => {
               return {
-                ...rel.father,
-                relation: "Ba",
+                ...rel.mother,
+                relation: "Mẹ",
               };
             })
-            .concat(
-              response.parent_relationships.map((rel) => {
-                return {
-                  ...rel.mother,
-                  relation: "Mẹ",
-                };
-              })
-            );
+          );
 
-          const siblings = [
-            ...(response.siblings.older_brothers || []).map((sibling) => ({
-              ...sibling,
-              relation: "Anh trai",
-            })),
-            ...(response.siblings.younger_brothers || []).map(
-              (sibling) => ({ ...sibling, relation: "Em trai" })
-            ),
-            ...(response.siblings.older_sisters || []).map((sibling) => ({
-              ...sibling, relation: "Chị gái",
-            })),
-            ...(response.siblings.younger_sisters || []).map(
-              (sibling) => ({ ...sibling, relation: "Em gái" })
-            ),
-          ];
+        const siblings = [
+          ...(response.siblings.older_brothers || []).map((sibling) => ({
+            ...sibling,
+            relation: "Anh trai",
+          })),
+          ...(response.siblings.younger_brothers || []).map((sibling) => ({
+            ...sibling,
+            relation: "Em trai",
+          })),
+          ...(response.siblings.older_sisters || []).map((sibling) => ({
+            ...sibling,
+            relation: "Chị gái",
+          })),
+          ...(response.siblings.younger_sisters || []).map((sibling) => ({
+            ...sibling,
+            relation: "Em gái",
+          })),
+        ];
+        const familyMembers = [...parents, ...siblings];
+        setFamilyMembers(familyMembers);
 
-          const familyMembers = [...parents, ...siblings];
-
-          setFamilyMembers(familyMembers);
-
-          if (parents.length === 0) {
-            setParentsEmpty(true);
-          } else {
-            setParentsEmpty(false);
-          }
+        if (parents.length === 0) {
+          setParentsEmpty(true);
+        } else {
+          setParentsEmpty(false);
         }
-      } catch (error) {
-        console.error("Error fetching family data:", error);
-        console.error(
-          "Error details:",
-          error.response ? error.response.data : error.message
-        );
       }
-    };
+    } catch (error) {
+      console.error("Error fetching family data:", error);
+      console.error(
+        "Error details:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
+  useEffect(() => {
+    
 
     fetchFamilyData();
   }, []);
+  const addParent = async (data) => {
+    delete data.husband.profile_picture;
+    delete data.wife.profile_picture;
+    delete data.husband.status;
+    delete data.wife.status;
+    console.log(data);
+    try {
+      setIsLoading(true);
+      const response = await AxiosInstance().post("people/motherfather/", data);
+      if (response) {
+        Alert.alert("Thành công", "Thông tin đã được lưu");
+      }
+      fetchFamilyData()
+    } catch (error) {
+      console.error({...error});
+    } finally {
+      setIsLoading(false);
 
+    }
+  };
   const renderFamilyMember = ({ item }) => (
     <TouchableOpacity
       style={styles.memberContainer}
-      onPress={() =>
-        navigation.navigate("DetailScreen", { id: item.people_id })
+      onPress={
+        () => {}
+        // navigation.navigate("DetailScreen", { id: item.people_id })
       }
     >
       <Image
@@ -156,13 +183,18 @@ const MyfamilyScreen = () => {
   );
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.resultItem} onPress={() => handleSelectParent(item)}>
+    <TouchableOpacity
+      style={styles.resultItem}
+      onPress={() => {
+        handleSelectParent(item)
+      }}
+    >
       <View style={styles.resultContent}>
         <Image
           source={
             item.husband.profile_picture
               ? { uri: item.husband.profile_picture }
-              : require('../../assets/father.png')
+              : require("../../assets/father.png")
           }
           style={styles.avatar}
         />
@@ -170,7 +202,7 @@ const MyfamilyScreen = () => {
           source={
             item.wife.profile_picture
               ? { uri: item.wife.profile_picture }
-              : require('../../assets/mother.png')
+              : require("../../assets/mother.png")
           }
           style={styles.avatar}
         />
@@ -184,10 +216,7 @@ const MyfamilyScreen = () => {
 
   return (
     <View style={styles.container}>
-      <AppHeader
-        back
-        title="Thành viên gia đình"
-      />
+      <AppHeader back title="Thành viên gia đình" />
       {parentsEmpty && (
         <TouchableOpacity
           style={styles.addButton}
@@ -232,16 +261,22 @@ const MyfamilyScreen = () => {
             style={styles.input}
             placeholder="Enter name..."
             value={searchQuery}
-            onChangeText={handleSearch}
+            onChangeText={(text) => {
+              handleSearch(text);
+            }}
           />
-          {searchQuery.length >= 3 && searchResults.length === 0 && showNoResults ? (
+          {searchQuery.length >= 3 &&
+          searchResults.length === 0 &&
+          showNoResults ? (
             <View style={styles.noResultsContainer}>
-              <Text style={styles.noResultsText}>Bạn chưa có ba mẹ</Text>
+              <Text style={styles.noResultsText}>
+                Không có ba mẹ phù hợp với từ khoá của bạn
+              </Text>
               <TouchableOpacity
                 style={styles.addButton}
                 onPress={() => {
                   toggleModal();
-                  navigation.navigate('AddFatherMotherScreen');
+                  navigation.navigate("AddFatherMotherScreen");
                 }}
               >
                 <Text style={styles.addButtonText}>TẠO MỚI</Text>
@@ -319,32 +354,32 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     color: "white",
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 18,
     marginLeft: 10,
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     padding: 10,
     borderRadius: 5,
-    width: '80%',
+    width: "80%",
     marginBottom: 10,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: "#f8f8f8",
   },
   noResultsContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginVertical: 20,
   },
   noResultsText: {
@@ -352,16 +387,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   resultsList: {
-    width: '100%',
+    width: "100%",
   },
   resultItem: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: "#ccc",
   },
   resultContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   avatar: {
     width: 60,
@@ -369,21 +404,21 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   nameContainer: {
-    flexDirection: 'column',
+    flexDirection: "column",
     marginLeft: 10,
   },
   resultText: {
     fontSize: 18,
   },
   closeButton: {
-    backgroundColor: '#f44336',
+    backgroundColor: "#f44336",
     paddingVertical: 15,
     paddingHorizontal: 80,
     borderRadius: 5,
     marginTop: 10,
   },
   closeButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
   },
 });

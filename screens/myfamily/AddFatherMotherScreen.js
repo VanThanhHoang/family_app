@@ -1,71 +1,43 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+import React, { useState } from "react";
+import { View,  StyleSheet, ScrollView } from "react-native";
 import { Provider } from "react-native-paper";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import PersonInfoForm from "../components/FatherMotherForm";
+import PersonInfoForm from "../components/PersonInfoForm";
 import RegisterMemberForm from "./RegisForm";
 import AppHeader from "../../components/AppHeader";
-
+import { defaultPeople } from "./Data";
+import AppFormDateInput from "../../components/FormDateInput";
 const AddFatherMotherScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const [fatherAlive, setFatherAlive] = useState(true);
-  const [motherAlive, setMotherAlive] = useState(true);
-
-  const [father, setFather] = useState({});
-  const [mother, setMother] = useState({});
-  const [marriageDate, setMarriageDate] = useState("");
-
-  useEffect(() => {
-    if (route.params) {
-      const { father, mother, marriageDate } = route.params;
-      if (father) {
-        setFather(father);
-        setFatherAlive(father.is_alive);
-      }
-      if (mother) {
-        setMother(mother);
-        setMotherAlive(mother.is_alive);
-      }
-      if (marriageDate) {
-        setMarriageDate(marriageDate);
-      }
-    }
-  }, [route.params]);
-
+  const { father, mother, marriageDate } = route?.params ?? {
+    father: defaultPeople,
+    mother: defaultPeople,
+    marriageDate: "",
+  };
+  const [fatherData, setFather] = useState(father);
+  const [motherData, setMother] = useState(mother);
+  const [marriageDateData, setMarriageDate] = useState(marriageDate);
   return (
     <Provider>
       <AppHeader back title={"Thêm thông tin về cha mẹ"} />
       <ScrollView contentContainerStyle={styles.container}>
         <PersonInfoForm
           title={"Thông tin về ba"}
-          person={father}
+          person={fatherData}
           setPerson={setFather}
-          isAlive={fatherAlive}
-          setIsAlive={setFatherAlive}
         />
         <View style={styles.marriageDateSection}>
-          <Text style={styles.sectionTitle}>Thông tin ngày cưới</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Nhập ngày cưới"
-            value={marriageDate}
-            onChangeText={setMarriageDate}
+          <AppFormDateInput
+            title={"Ngày cưới"}
+            value={marriageDateData}
+            onSaveText={setMarriageDate}
           />
         </View>
         <PersonInfoForm
-          title={"Thông tin về mẹ"}
-          person={mother}
           setPerson={setMother}
-          isAlive={motherAlive}
-          setIsAlive={setMotherAlive}
+          title={"Thông tin về mẹ"}
+          person={motherData}
         />
         <RegisterMemberForm />
       </ScrollView>

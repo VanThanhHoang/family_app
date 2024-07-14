@@ -6,6 +6,15 @@ const AppProvier = ({ children }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [birhdayData, setBirhdayData] = useState([]);
   const [userData, setUserData] = useState({}); //[{},{}
+  const [dropdownData, setDropdownData] = useState([]);
+  const getDropdownData = async () => {
+    try {
+      const data = await AxiosInstance().get("dropdown/");
+      data && setDropdownData(data);
+    } catch (err) {
+      console.log({ ...err });
+    }
+  };
   const getFamilyData = async () => {
     try {
       const data = await AxiosInstance().get("birthdays/");
@@ -17,10 +26,11 @@ const AppProvier = ({ children }) => {
   };
   useEffect(() => {
     getFamilyData();
+    getDropdownData();
   }, []);
   return (
     <AppContext.Provider
-      value={{ isLoading, setIsLoading, birhdayData,userData, setUserData}}
+      value={{ isLoading, setIsLoading, birhdayData,userData, setUserData, dropdownData }}
     >
       {children}
     </AppContext.Provider>
