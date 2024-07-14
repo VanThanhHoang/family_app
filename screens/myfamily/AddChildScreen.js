@@ -15,17 +15,17 @@ import RegisterMemberForm from "./RegisForm";
 import PersonInfoForm from "../components/PersonInfoForm";
 import { defaultPeople } from "./Data";
 
-
 const AddChildScreen = () => {
-  const [childInfo, setChildInfo] = useState(defaultPeople)
+  const [childInfo, setChildInfo] = useState(defaultPeople);
   return (
     <Provider>
       <AppHeader back title={"Thêm thông tin về con"} />
       <ScrollView contentContainerStyle={styles.container}>
-        <PersonInfoForm 
-        person={childInfo}
-setPerson={setChildInfo}
-title={"Con"} />
+        <PersonInfoForm
+          person={childInfo}
+          setPerson={setChildInfo}
+          title={"Con"}
+        />
         <RegisterMemberForm />
       </ScrollView>
     </Provider>

@@ -35,7 +35,7 @@ const ProfileScreen = () => {
       const people_id = await AsyncStorage.getItem("people_id");
       const profile_picture = await AsyncStorage.getItem("profile_picture");
       const full_name_vn = await AsyncStorage.getItem("full_name_vn");
-
+      console.log("Profile picture:--", profile_picture);
       if (profile_picture) {
         setProfileImage(profile_picture);
       }
@@ -55,8 +55,6 @@ const ProfileScreen = () => {
 
   const uploadImage = async (image) => {
     try {
-      console.log("Image object:", image); // Log the image object for debugging
-
       if (!image || !image.uri) {
         throw new Error("Invalid image URI");
       }
@@ -75,9 +73,7 @@ const ProfileScreen = () => {
 
       const formData = new FormData();
       formData.append("profile_picture", fileData);
-
       const people_id = userInfo.people_id; // Ensure people_id is retrieved from userInfo
-      console.log("Uploading image to:", `people/people-detail/${people_id}/`);
       const axiosInstance = AxiosInstance("multipart/form-data"); // Create Axios instance
       const response = await axiosInstance.put(
         `people/people-detail/${people_id}/`,
@@ -85,7 +81,10 @@ const ProfileScreen = () => {
       );
 
       if (response.data.profile_picture) {
-        await AsyncStorage.setItem("profile_picture", response.data.profile_picture);
+        await AsyncStorage.setItem(
+          "profile_picture",
+          response.data.profile_picture
+        );
         setProfileImage(response.data.profile_picture); // Update the profileImage state with the new URL
         console.log("New profile picture URL:", response.data.profile_picture); // Log the new profile picture URL
         Alert.alert("Thành công", "Ảnh đã được cập nhật");
@@ -162,10 +161,12 @@ const ProfileScreen = () => {
         <View style={styles.imageWrapper}>
           <Image
             source={{
-              uri: profileImage ?? APP_CONSTANTS.defaultAvatar,
+              uri: profileImage ? profileImage : APP_CONSTANTS.defaultAvatar,
             }}
             style={styles.profileImage}
-            onError={(error) => console.log("Image load error:", error.nativeEvent.error)} // Log image load errors
+            onError={(error) =>
+              console.log("Image load error:", error.nativeEvent.error)
+            } // Log image load errors
           />
           <TouchableOpacity
             onPress={pickImage}

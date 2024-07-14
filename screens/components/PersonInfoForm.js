@@ -14,7 +14,6 @@ const PersonInfoForm = ({ title, person, setPerson }) => {
   const { theme } = useThemeContext();
   const [religionVisible, setReligionVisible] = useState(false);
   const [saintVisible, setSaintVisible] = useState(false);
-
   const getReigion = () => {
     if (person.religion === "") return "Tôn giáo *";
     if (person.religion === "catholic") return "Công giáo";
@@ -119,7 +118,7 @@ const PersonInfoForm = ({ title, person, setPerson }) => {
               key={index}
               title={item.name}
               onPress={() => {
-                setPerson({ ...person, saint: item.name });
+                setPerson({ ...person, saint: index+1 });
                 setSaintVisible(false);
               }}
             />

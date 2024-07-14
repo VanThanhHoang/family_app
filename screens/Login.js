@@ -102,11 +102,7 @@ const Login = () => {
       await AsyncStorage.setItem("email", response.email);
       await AsyncStorage.setItem("id", response.id.toString());
       await AsyncStorage.setItem("people_id", response.people_id.toString());
-      if (response.profile_picture) {
-        await AsyncStorage.setItem("profile_picture", response.profile_picture);
-      }else{
-        await AsyncStorage.setItem("profile_picture", "");
-      }
+      await AsyncStorage.setItem("profile_picture", response?.profile_picture);
       navigation.reset({
         index: 0,
         routes: [{ name: "Profile" }],

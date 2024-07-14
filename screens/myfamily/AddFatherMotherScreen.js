@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View,  StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { Provider } from "react-native-paper";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import PersonInfoForm from "../components/PersonInfoForm";
@@ -18,6 +18,16 @@ const AddFatherMotherScreen = () => {
   const [fatherData, setFather] = useState(father);
   const [motherData, setMother] = useState(mother);
   const [marriageDateData, setMarriageDate] = useState(marriageDate);
+  const defaultEducation = {
+    level: "unknow",
+  };
+    fatherData.education_level = defaultEducation;
+    motherData.education_level = defaultEducation;
+  console.log({
+    husband: fatherData,
+    wife: motherData,
+    marriageDate: marriageDateData,
+  });
   return (
     <Provider>
       <AppHeader back title={"Thêm thông tin về cha mẹ"} />
