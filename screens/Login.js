@@ -21,15 +21,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { CountryPicker } from "react-native-country-codes-picker";
-
+import {APP_CONSTANTS} from "../helper/constant"; 
 const Login = () => {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  const [isUsePhone, setIsUsePhone] = useState(true);
+  const [isUsePhone, setIsUsePhone] = useState(false);
   const [countryCode, setCountryCode] = useState("");
   const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("lesa77040@gmail.com");
-  const [password, setPassword] = useState("Dequa@123!");
+  const [email, setEmail] = useState("hoangvanthanhdev@gmail.com");
+  const [password, setPassword] = useState("123123@a");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [ip, setIp] = useState("");
@@ -102,7 +102,7 @@ const Login = () => {
       await AsyncStorage.setItem("email", response.email);
       await AsyncStorage.setItem("id", response.id.toString());
       await AsyncStorage.setItem("people_id", response.people_id.toString());
-      await AsyncStorage.setItem("profile_picture", response?.profile_picture);
+      await AsyncStorage.setItem("profile_picture", response?.profile_picture || APP_CONSTANTS.defaultAvatar);
       navigation.reset({
         index: 0,
         routes: [{ name: "Profile" }],

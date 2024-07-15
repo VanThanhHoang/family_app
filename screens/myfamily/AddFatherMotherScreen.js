@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import React, { useContext, useState } from "react";
+import { View, StyleSheet, ScrollView, Alert } from "react-native";
 import { Provider } from "react-native-paper";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import PersonInfoForm from "../components/PersonInfoForm";
@@ -7,6 +7,8 @@ import RegisterMemberForm from "./RegisForm";
 import AppHeader from "../../components/AppHeader";
 import { defaultPeople } from "./Data";
 import AppFormDateInput from "../../components/FormDateInput";
+import { AppContext } from "../../AppContext";
+import AxiosInstance from "../../network/AxiosInstance";
 const AddFatherMotherScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -21,16 +23,74 @@ const AddFatherMotherScreen = () => {
   const defaultEducation = {
     level: "unknow",
   };
-    fatherData.education_level = defaultEducation;
-    motherData.education_level = defaultEducation;
-  console.log({
-    husband: fatherData,
-    wife: motherData,
-    marriageDate: marriageDateData,
-  });
+  fatherData.education_level = defaultEducation;
+  motherData.education_level = defaultEducation;
+  const validateData = () => {
+    const errors = [];
+
+    if (!fatherData.full_name_vn.trim()) {
+      errors.push("Tên của cha không được để trống");
+    }
+
+    if (!fatherData.birth_date) {
+      errors.push("Ngày sinh của cha không được để trống");
+    }
+
+    if (!motherData.full_name_vn.trim()) {
+      errors.push("Tên của mẹ không được để trống");
+    }
+
+    if (!motherData.birth_date) {
+      errors.push("Ngày sinh của mẹ không được để trống");
+    }
+
+    if (!marriageDateData) {
+      errors.push("Ngày cưới không được để trống");
+    }
+
+    return errors;
+  };
+  const { setIsLoading } = useContext(AppContext);
+  const handleSubmit = async () => {
+    const validationErrors = validateData();
+
+    if (validationErrors.length > 0) {
+      Alert.alert(
+        "Lỗi",
+        validationErrors.join("\n"),
+        [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+        { cancelable: false }
+      );
+    } else {
+      setIsLoading(true);
+      try {
+        const data = {
+          husband: fatherData,
+          wife: motherData,
+          marriage_date: marriageDateData,
+        };
+        const rs = await AxiosInstance().post("people/motherfather/", data);
+        Alert.alert("Thành công", "Thêm thông tin thành công");
+        navigation.goBack();
+        console.log(rs);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setIsLoading(false);
+      }
+      console.log("Form is valid, proceed with submission");
+    }
+  };
   return (
     <Provider>
-      <AppHeader back title={"Thêm thông tin về cha mẹ"} />
+      <AppHeader
+        right={{
+          icon: "save",
+          onPress: handleSubmit,
+        }}
+        back
+        title={"Thêm thông tin về cha mẹ"}
+      />
       <ScrollView contentContainerStyle={styles.container}>
         <PersonInfoForm
           title={"Thông tin về ba"}

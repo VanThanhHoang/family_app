@@ -78,7 +78,7 @@ const MyfamilyScreen = () => {
       const peopleId = await AsyncStorage.getItem("people_id");
       if (token && peopleId) {
         const response = await AxiosInstance().get("user/myfamily/");
-      
+
         setUserGender(response.gender);
         setUserMaritalStatus(response.marital_status);
         const parents = response.parent_relationships
@@ -132,10 +132,12 @@ const MyfamilyScreen = () => {
       );
     }
   };
-  useEffect(() => {
-    
 
-    fetchFamilyData();
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchFamilyData();
+    });
+    return unsubscribe;
   }, []);
   const addParent = async (data) => {
     delete data.husband.profile_picture;
@@ -149,12 +151,11 @@ const MyfamilyScreen = () => {
       if (response) {
         Alert.alert("Thành công", "Thông tin đã được lưu");
       }
-      fetchFamilyData()
+      fetchFamilyData();
     } catch (error) {
-      console.error({...error});
+      console.error({ ...error });
     } finally {
       setIsLoading(false);
-
     }
   };
   const renderFamilyMember = ({ item }) => (
@@ -187,7 +188,7 @@ const MyfamilyScreen = () => {
     <TouchableOpacity
       style={styles.resultItem}
       onPress={() => {
-        handleSelectParent(item)
+        handleSelectParent(item);
       }}
     >
       <View style={styles.resultContent}>
