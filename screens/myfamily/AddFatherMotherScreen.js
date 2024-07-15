@@ -65,8 +65,14 @@ const AddFatherMotherScreen = () => {
       setIsLoading(true);
       try {
         const data = {
-          husband: fatherData,
-          wife: motherData,
+          husband: {
+            ...fatherData,
+            gender: true,
+          },
+          wife: {
+            ...motherData,
+          
+          },
           marriage_date: marriageDateData,
         };
         const rs = await AxiosInstance().post("people/motherfather/", data);
