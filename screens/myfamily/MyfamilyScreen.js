@@ -15,7 +15,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import AxiosInstance from "../../network/AxiosInstance";
 import AppHeader from "../../components/AppHeader";
 import Modal from "react-native-modal";
-import axios from "axios";
 import { AppContext } from "../../AppContext";
 
 const MyfamilyScreen = () => {
@@ -72,56 +71,57 @@ const MyfamilyScreen = () => {
   const handleFatherMotherPress = () => {
     toggleModal();
   };
+
   const fetchFamilyData = async () => {
     try {
       const token = await AsyncStorage.getItem("access");
       const peopleId = await AsyncStorage.getItem("people_id");
       if (token && peopleId) {
         const response = await AxiosInstance().get("user/myfamily/");
+        if (response) {
+          setUserGender(response.gender || null);
+          setUserMaritalStatus(response.marital_status || false);
 
-        setUserGender(response.gender);
-        setUserMaritalStatus(response.marital_status);
-        const parents = response.parent_relationships
-          .map((rel) => {
-            return {
-              ...rel.father,
-              relation: "Ba",
-            };
-          })
-          .concat(
-            response.parent_relationships.map((rel) => {
-              return {
-                ...rel.mother,
-                relation: "Mẹ",
-              };
+          const parentRelationships = response.parent_relationships || [];
+          const siblings = response.siblings || {};
+
+          const parents = parentRelationships
+            .map((rel) => {
+              return rel.father ? { ...rel.father, relation: "Ba" } : null;
             })
-          );
+            .concat(
+              parentRelationships.map((rel) => {
+                return rel.mother ? { ...rel.mother, relation: "Mẹ" } : null;
+              })
+            )
+            .filter(Boolean);
 
-        const siblings = [
-          ...(response.siblings.older_brothers || []).map((sibling) => ({
-            ...sibling,
-            relation: "Anh trai",
-          })),
-          ...(response.siblings.younger_brothers || []).map((sibling) => ({
-            ...sibling,
-            relation: "Em trai",
-          })),
-          ...(response.siblings.older_sisters || []).map((sibling) => ({
-            ...sibling,
-            relation: "Chị gái",
-          })),
-          ...(response.siblings.younger_sisters || []).map((sibling) => ({
-            ...sibling,
-            relation: "Em gái",
-          })),
-        ];
-        const familyMembers = [...parents, ...siblings];
-        setFamilyMembers(familyMembers);
+          const siblingsData = [
+            ...(siblings.older_brothers || []).map((sibling) => ({
+              ...sibling,
+              relation: "Anh trai",
+            })),
+            ...(siblings.younger_brothers || []).map((sibling) => ({
+              ...sibling,
+              relation: "Em trai",
+            })),
+            ...(siblings.older_sisters || []).map((sibling) => ({
+              ...sibling,
+              relation: "Chị gái",
+            })),
+            ...(siblings.younger_sisters || []).map((sibling) => ({
+              ...sibling,
+              relation: "Em gái",
+            })),
+          ];
 
-        if (parents.length === 0) {
-          setParentsEmpty(true);
-        } else {
-          setParentsEmpty(false);
+          setFamilyMembers([...parents, ...siblingsData]);
+
+          if (parents.length === 0) {
+            setParentsEmpty(true);
+          } else {
+            setParentsEmpty(false);
+          }
         }
       }
     } catch (error) {
@@ -134,11 +134,9 @@ const MyfamilyScreen = () => {
   };
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      fetchFamilyData();
-    });
-    return unsubscribe;
+    fetchFamilyData();
   }, []);
+
   const addParent = async (data) => {
     delete data.husband.profile_picture;
     delete data.wife.profile_picture;
@@ -158,6 +156,7 @@ const MyfamilyScreen = () => {
       setIsLoading(false);
     }
   };
+
   const renderFamilyMember = ({ item }) => (
     <TouchableOpacity
       style={styles.memberContainer}
