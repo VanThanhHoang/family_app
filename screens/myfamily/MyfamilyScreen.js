@@ -10,14 +10,13 @@ import {
   Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AxiosInstance from "../../network/AxiosInstance";
 import AppHeader from "../../components/AppHeader";
 import Modal from "react-native-modal";
-import axios from "axios";
 import { AppContext } from "../../AppContext";
-
+import Icon from "react-native-vector-icons/MaterialIcons"; // Sử dụng thư viện icon
+import ConfirmDelete from "../../components/ComfirmDelete";
 const MyfamilyScreen = () => {
   const navigation = useNavigation();
   const { isLoading, setIsLoading } = useContext(AppContext);
@@ -29,7 +28,7 @@ const MyfamilyScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showNoResults, setShowNoResults] = useState(false);
-
+  
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
     setShowNoResults(false);
@@ -164,8 +163,10 @@ const MyfamilyScreen = () => {
       setIsLoading(false);
     }
   };
-  const renderFamilyMember = ({ item }) => (
-    <TouchableOpacity
+  const RenderFamilyMember = ({ item }) => {
+    const onDelete = async () => {}
+    const [visible,setVisible]=useState(false)
+  return  <TouchableOpacity
       style={styles.memberContainer}
       onPress={
         () => {}
@@ -187,8 +188,27 @@ const MyfamilyScreen = () => {
         {item.relation && <Text style={styles.relation}>{item.relation}</Text>}
         <Text style={styles.birthDate}>{item.birth_date}</Text>
       </View>
+      <TouchableOpacity
+        style={styles.editButton}
+        onPress={() => {
+          setVisible(true);
+        }}
+      >
+        <Icon name="delete" size={20} color="gray" />
+      </TouchableOpacity>
+      <ConfirmDelete
+        name={item.full_name_vn}
+        visible={visible}
+        onConfirm={() => {
+          onDelete();
+          setVisible(false);
+        }}
+        onClose={() => {
+          setVisible(false);
+        }}
+      />
     </TouchableOpacity>
-  );
+  }
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -218,7 +238,9 @@ const MyfamilyScreen = () => {
           <Text style={styles.resultText}>{item.husband.full_name_vn}</Text>
           <Text style={styles.resultText}>{item.wife.full_name_vn}</Text>
         </View>
+        
       </View>
+    
     </TouchableOpacity>
   );
 
@@ -260,7 +282,7 @@ const MyfamilyScreen = () => {
       <FlatList
         data={familyMembers}
         keyExtractor={(item) => item.people_id.toString()}
-        renderItem={renderFamilyMember}
+        renderItem={({item})=><RenderFamilyMember item={item}/>}
       />
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
@@ -429,6 +451,10 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
   },
+  editButton: {
+    alignSelf: "flex-start",
+    marginHorizontal: 5,
+  }
 });
 
 export default MyfamilyScreen;
