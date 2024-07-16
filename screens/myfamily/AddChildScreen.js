@@ -1,25 +1,69 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TextInput,
   ScrollView,
-  TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Checkbox, Button, Menu, Provider } from "react-native-paper";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { useNavigation } from "@react-navigation/native";
 import AppHeader from "../../components/AppHeader";
 import RegisterMemberForm from "./RegisForm";
 import PersonInfoForm from "../components/PersonInfoForm";
 import { defaultPeople } from "./Data";
+import { AppContext } from "../../AppContext";
+import AxiosInstance from "../../network/AxiosInstance";
 
-const AddChildScreen = () => {
+const AddChildScreen = ({ navigation }) => {
+  const { setIsLoading } = useContext(AppContext);
+  const validate = (data) => {
+    // require name,birth_date
+    if (!data.full_name_vn) {
+      Alert.alert("Lỗi", "Vui lòng nhập tên");
+      return false;
+    }
+    if (!data.birth_date) {
+      Alert.alert("Lỗi", "Vui lòng nhập ngày sinh");
+      return false;
+    }
+  return true;
+  };
   const [childInfo, setChildInfo] = useState(defaultPeople);
+  const addChild = async () => {
+    try {
+      setIsLoading(true);
+      console.log(childInfo);
+      delete childInfo.place_of_birth;
+      delete childInfo.place_of_death;
+      console.log(childInfo);
+      const data = await AxiosInstance().post("people/fatherchild/", {
+        child: childInfo,
+      });
+      console.log(data);
+      navigation.goBack();
+      Alert.alert("Thành công", "Thêm thông tin con thành công");
+    } catch (err) {
+      console.log({ ...err });
+      Alert.alert("Lỗi", "Có lỗi xảy ra, vui lòng thử lại sau");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <Provider>
-      <AppHeader back title={"Thêm thông tin về con"} />
+      <AppHeader
+        right={{
+          icon: "save",
+          onPress: () => {
+            if (validate(childInfo)) {
+              addChild();
+            }
+          },
+        }}
+        back
+        title={"Thêm thông tin về con"}
+      />
       <ScrollView contentContainerStyle={styles.container}>
         <PersonInfoForm
           person={childInfo}

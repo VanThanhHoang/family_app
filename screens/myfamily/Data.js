@@ -3,11 +3,12 @@ export const defaultPeople = {
   cause_of_death: "",
   education_level: "",
   full_name_vn: "",
-  gender: false,
+  gender: true,
   is_alive: true,
   marital_status: false,
   nationality:"",
   phone_number: "",
+  death_date: "",
   place_of_birth: {
     address_line: "",
     city: "",

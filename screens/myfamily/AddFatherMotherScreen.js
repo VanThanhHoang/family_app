@@ -71,7 +71,6 @@ const AddFatherMotherScreen = () => {
           },
           wife: {
             ...motherData,
-          
           },
           marriage_date: marriageDateData,
         };
@@ -84,7 +83,6 @@ const AddFatherMotherScreen = () => {
       } finally {
         setIsLoading(false);
       }
-      console.log("Form is valid, proceed with submission");
     }
   };
   return (

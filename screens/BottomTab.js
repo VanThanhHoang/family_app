@@ -8,9 +8,7 @@ import AuthNavigation from "./AuthStack";
 import React from "react";
 import { AppContext } from "../AppContext";
 import { useThemeContext } from '../ThemeContext';
-
 const Tab = createBottomTabNavigator();
-
 const screens = [
   {
     name: "Gia đình",

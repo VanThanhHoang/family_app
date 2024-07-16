@@ -125,10 +125,16 @@ const FamilyTreeScreen = () => {
   useEffect(() => {
     getData();
   }, []);
-
+  const navigation = useNavigation();
   return (
     <View style={styles.container}>
-      <AppHeader back title="Gia phả" />
+      <AppHeader back title="Gia phả" right={{
+
+        icon: "map",
+        onPress: () => {
+          navigation.navigate("FamilyMap");
+        },
+      }} />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
