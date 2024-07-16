@@ -1,15 +1,6 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, StyleSheet, TextInput, ScrollView } from "react-native";
 import { Checkbox, Button, Menu, Provider } from "react-native-paper";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { useNavigation } from "@react-navigation/native";
 import AppHeader from "../../components/AppHeader";
 import RegisterMemberForm from "./RegisForm";
 import PersonInfoForm from "../components/PersonInfoForm";
@@ -19,7 +10,14 @@ const AddChildScreen = () => {
   const [childInfo, setChildInfo] = useState(defaultPeople);
   return (
     <Provider>
-      <AppHeader back title={"Thêm thông tin về con"} />
+      <AppHeader
+        right={{
+          icon: "save",
+          onPress: () => console.log(childInfo),
+        }}
+        back
+        title={"Thêm thông tin về con"}
+      />
       <ScrollView contentContainerStyle={styles.container}>
         <PersonInfoForm
           person={childInfo}

@@ -29,15 +29,11 @@ const FamilyMap = () => {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "white",
       }}
     >
-      <ScrollView
-      
-      >
-         <FamilyTree    />
-      </ScrollView>
-     
+     <ScrollView showsVerticalScrollIndicator={false} >
+     <FamilyTree data={[]} />
+     </ScrollView>
     </View>
   );
 };

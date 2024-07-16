@@ -9,6 +9,7 @@ const AxiosInstance = (contentType = 'application/json') => {
     axiosInstance.interceptors.request.use(
         async (config) => {
             const token = await AsyncStorage.getItem('access');
+            console.log('token', token);
             config.headers = {
                 'Accept': 'application/json',
                 'Content-Type': contentType,

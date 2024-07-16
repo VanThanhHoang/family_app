@@ -22,6 +22,11 @@ const PersonInfoForm = ({ title, person, setPerson }) => {
     if (person.religion === "other") return "Đạo khác";
   };
   const { dropdownData } = useContext(AppContext);
+  const getStaint = (id) => {
+    if (!id) return "";
+    return dropdownData?.saints[id - 1]?.name;
+  };
+
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
@@ -108,7 +113,7 @@ const PersonInfoForm = ({ title, person, setPerson }) => {
               onPress={() => setSaintVisible(true)}
               style={styles.dropdown}
             >
-              <Text>{person?.saint || "Tên Thánh"}</Text>
+              <Text>{getStaint(person?.saint) || "Tên Thánh"}</Text>
               <Icon name="caret-down" size={20} />
             </TouchableOpacity>
           }
@@ -118,7 +123,7 @@ const PersonInfoForm = ({ title, person, setPerson }) => {
               key={index}
               title={item.name}
               onPress={() => {
-                setPerson({ ...person, saint: index+1 });
+                setPerson({ ...person, saint: index + 1 });
                 setSaintVisible(false);
               }}
             />
