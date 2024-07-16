@@ -1,8 +1,9 @@
 import { ScrollView, View } from "react-native";
 import React, { useState, useEffect, useContext } from "react";
 import { AppContext } from "../../AppContext";
-import FamilyTree, { convertToFamilyTreeFormat } from "./FamilyTree";
+import FamilyTree from "./FamilyTree";
 import AxiosInstance from "../../network/AxiosInstance";
+import AppHeader from "../../components/AppHeader";
 const FamilyMap = () => {
   const [data, setData] = useState([]);
   const { setIsLoading } = useContext(AppContext);
@@ -31,9 +32,10 @@ const FamilyMap = () => {
         alignItems: "center",
       }}
     >
-     <ScrollView showsVerticalScrollIndicator={false} >
-     <FamilyTree data={[]} />
-     </ScrollView>
+      <AppHeader  back title={"Family Tree"} />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <FamilyTree data={data} />
+      </ScrollView>
     </View>
   );
 };

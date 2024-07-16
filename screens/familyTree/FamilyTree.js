@@ -5,7 +5,6 @@ import { APP_CONSTANTS } from "../../helper/constant";
 
 const FamilyTree = ({ data, ...props }) => {
   const hasChildren = (member) => member.children && member.children.length > 0;
-
   const renderMember = (member) => {
     return (
       <View style={props.nodeStyle}>
@@ -15,14 +14,14 @@ const FamilyTree = ({ data, ...props }) => {
             uri: member.profile_picture || APP_CONSTANTS.defaultAvatar,
           }}
         />
-        <Text style={{ ...props.nodeTitleStyle, color: props.nodeTitleColor }}>
+        <Text style={{ ...props.nodeTitleStyle, color: props.nodeTitleColor,fontSize:16 }}>
           {member.full_name_vn}
         </Text>
-        <Text style={{ fontSize: 10, color: props.nodeTitleColor }}>
+        <Text style={{ fontSize: 12, color: props.nodeTitleColor,fontWeight:'bold' }}>
           {member.birth_date}
         </Text>
         {member.death_date && (
-          <Text style={{ fontSize: 10, color: props.nodeTitleColor }}>
+          <Text style={{ fontSize: 12, color: props.nodeTitleColor,fontWeight:'bold' }}>
             {member.death_date}
           </Text>
         )}
@@ -33,6 +32,7 @@ const FamilyTree = ({ data, ...props }) => {
   const renderTree = (members, level) => {
     return (
       <FlatList
+      showsHorizontalScrollIndicator={false}
         data={members}
         horizontal={true}
         contentContainerStyle={{ padding: 50 }}
@@ -115,9 +115,6 @@ const FamilyTree = ({ data, ...props }) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <Text style={{ ...props.titleStyle, color: props.titleColor }}>
-        {props.title}
-      </Text>
       {renderTree([data], 1)}
     </View>
   );
@@ -146,7 +143,7 @@ FamilyTree.defaultProps = {
     fontWeight: "bold",
     textAlign: "center",
   },
-  pathColor: "#00ffd8",
+  pathColor: "gray",
   siblingGap: 50,
   imageStyle: {
     width: 80,

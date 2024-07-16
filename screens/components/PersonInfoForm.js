@@ -14,6 +14,11 @@ const PersonInfoForm = ({ title, person, setPerson }) => {
   const { theme } = useThemeContext();
   const [religionVisible, setReligionVisible] = useState(false);
   const [saintVisible, setSaintVisible] = useState(false);
+  const [eduVisible, setEduVisible] = useState(false);
+  const getEdu = (id) => {
+    if (!id) return "";
+    return dropdownData?.education_levels[id - 1]?.level_vn;
+  };
   const getReigion = () => {
     if (person.religion === "") return "Tôn giáo *";
     if (person.religion === "catholic") return "Công giáo";
@@ -131,7 +136,32 @@ const PersonInfoForm = ({ title, person, setPerson }) => {
           <View style={{ height: 200 }} />
         </Menu>
       </View>
-
+      <Menu
+        visible={eduVisible}
+        onDismiss={() => setEduVisible(false)}
+        anchor={
+          <TouchableOpacity
+            onPress={() => setEduVisible(true)}
+            style={{ ...styles.dropdown, margin: 10 }}
+          >
+            <Text>{getEdu(person?.education_level) || "Trình độ học vấn"}</Text>
+            <Icon name="caret-down" size={20} />
+          </TouchableOpacity>
+        }
+      >
+        {title == "Con" &&
+          dropdownData?.education_levels?.map((item, index) => (
+            <Menu.Item
+              key={index}
+              title={item.level_vn}
+              onPress={() => {
+                setPerson({ ...person, education_level: item.id });
+                setEduVisible(false);
+              }}
+            />
+          ))}
+        <View style={{ height: 200 }} />
+      </Menu>
       <AppFormInput
         title="Họ và tên"
         onTextChange={(value) => setPerson({ ...person, full_name_vn: value })}

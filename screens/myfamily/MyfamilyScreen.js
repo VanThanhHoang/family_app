@@ -78,7 +78,6 @@ const MyfamilyScreen = () => {
       const peopleId = await AsyncStorage.getItem("people_id");
       if (token && peopleId) {
         const response = await AxiosInstance().get("user/myfamily/");
-
         setUserGender(response.gender);
         setUserMaritalStatus(response.marital_status);
         const parents = response.parent_relationships
@@ -115,7 +114,14 @@ const MyfamilyScreen = () => {
             relation: "Em gái",
           })),
         ];
-        const familyMembers = [...parents, ...siblings];
+        // set relationship children to 'Con'
+        const child = response.children.map((child) => {
+          return {
+            ...child,
+            relation: "Con",
+          };
+        });
+        const familyMembers = [...parents, ...siblings, ...child];
         setFamilyMembers(familyMembers);
 
         if (parents.length === 0) {
