@@ -1,55 +1,78 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
-import AppHeader from '../../components/AppHeader';
-import AxiosInstance from '../../network/AxiosInstance';
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import AxiosInstance from "../../network/AxiosInstance";
+import AppHeader from "../../components/AppHeader";
+import Icon from "react-native-vector-icons/Ionicons";
 
-const PaternalScreen = () => {
+const PaternalFamilyScreen = () => {
   const navigation = useNavigation();
   const [familyMembers, setFamilyMembers] = useState([]);
 
-  useEffect(() => {
-    const fetchFamilyData = async () => {
-      try {
-        const token = await AsyncStorage.getItem('access');
-        const peopleId = await AsyncStorage.getItem('people_id');
+  const fetchFamilyData = async () => {
+    try {
+      const token = await AsyncStorage.getItem("access");
+      console.log("Token for fetching family data:", token);
+      if (token) {
+        const response = await AxiosInstance().get('paternal-relationship/', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.data && response.data) {
+          const data = response.data;
 
-        console.log('Token:', token);
-        console.log('People ID:', peopleId);
+          const paternalGrandparents = [];
+          if (data.paternal_grandparents) {
+            if (data.paternal_grandparents.paternal_grandfather) {
+              paternalGrandparents.push({
+                ...data.paternal_grandparents.paternal_grandfather,
+                relationship: data.paternal_grandparents.paternal_grandfather_relationship,
+                relationship_id: data.paternal_grandparents.paternal_grandfather_relationship_id,
+              });
+            }
+            if (data.paternal_grandparents.paternal_grandmother) {
+              paternalGrandparents.push({
+                ...data.paternal_grandparents.paternal_grandmother,
+                relationship: data.paternal_grandparents.paternal_grandmother_relationship,
+                relationship_id: data.paternal_grandparents.paternal_grandmother_relationship_id,
+              });
+            }
+          }
 
-        if (token && peopleId) {
-          const response = await AxiosInstance().get(`user/paternal-detail/?people_id=${peopleId}`);
-          const familyMembers = [
-            ...(response.paternal_grandfather ? [{ ...response.paternal_grandfather, relation: 'Ông nội' }] : []),
-            ...(response.paternal_grandmother ? [{ ...response.paternal_grandmother, relation: 'Bà nội' }] : []),
-            ...(response.parent_relationships || []).map(rel => ({
-              ...rel.father,
-              relation: 'Ba'
-            })).concat((response.parent_relationships || []).map(rel => ({
-              ...rel.mother,
-              relation: 'Mẹ'
-            }))),
-            ...(response.siblings.older_brothers || []).map(sibling => ({ ...sibling, relation: 'Anh trai' })),
-            ...(response.siblings.younger_brothers || []).map(sibling => ({ ...sibling, relation: 'Em trai' })),
-            ...(response.siblings.older_sisters || []).map(sibling => ({ ...sibling, relation: 'Chị gái' })),
-            ...(response.siblings.younger_sisters || []).map(sibling => ({ ...sibling, relation: 'Em gái' })),
-            ...(response.paternal_aunts_uncles || []).map(auntUncle => ({
-              ...auntUncle,
-              relation: auntUncle.relation // Quan hệ được xử lý từ backend
-            }))
-          ];
+          const parents = [];
+          if (data.user_parents) {
+            if (data.user_parents.father) {
+              parents.push({
+                ...data.user_parents.father,
+                relationship: data.user_parents.father_relationship,
+                relationship_id: data.user_parents.father_relationship_id,
+              });
+            }
+            if (data.user_parents.mother) {
+              parents.push({
+                ...data.user_parents.mother,
+                relationship: data.user_parents.mother_relationship,
+                relationship_id: data.user_parents.mother_relationship_id,
+              });
+            }
+          }
 
-          setFamilyMembers(familyMembers);
+          const siblings = data.user_siblings?.siblings || [];
+          const fatherSiblings = data.father_siblings || [];
+
+          setFamilyMembers([...paternalGrandparents, ...parents, ...siblings, ...fatherSiblings]);
         }
-      } catch (error) {
-        console.error('Error fetching family data:', error);
-        console.error('Error details:', error.response ? error.response : error.message);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching family data:", error);
+      console.error(
+        "Error details:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
 
+  useEffect(() => {
     fetchFamilyData();
   }, []);
 
@@ -78,7 +101,13 @@ const PaternalScreen = () => {
 
   return (
     <View style={styles.container}>
-      <AppHeader back title={'Thành viên gia đình nội'} />
+      <AppHeader back title="Thành viên gia đình" />
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate("AddFamilyMember")}
+      >
+        <Icon name="person-add" size={30} color="black" />
+      </TouchableOpacity>
       <FlatList
         data={familyMembers}
         keyExtractor={(item) => item.people_id.toString()}
@@ -92,23 +121,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 20,
-  },
   memberContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: "#ccc",
   },
   profilePicture: {
     width: 50,
@@ -117,19 +135,19 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   textContainer: {
-    flexDirection: 'column',
+    flexDirection: "column",
   },
   memberName: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   relation: {
     fontSize: 14,
-    color: '#777',
+    color: "#777",
   },
   birthDate: {
     fontSize: 12,
-    color: '#555',
+    color: "#555",
   },
   addButton: {
     position: 'absolute',
@@ -138,8 +156,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f8f8',
     borderRadius: 50,
     padding: 10,
-    elevation: 3, // Tạo bóng để nút nổi bật hơn
+    elevation: 3,
   },
 });
 
-export default PaternalScreen;
+export default PaternalFamilyScreen;

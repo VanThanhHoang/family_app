@@ -6,7 +6,7 @@ import AxiosInstance from "../../network/AxiosInstance";
 import AppHeader from "../../components/AppHeader";
 import Icon from "react-native-vector-icons/Ionicons";
 
-const SpouseFamilyScreen = () => {
+const maternalFamilyScreen = () => {
   const navigation = useNavigation();
   const [familyMembers, setFamilyMembers] = useState([]);
 
@@ -15,25 +15,52 @@ const SpouseFamilyScreen = () => {
       const token = await AsyncStorage.getItem("access");
       console.log("Token for fetching family data:", token);
       if (token) {
-        const response = await AxiosInstance().get('https://api.lehungba.com/api/maternal/relationship/', {
+        const response = await AxiosInstance().get('maternal/relationship/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.data && response.data) {
           const data = response.data;
 
-          const parents = [];
-          if (data.spouse_parents) {
-            if (data.spouse_parents.father) {
-              parents.push(data.spouse_parents.father);
+          const maternalGrandparents = [];
+          if (data.maternal_grandparents) {
+            if (data.maternal_grandparents.maternal_grandfather) {
+              maternalGrandparents.push({
+                ...data.maternal_grandparents.maternal_grandfather,
+                relationship: data.maternal_grandparents.maternal_grandfather_relationship,
+                relationship_id: data.maternal_grandparents.maternal_grandfather_relationship_id,
+              });
             }
-            if (data.spouse_parents.mother) {
-              parents.push(data.spouse_parents.mother);
+            if (data.maternal_grandparents.maternal_grandmother) {
+              maternalGrandparents.push({
+                ...data.maternal_grandparents.maternal_grandmother,
+                relationship: data.maternal_grandparents.maternal_grandmother_relationship,
+                relationship_id: data.maternal_grandparents.maternal_grandmother_relationship_id,
+              });
             }
           }
 
-          const siblings = data.spouse_siblings || [];
+          const parents = [];
+          if (data.user_parents) {
+            if (data.user_parents.father) {
+              parents.push({
+                ...data.user_parents.father,
+                relationship: data.user_parents.father_relationship,
+                relationship_id: data.user_parents.father_relationship_id,
+              });
+            }
+            if (data.user_parents.mother) {
+              parents.push({
+                ...data.user_parents.mother,
+                relationship: data.user_parents.mother_relationship,
+                relationship_id: data.user_parents.mother_relationship_id,
+              });
+            }
+          }
 
-          setFamilyMembers([...parents, ...siblings]);
+          const siblings = data.user_siblings?.siblings || [];
+          const fatherSiblings = data.mother_siblings || [];
+
+          setFamilyMembers([...maternalGrandparents, ...parents, ...siblings, ...fatherSiblings]);
         }
       }
     } catch (error) {
@@ -129,8 +156,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f8f8',
     borderRadius: 50,
     padding: 10,
-    elevation: 3, // Tạo bóng để nút nổi bật hơn
+    elevation: 3,
   },
 });
 
-export default SpouseFamilyScreen;
+export default maternalFamilyScreen;
