@@ -136,32 +136,46 @@ const PersonInfoForm = ({ title, person, setPerson }) => {
           <View style={{ height: 200 }} />
         </Menu>
       </View>
-      <Menu
-        visible={eduVisible}
-        onDismiss={() => setEduVisible(false)}
-        anchor={
-          <TouchableOpacity
-            onPress={() => setEduVisible(true)}
-            style={{ ...styles.dropdown, margin: 10 }}
-          >
-            <Text>{getEdu(person?.education_level) || "Trình độ học vấn"}</Text>
-            <Icon name="caret-down" size={20} />
-          </TouchableOpacity>
-        }
-      >
-        {title == "Con" &&
-          dropdownData?.education_levels?.map((item, index) => (
+      {
+        title == 'Thông tin về chồng' || title == 'Thông tin về vợ' && (
+          <View style={styles.marriageDateSection}>
+          <AppFormDateInput
+            title={"Ngày cưới"}
+            value={person.marriage_date || ""}
+            onSaveText={(value) => setPerson({ ...person, marriage_date: value })}
+          />
+        </View>
+        )
+      }
+      {title === "Con" && (
+        <Menu
+          visible={eduVisible}
+          onDismiss={() => setEduVisible(false)}
+          anchor={
+            <TouchableOpacity
+              onPress={() => setEduVisible(true)}
+              style={styles.dropdown}
+            >
+              <Text>
+                {getEdu(person?.education_level) || "Trình độ học vấn"}
+              </Text>
+              <Icon name="caret-down" size={20} />
+            </TouchableOpacity>
+          }
+        >
+          {dropdownData?.education_levels?.map((item, index) => (
             <Menu.Item
               key={index}
               title={item.level_vn}
               onPress={() => {
-                setPerson({ ...person, education_level: item.id });
+                setPerson({ ...person, education_level: index + 1 });
                 setEduVisible(false);
               }}
             />
           ))}
-        <View style={{ height: 200 }} />
-      </Menu>
+          <View style={{ height: 200 }} />
+        </Menu>
+      )}
       <AppFormInput
         title="Họ và tên"
         onTextChange={(value) => setPerson({ ...person, full_name_vn: value })}

@@ -78,7 +78,7 @@ const MyfamilyScreen = () => {
       if (token && peopleId) {
         const response = await AxiosInstance().get("user/myfamily/");
         setUserGender(response.gender);
-        setUserMaritalStatus(response.marital_status);
+        setUserMaritalStatus(response.spouse_relationships?.length>0);
         const parents = response.parent_relationships
           .map((rel) => {
             return {
@@ -113,6 +113,12 @@ const MyfamilyScreen = () => {
             relation: "Em gái",
           })),
         ];
+        const wife = response.spouse_relationships.map((rel) => {
+          return {
+            ...rel.wife,
+            relation: "Vợ",
+          };
+        })
         // set relationship children to 'Con'
         const child = response.children.map((child) => {
           return {
@@ -120,7 +126,7 @@ const MyfamilyScreen = () => {
             relation: "Con",
           };
         });
-        const familyMembers = [...parents, ...siblings, ...child];
+        const familyMembers = [...parents,...wife, ...siblings, ...child];
         setFamilyMembers(familyMembers);
 
         if (parents.length === 0) {
@@ -256,7 +262,7 @@ const MyfamilyScreen = () => {
           <Text style={styles.addButtonText}>Father & Mother</Text>
         </TouchableOpacity>
       )}
-      {userMaritalStatus && (
+      {!userMaritalStatus && (
         <TouchableOpacity
           style={styles.addButton}
           onPress={() =>

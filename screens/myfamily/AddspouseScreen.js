@@ -1,20 +1,70 @@
-import React from "react";
-import { StyleSheet, ScrollView } from "react-native";
+import React, { useContext } from "react";
+import { StyleSheet, ScrollView, Alert } from "react-native";
 import { Provider } from "react-native-paper";
 import RegisterMemberForm from "./RegisForm";
 import AppHeader from "../../components/AppHeader";
-import SpouseForm from "../components/SpouseForm";
+import PersionInfoForm from "../components/PersonInfoForm";
 import { useRoute } from "@react-navigation/native";
+import { defaultPeople } from "./Data";
+import { AppContext } from "../../AppContext";
+import AxiosInstance from "../../network/AxiosInstance";
 
-const AddspouseScreen = () => {
+const AddspouseScreen = ({navigation}) => {
   const route = useRoute();
   const { gender, nationality } = route.params;
-
+  const [personInfo, setPersonInfo] = React.useState({
+    ...defaultPeople,
+    gender,
+    nationality,
+  });
+  const validate = (data) => {
+    // require name,birth_date
+    if (!data.full_name_vn) {
+      Alert.alert("Lỗi", "Vui lòng nhập tên");
+      return false;
+    }
+    if (!data.birth_date) {
+      Alert.alert("Lỗi", "Vui lòng nhập ngày sinh");
+      return false;
+    }
+  return true;
+  };
+  const {setIsLoading}=useContext(AppContext)
+  const addSpouse=async (data)=>{
+    if(validate(data)){
+      try {
+        setIsLoading(true);
+        delete personInfo.place_of_birth;
+        delete personInfo.place_of_death;
+        const data = await AxiosInstance().post("people/husbandwife/", {
+          wife:personInfo,
+          marriage_date:personInfo.marriage_date
+        });
+        console.log(data);
+        navigation.goBack();
+        Alert.alert("Thành công", "Thêm thông tin thành công");
+      } catch (err) {
+        console.log({ ...err });
+        Alert.alert("Lỗi", "Có lỗi xảy ra, vui lòng thử lại sau");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  }
   return (
     <Provider>
-      <AppHeader back title={"Thêm thông tin về vợ/chồng"} />
+      <AppHeader right={{
+        icon:'save',
+        onPress:()=>{
+          addSpouse(personInfo);
+        }
+      }} back title={`Thêm thông tin ${!gender ? "vợ" : "chồng"}`} />
       <ScrollView contentContainerStyle={styles.container}>
-        <SpouseForm title={"Vợ/Chồng"} defaultGender={gender} defaultNationality={nationality} />
+        <PersionInfoForm
+            title={`${gender ? "Thông tin về chồng" : "Thông tin về vợ"}`}
+            person={personInfo}
+            setPerson={setPersonInfo}
+        />
         <RegisterMemberForm />
       </ScrollView>
     </Provider>
