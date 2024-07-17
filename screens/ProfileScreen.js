@@ -35,6 +35,8 @@ const ProfileScreen = () => {
       const people_id = await AsyncStorage.getItem("people_id");
       const profile_picture = await AsyncStorage.getItem("profile_picture");
       const full_name_vn = await AsyncStorage.getItem("full_name_vn");
+      const marital_status = await AsyncStorage.getItem("marital_status") === 'true';
+      const gender = await AsyncStorage.getItem("gender") === 'true';
       console.log("Profile picture:--", profile_picture);
       if (profile_picture) {
         setProfileImage(profile_picture);
@@ -47,6 +49,8 @@ const ProfileScreen = () => {
         people_id,
         profile_picture,
         full_name_vn,
+        marital_status,
+        gender,
       });
     } catch (e) {
       console.log(e);
@@ -193,6 +197,20 @@ const ProfileScreen = () => {
           title="My Family"
           onPress={() => navigation.navigate("MyFamilyScreen")}
         />
+        {userInfo.marital_status && userInfo.gender && (
+          <SettingItem
+            icon={"heart"}
+            title="My Wife's Family"
+            onPress={() => navigation.navigate("MyWifeFamilyScreen")}
+          />
+        )}
+        {userInfo.marital_status && !userInfo.gender && (
+          <SettingItem
+            icon={"heart"}
+            title="My Husband's Family"
+            onPress={() => navigation.navigate("MyHusbandFamilyScreen")}
+          />
+        )}
         <SettingItem
           icon={"home"}
           title="Gia Đình Nội"
@@ -200,7 +218,7 @@ const ProfileScreen = () => {
         />
         <SettingItem
           icon={"home"}
-          title="Gia Ngoại"
+          title="Gia Đình Ngoại"
           onPress={() => navigation.navigate("MaternalScreen")}
         />
         <SettingItem

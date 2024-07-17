@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import AppHeader from '../../components/AppHeader';  // Đảm bảo đường dẫn đúng
 
 const PaternalScreen = () => {
   const navigation = useNavigation();
@@ -27,25 +28,37 @@ const PaternalScreen = () => {
 
           console.log('API Response:', response.data);
 
-          const familyMembers = [
-            ...(response.data.paternal_grandfather ? [{ ...response.data.paternal_grandfather, relation: 'Ông nội' }] : []),
-            ...(response.data.paternal_grandmother ? [{ ...response.data.paternal_grandmother, relation: 'Bà nội' }] : []),
-            ...(response.data.parent_relationships || []).map(rel => ({
-              ...rel.father,
-              relation: 'Ba'
-            })).concat((response.data.parent_relationships || []).map(rel => ({
-              ...rel.mother,
-              relation: 'Mẹ'
-            }))),
-            ...(response.data.siblings.older_brothers || []).map(sibling => ({ ...sibling, relation: 'Anh trai' })),
-            ...(response.data.siblings.younger_brothers || []).map(sibling => ({ ...sibling, relation: 'Em trai' })),
-            ...(response.data.siblings.older_sisters || []).map(sibling => ({ ...sibling, relation: 'Chị gái' })),
-            ...(response.data.siblings.younger_sisters || []).map(sibling => ({ ...sibling, relation: 'Em gái' })),
-            ...(response.data.paternal_aunts_uncles || []).map(auntUncle => ({
-              ...auntUncle,
-              relation: auntUncle.relation // Quan hệ được xử lý từ backend
-            }))
-          ];
+          const familyMembers = [];
+
+          if (response.data.paternal_grandfather) {
+            familyMembers.push(response.data.paternal_grandfather);
+          }
+          if (response.data.paternal_grandmother) {
+            familyMembers.push(response.data.paternal_grandmother);
+          }
+          if (response.data.parent_relationships) {
+            response.data.parent_relationships.forEach(rel => {
+              if (rel.father) familyMembers.push(rel.father);
+              if (rel.mother) familyMembers.push(rel.mother);
+            });
+          }
+          if (response.data.siblings) {
+            if (response.data.siblings.older_brothers) {
+              familyMembers.push(...response.data.siblings.older_brothers);
+            }
+            if (response.data.siblings.younger_brothers) {
+              familyMembers.push(...response.data.siblings.younger_brothers);
+            }
+            if (response.data.siblings.older_sisters) {
+              familyMembers.push(...response.data.siblings.older_sisters);
+            }
+            if (response.data.siblings.younger_sisters) {
+              familyMembers.push(...response.data.siblings.younger_sisters);
+            }
+          }
+          if (response.data.paternal_aunts_uncles) {
+            familyMembers.push(...response.data.paternal_aunts_uncles);
+          }
 
           setFamilyMembers(familyMembers);
         }
@@ -58,31 +71,38 @@ const PaternalScreen = () => {
     fetchFamilyData();
   }, []);
 
-  const renderFamilyMember = ({ item }) => (
-    <TouchableOpacity 
-      style={styles.memberContainer}
-      onPress={() => navigation.navigate('DetailBirthDay', { id: item.people_id })}
-    >
-      <Image
-        source={item.profile_picture ? { uri: item.profile_picture } : (item.gender ? require("../../assets/father.png") : require("../../assets/mother.png"))}
-        style={styles.profilePicture}
-      />
-      <View style={styles.textContainer}>
-        <Text style={styles.memberName}>{item.full_name_vn}</Text>
-        {item.relation && <Text style={styles.relation}>{item.relation}</Text>}
-        <Text style={styles.birthDate}>{item.birth_date}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+  const renderFamilyMember = ({ item }) => {
+    const profilePictureUrl = item.profile_picture
+      ? { uri: item.profile_picture }
+      : item.gender
+      ? require("../../assets/father.png")
+      : require("../../assets/mother.png");
+    console.log("Profile picture:", profilePictureUrl.uri || profilePictureUrl);
+
+    return (
+      <TouchableOpacity 
+        style={styles.memberContainer}
+        onPress={() => navigation.navigate('DetailBirthDay', { id: item.people_id })}
+      >
+        <Image source={profilePictureUrl} style={styles.profilePicture} />
+        <View style={styles.textContainer}>
+          <Text style={styles.memberName}>{item.full_name_vn}</Text>
+          {item.relationship && <Text style={styles.relation}>{item.relationship}</Text>}
+          <Text style={styles.birthDate}>{item.birth_date}</Text>
+        </View>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={30} color="#000" />
-        </TouchableOpacity>
-      </View>
-      <Text style={styles.title}>Thành Viên Gia Đình Nội</Text>
+      <AppHeader back title="Thành Viên Gia Đình Nội" />
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate("AddFamilyMember")}
+      >
+        <Icon name="person-add" size={30} color="black" />
+      </TouchableOpacity>
       <FlatList
         data={familyMembers}
         keyExtractor={(item) => item.people_id.toString()}
@@ -95,18 +115,6 @@ const PaternalScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
-  },
-  header: {
-    position: 'absolute',
-    top: 10,
-    left: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 20,
   },
   memberContainer: {
     flexDirection: 'row',
@@ -135,6 +143,15 @@ const styles = StyleSheet.create({
   birthDate: {
     fontSize: 12,
     color: '#555',
+  },
+  addButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: '#f8f8f8',
+    borderRadius: 50,
+    padding: 10,
+    elevation: 3, // Tạo bóng để nút nổi bật hơn
   },
 });
 

@@ -32,6 +32,7 @@ import AddGrandFatherMotherScreen from "./screens/myfamily/AddGrandFatherMotherS
 import AddspouseScreen from "./screens/myfamily/AddspouseScreen";
 import AddChildScreen from "./screens/myfamily/AddChildScreen";
 import AddFatherMotherScreen from "./screens/myfamily/AddFatherMotherScreen";
+import SpouseFamilyScreen from "./screens/spousefamily/SpouseFamilyScreen";
 
 import FamilyTree from "./web-view/FMLTree";
 import FamilyMap from "./screens/familyTree/FamilyTreeView";
@@ -106,7 +107,8 @@ const AppNavigation = () => {
         <AppStack.Screen name="AddGrandFatherMotherScreen" component={AddGrandFatherMotherScreen} />   
         <AppStack.Screen name="AddspouseScreen" component={AddspouseScreen} />  
         <AppStack.Screen name="AddChildScreen" component={AddChildScreen} />  
-        <AppStack.Screen name="AddFatherMotherScreen" component={AddFatherMotherScreen} /> 
+        <AppStack.Screen name="AddFatherMotherScreen" component={AddFatherMotherScreen} />
+        <AppStack.Screen name="SpouseFamilyScreen" component={SpouseFamilyScreen} />
         <AppStack.Screen name="FamilyMap" component={FamilyMap} />     
 
       </AppStack.Navigator>

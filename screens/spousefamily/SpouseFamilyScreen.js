@@ -15,7 +15,7 @@ const SpouseFamilyScreen = () => {
       const token = await AsyncStorage.getItem("access");
       console.log("Token for fetching family data:", token);
       if (token) {
-        const response = await AxiosInstance().get('https://api.lehungba.com/api/maternal/relationship/', {
+        const response = await AxiosInstance().get('spouse/relationship/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.data && response.data) {
