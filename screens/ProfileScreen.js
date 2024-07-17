@@ -208,7 +208,7 @@ const ProfileScreen = () => {
           <SettingItem
             icon={"heart"}
             title="My Husband's Family"
-            onPress={() => navigation.navigate("MyHusbandFamilyScreen")}
+            onPress={() => navigation.navigate("SpouseFamilyScreen")}
           />
         )}
         <SettingItem
