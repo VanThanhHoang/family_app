@@ -4,7 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import AppHeader from '../../components/AppHeader';  // Đảm bảo đường dẫn đúng
+import AppHeader from '../../components/AppHeader';
+import AxiosInstance from '../../network/AxiosInstance';
 
 const PaternalScreen = () => {
   const navigation = useNavigation();
@@ -20,51 +21,32 @@ const PaternalScreen = () => {
         console.log('People ID:', peopleId);
 
         if (token && peopleId) {
-          const response = await axios.get(`https://api.lehungba.com/api/user/paternal-detail/?people_id=${peopleId}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-
-          console.log('API Response:', response.data);
-
-          const familyMembers = [];
-
-          if (response.data.paternal_grandfather) {
-            familyMembers.push(response.data.paternal_grandfather);
-          }
-          if (response.data.paternal_grandmother) {
-            familyMembers.push(response.data.paternal_grandmother);
-          }
-          if (response.data.parent_relationships) {
-            response.data.parent_relationships.forEach(rel => {
-              if (rel.father) familyMembers.push(rel.father);
-              if (rel.mother) familyMembers.push(rel.mother);
-            });
-          }
-          if (response.data.siblings) {
-            if (response.data.siblings.older_brothers) {
-              familyMembers.push(...response.data.siblings.older_brothers);
-            }
-            if (response.data.siblings.younger_brothers) {
-              familyMembers.push(...response.data.siblings.younger_brothers);
-            }
-            if (response.data.siblings.older_sisters) {
-              familyMembers.push(...response.data.siblings.older_sisters);
-            }
-            if (response.data.siblings.younger_sisters) {
-              familyMembers.push(...response.data.siblings.younger_sisters);
-            }
-          }
-          if (response.data.paternal_aunts_uncles) {
-            familyMembers.push(...response.data.paternal_aunts_uncles);
-          }
+          const response = await AxiosInstance().get(`user/paternal-detail/?people_id=${peopleId}`);
+          const familyMembers = [
+            ...(response.paternal_grandfather ? [{ ...response.paternal_grandfather, relation: 'Ông nội' }] : []),
+            ...(response.paternal_grandmother ? [{ ...response.paternal_grandmother, relation: 'Bà nội' }] : []),
+            ...(response.parent_relationships || []).map(rel => ({
+              ...rel.father,
+              relation: 'Ba'
+            })).concat((response.parent_relationships || []).map(rel => ({
+              ...rel.mother,
+              relation: 'Mẹ'
+            }))),
+            ...(response.siblings.older_brothers || []).map(sibling => ({ ...sibling, relation: 'Anh trai' })),
+            ...(response.siblings.younger_brothers || []).map(sibling => ({ ...sibling, relation: 'Em trai' })),
+            ...(response.siblings.older_sisters || []).map(sibling => ({ ...sibling, relation: 'Chị gái' })),
+            ...(response.siblings.younger_sisters || []).map(sibling => ({ ...sibling, relation: 'Em gái' })),
+            ...(response.paternal_aunts_uncles || []).map(auntUncle => ({
+              ...auntUncle,
+              relation: auntUncle.relation // Quan hệ được xử lý từ backend
+            }))
+          ];
 
           setFamilyMembers(familyMembers);
         }
       } catch (error) {
         console.error('Error fetching family data:', error);
-        console.error('Error details:', error.response ? error.response.data : error.message);
+        console.error('Error details:', error.response ? error.response : error.message);
       }
     };
 
@@ -96,13 +78,7 @@ const PaternalScreen = () => {
 
   return (
     <View style={styles.container}>
-      <AppHeader back title="Thành Viên Gia Đình Nội" />
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => navigation.navigate("AddFamilyMember")}
-      >
-        <Icon name="person-add" size={30} color="black" />
-      </TouchableOpacity>
+      <AppHeader back title={'Thành viên gia đình nội'} />
       <FlatList
         data={familyMembers}
         keyExtractor={(item) => item.people_id.toString()}
@@ -115,6 +91,17 @@ const PaternalScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginVertical: 20,
   },
   memberContainer: {
     flexDirection: 'row',

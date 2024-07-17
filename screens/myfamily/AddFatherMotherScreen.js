@@ -17,6 +17,9 @@ const AddFatherMotherScreen = () => {
     mother: defaultPeople,
     marriageDate: "",
   };
+  const {type}=route.params ?? {
+    type:1
+  };
   const [fatherData, setFather] = useState(father);
   const [motherData, setMother] = useState(mother);
   const [marriageDateData, setMarriageDate] = useState(marriageDate);
