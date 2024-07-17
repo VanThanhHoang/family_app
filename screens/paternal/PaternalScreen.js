@@ -4,6 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import AppHeader from '../../components/AppHeader';
+import AxiosInstance from '../../network/AxiosInstance';
 
 const PaternalScreen = () => {
   const navigation = useNavigation();
@@ -19,29 +21,22 @@ const PaternalScreen = () => {
         console.log('People ID:', peopleId);
 
         if (token && peopleId) {
-          const response = await axios.get(`https://api.lehungba.com/api/user/paternal-detail/?people_id=${peopleId}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
-
-          console.log('API Response:', response.data);
-
+          const response = await AxiosInstance().get(`user/paternal-detail/?people_id=${peopleId}`);
           const familyMembers = [
-            ...(response.data.paternal_grandfather ? [{ ...response.data.paternal_grandfather, relation: 'Ông nội' }] : []),
-            ...(response.data.paternal_grandmother ? [{ ...response.data.paternal_grandmother, relation: 'Bà nội' }] : []),
-            ...(response.data.parent_relationships || []).map(rel => ({
+            ...(response.paternal_grandfather ? [{ ...response.paternal_grandfather, relation: 'Ông nội' }] : []),
+            ...(response.paternal_grandmother ? [{ ...response.paternal_grandmother, relation: 'Bà nội' }] : []),
+            ...(response.parent_relationships || []).map(rel => ({
               ...rel.father,
               relation: 'Ba'
-            })).concat((response.data.parent_relationships || []).map(rel => ({
+            })).concat((response.parent_relationships || []).map(rel => ({
               ...rel.mother,
               relation: 'Mẹ'
             }))),
-            ...(response.data.siblings.older_brothers || []).map(sibling => ({ ...sibling, relation: 'Anh trai' })),
-            ...(response.data.siblings.younger_brothers || []).map(sibling => ({ ...sibling, relation: 'Em trai' })),
-            ...(response.data.siblings.older_sisters || []).map(sibling => ({ ...sibling, relation: 'Chị gái' })),
-            ...(response.data.siblings.younger_sisters || []).map(sibling => ({ ...sibling, relation: 'Em gái' })),
-            ...(response.data.paternal_aunts_uncles || []).map(auntUncle => ({
+            ...(response.siblings.older_brothers || []).map(sibling => ({ ...sibling, relation: 'Anh trai' })),
+            ...(response.siblings.younger_brothers || []).map(sibling => ({ ...sibling, relation: 'Em trai' })),
+            ...(response.siblings.older_sisters || []).map(sibling => ({ ...sibling, relation: 'Chị gái' })),
+            ...(response.siblings.younger_sisters || []).map(sibling => ({ ...sibling, relation: 'Em gái' })),
+            ...(response.paternal_aunts_uncles || []).map(auntUncle => ({
               ...auntUncle,
               relation: auntUncle.relation // Quan hệ được xử lý từ backend
             }))
@@ -51,7 +46,7 @@ const PaternalScreen = () => {
         }
       } catch (error) {
         console.error('Error fetching family data:', error);
-        console.error('Error details:', error.response ? error.response.data : error.message);
+        console.error('Error details:', error.response ? error.response : error.message);
       }
     };
 
@@ -77,12 +72,7 @@ const PaternalScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={30} color="#000" />
-        </TouchableOpacity>
-      </View>
-      <Text style={styles.title}>Thành Viên Gia Đình Nội</Text>
+      <AppHeader back title={'Thành viên gia đình nội'} />
       <FlatList
         data={familyMembers}
         keyExtractor={(item) => item.people_id.toString()}
@@ -95,7 +85,6 @@ const PaternalScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
   },
   header: {
     position: 'absolute',

@@ -28,7 +28,7 @@ const MyfamilyScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showNoResults, setShowNoResults] = useState(false);
-  
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
     setShowNoResults(false);
@@ -78,11 +78,13 @@ const MyfamilyScreen = () => {
       if (token && peopleId) {
         const response = await AxiosInstance().get("user/myfamily/");
         setUserGender(response.gender);
-        setUserMaritalStatus(response.spouse_relationships?.length>0);
+        setUserMaritalStatus(response.spouse_relationships?.length > 0);
         const parents = response.parent_relationships
           .map((rel) => {
             return {
               ...rel.father,
+              relationship_id: rel.relationship_id,
+
               relation: "Ba",
             };
           })
@@ -90,6 +92,8 @@ const MyfamilyScreen = () => {
             response.parent_relationships.map((rel) => {
               return {
                 ...rel.mother,
+                relationship_id: rel.relationship_id,
+
                 relation: "Mẹ",
               };
             })
@@ -102,33 +106,38 @@ const MyfamilyScreen = () => {
           })),
           ...(response.siblings.younger_brothers || []).map((sibling) => ({
             ...sibling,
+            relationship_id: sibling.relationship_id,
+
             relation: "Em trai",
           })),
           ...(response.siblings.older_sisters || []).map((sibling) => ({
             ...sibling,
+            relationship_id: sibling.relationship_id,
+
             relation: "Chị gái",
           })),
           ...(response.siblings.younger_sisters || []).map((sibling) => ({
             ...sibling,
+            relationship_id: sibling.relationship_id,
             relation: "Em gái",
           })),
         ];
         const wife = response.spouse_relationships.map((rel) => {
           return {
             ...rel.wife,
+            relationship_id: rel.relationship_id,
             relation: "Vợ",
           };
-        })
-        // set relationship children to 'Con'
+        });
         const child = response.children.map((child) => {
           return {
             ...child,
+            relationship_id: child.relationship_id,
             relation: "Con",
           };
         });
-        const familyMembers = [...parents,...wife, ...siblings, ...child];
+        const familyMembers = [...parents, ...wife, ...siblings, ...child];
         setFamilyMembers(familyMembers);
-
         if (parents.length === 0) {
           setParentsEmpty(true);
         } else {
@@ -170,51 +179,56 @@ const MyfamilyScreen = () => {
     }
   };
   const RenderFamilyMember = ({ item }) => {
-    const onDelete = async () => {}
-    const [visible,setVisible]=useState(false)
-  return  <TouchableOpacity
-      style={styles.memberContainer}
-      onPress={
-        () => {}
-        // navigation.navigate("DetailScreen", { id: item.people_id })
-      }
-    >
-      <Image
-        source={
-          item.profile_picture
-            ? { uri: item.profile_picture }
-            : item.gender
-            ? require("../../assets/father.png")
-            : require("../../assets/mother.png")
-        }
-        style={styles.profilePicture}
-      />
-      <View style={styles.textContainer}>
-        <Text style={styles.memberName}>{item.full_name_vn}</Text>
-        {item.relation && <Text style={styles.relation}>{item.relation}</Text>}
-        <Text style={styles.birthDate}>{item.birth_date}</Text>
-      </View>
+    console.log(item);
+    const onDelete = async () => {};
+    const [visible, setVisible] = useState(false);
+    return (
       <TouchableOpacity
-        style={styles.editButton}
-        onPress={() => {
-          setVisible(true);
-        }}
+        style={styles.memberContainer}
+        onPress={
+          () => {}
+          // navigation.navigate("DetailScreen", { id: item.people_id })
+        }
       >
-        <Icon name="delete" size={20} color="gray" />
+        <Image
+          source={
+            item.profile_picture
+              ? { uri: item.profile_picture }
+              : item.gender
+              ? require("../../assets/father.png")
+              : require("../../assets/mother.png")
+          }
+          style={styles.profilePicture}
+        />
+        <View style={styles.textContainer}>
+          <Text style={styles.memberName}>{item.full_name_vn}</Text>
+          {item.relation && (
+            <Text style={styles.relation}>{item.relation}</Text>
+          )}
+          <Text style={styles.birthDate}>{item.birth_date}</Text>
+        </View>
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => {
+            setVisible(true);
+          }}
+        >
+          <Icon name="delete" size={20} color="gray" />
+        </TouchableOpacity>
+        <ConfirmDelete
+          name={item.full_name_vn}
+          visible={visible}
+          onConfirm={() => {
+            onDelete();
+            setVisible(false);
+          }}
+          onClose={() => {
+            setVisible(false);
+          }}
+        />
       </TouchableOpacity>
-      <ConfirmDelete
-        name={item.full_name_vn}
-        visible={visible}
-        onConfirm={() => {
-          onDelete();
-          setVisible(false);
-        }}
-        onClose={() => {
-          setVisible(false);
-        }}
-      />
-    </TouchableOpacity>
-  }
+    );
+  };
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -244,9 +258,7 @@ const MyfamilyScreen = () => {
           <Text style={styles.resultText}>{item.husband.full_name_vn}</Text>
           <Text style={styles.resultText}>{item.wife.full_name_vn}</Text>
         </View>
-        
       </View>
-    
     </TouchableOpacity>
   );
 
@@ -288,7 +300,7 @@ const MyfamilyScreen = () => {
       <FlatList
         data={familyMembers}
         keyExtractor={(item) => item.people_id.toString()}
-        renderItem={({item})=><RenderFamilyMember item={item}/>}
+        renderItem={({ item }) => <RenderFamilyMember item={item} />}
       />
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
@@ -460,7 +472,7 @@ const styles = StyleSheet.create({
   editButton: {
     alignSelf: "flex-start",
     marginHorizontal: 5,
-  }
+  },
 });
 
 export default MyfamilyScreen;
