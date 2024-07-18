@@ -6,7 +6,7 @@ import AxiosInstance from "../../network/AxiosInstance";
 import AppHeader from "../../components/AppHeader";
 import Icon from "react-native-vector-icons/Ionicons";
 
-const PaternalFamilyScreen = () => {
+const PaternalScreen = () => {
   const navigation = useNavigation();
   const [familyMembers, setFamilyMembers] = useState([]);
 
@@ -57,10 +57,27 @@ const PaternalFamilyScreen = () => {
             }
           }
 
-          const siblings = data.user_siblings?.siblings || [];
-          const fatherSiblings = data.father_siblings || [];
+          const siblings = (data.user_siblings?.siblings || []).map(sibling => ({
+            ...sibling,
+            key: `sibling-${sibling.people_id}`
+          }));
 
-          setFamilyMembers([...paternalGrandparents, ...parents, ...siblings, ...fatherSiblings]);
+          const fatherSiblings = (data.father_siblings || []).map(sibling => ({
+            ...sibling,
+            key: `father-sibling-${sibling.people_id}`
+          }));
+
+          const paternalGrandparentsWithKeys = paternalGrandparents.map(grandparent => ({
+            ...grandparent,
+            key: `grandparent-${grandparent.people_id}`
+          }));
+
+          const parentsWithKeys = parents.map(parent => ({
+            ...parent,
+            key: `parent-${parent.people_id}`
+          }));
+
+          setFamilyMembers([...paternalGrandparentsWithKeys, ...parentsWithKeys, ...siblings, ...fatherSiblings]);
         }
       }
     } catch (error) {
@@ -84,6 +101,11 @@ const PaternalFamilyScreen = () => {
       : require("../../assets/mother.png");
     console.log("Profile picture:", profilePictureUrl.uri || profilePictureUrl);
 
+    const age = item.birth_date ? new Date().getFullYear() - new Date(item.birth_date).getFullYear() : null;
+    const childrenCount = item.children ? item.children.length : 0;
+    const childrenMale = item.children ? item.children.filter(child => child.gender).length : 0;
+    const childrenFemale = childrenCount - childrenMale;
+
     return (
       <TouchableOpacity 
         style={styles.memberContainer}
@@ -92,8 +114,12 @@ const PaternalFamilyScreen = () => {
         <Image source={profilePictureUrl} style={styles.profilePicture} />
         <View style={styles.textContainer}>
           <Text style={styles.memberName}>{item.full_name_vn}</Text>
+          {age !== null && <Text style={styles.age}>{`Tuổi: ${age}`}</Text>}
           {item.relationship && <Text style={styles.relation}>{item.relationship}</Text>}
           <Text style={styles.birthDate}>{item.birth_date}</Text>
+          <View style={styles.childrenContainer}>
+            <Text style={styles.childrenText}>{`👦 ${childrenMale} 👧 ${childrenFemale}`}</Text>
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -110,7 +136,7 @@ const PaternalFamilyScreen = () => {
       </TouchableOpacity>
       <FlatList
         data={familyMembers}
-        keyExtractor={(item) => item.people_id.toString()}
+        keyExtractor={(item) => item.key}
         renderItem={renderFamilyMember}
       />
     </View>
@@ -141,6 +167,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
+  age: {
+    fontSize: 14,
+    color: "#777",
+  },
   relation: {
     fontSize: 14,
     color: "#777",
@@ -148,6 +178,14 @@ const styles = StyleSheet.create({
   birthDate: {
     fontSize: 12,
     color: "#555",
+  },
+  childrenContainer: {
+    flexDirection: "row",
+    marginTop: 5,
+  },
+  childrenText: {
+    fontSize: 14,
+    color: "#777",
   },
   addButton: {
     position: 'absolute',
@@ -160,4 +198,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PaternalFamilyScreen;
+export default PaternalScreen;

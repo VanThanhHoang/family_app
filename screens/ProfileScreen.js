@@ -56,25 +56,24 @@ const ProfileScreen = () => {
       console.log(e);
     }
   };
-
   const uploadImage = async (image) => {
     try {
       if (!image || !image.uri) {
         throw new Error("Invalid image URI");
       }
-
+  
       const compressedImage = await ImageManipulator.manipulateAsync(
         image.uri,
-        [{ resize: { width: 566, height: 586 } }],
+        [{ resize: { height: 586 } }], // Resize only height to maintain aspect ratio
         { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
       );
-
+  
       const fileData = {
         uri: compressedImage.uri,
         type: "image/jpeg",
         name: `${new Date().getTime()}.jpg`,
       };
-
+  
       const formData = new FormData();
       formData.append("profile_picture", fileData);
       const people_id = userInfo.people_id; // Ensure people_id is retrieved from userInfo
@@ -83,7 +82,7 @@ const ProfileScreen = () => {
         `people/people-detail/${people_id}/`,
         formData
       );
-
+  
       if (response.data.profile_picture) {
         await AsyncStorage.setItem(
           "profile_picture",
@@ -100,6 +99,7 @@ const ProfileScreen = () => {
       Alert.alert("Error", "Upload image failed");
     }
   };
+  
 
   useEffect(() => {
     getUserInfo();

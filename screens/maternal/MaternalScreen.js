@@ -6,7 +6,7 @@ import AxiosInstance from "../../network/AxiosInstance";
 import AppHeader from "../../components/AppHeader";
 import Icon from "react-native-vector-icons/Ionicons";
 
-const maternalFamilyScreen = () => {
+const MaternalScreen = () => {
   const navigation = useNavigation();
   const [familyMembers, setFamilyMembers] = useState([]);
 
@@ -160,4 +160,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default maternalFamilyScreen;
+export default MaternalScreen;

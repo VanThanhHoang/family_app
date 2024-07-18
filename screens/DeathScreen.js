@@ -1,71 +1,63 @@
-import { View, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, FlatList } from "react-native";
 import AppHeader from "../components/AppHeader";
 import SearchBar from "../components/SearchBar";
-import React, { useEffect, useState } from "react";
 import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
-import { FlatList } from "react-native-gesture-handler";
-import BirthDayItem from "./components/BirthDayItem";
 import DeathItem from "./components/DeathItem";
 import { removeDiacritics } from "../helper/string_format";
 import { useThemeContext } from "../ThemeContext";
-import { useTheme } from '@rneui/themed';
 
 const DeathScreen = () => {
-    const [birhdayData, setBirhdayData] = useState([]);
-    const { setIsLoading } = React.useContext(AppContext);
-    const { theme: rneTheme } = useThemeContext();
+  const [deathData, setDeathData] = useState([]);
+  const { setIsLoading } = React.useContext(AppContext);
+  const { theme } = useThemeContext();
 
-    const getFamilyData = async () => {
-      try {
-        setIsLoading(true);
-        const data = await AxiosInstance().get("deathday/");
-        if(data?.data){
-          setBirhdayData(data.data);
-          setFilteredList(data.data);
-        }
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setIsLoading(false);
+  const getFamilyData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await AxiosInstance().get("deathday/");
+      if (response?.data) {
+        setDeathData(response.data);
+        setFilteredList(response.data);
       }
-    };
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    useEffect(() => {
-      getFamilyData();
-    }, []);
+  useEffect(() => {
+    getFamilyData();
+  }, []);
 
-    const [filteredList, setFilteredList] = useState(birhdayData);
-    const [searchText, setSearchText] = useState("");
+  const [filteredList, setFilteredList] = useState(deathData);
+  const [searchText, setSearchText] = useState("");
 
-    const searchFilter = (text) => {
-      const normalizedText = removeDiacritics(text);
-      setSearchText(text);
-      const filteredData = birhdayData.filter((item) => {
-        const husbandName = item?.full_name_vn || "";
-        const normalizedHusbandName = removeDiacritics(husbandName);
-        const isMatchHusband = normalizedHusbandName.includes(normalizedText);
-        return isMatchHusband 
-      });
-      setFilteredList(filteredData);
-    };
+  const searchFilter = (text) => {
+    const normalizedText = removeDiacritics(text);
+    setSearchText(text);
+    const filteredData = deathData.filter((item) => {
+      const fullName = item?.full_name_vn || "";
+      const normalizedFullName = removeDiacritics(fullName);
+      return normalizedFullName.includes(normalizedText);
+    });
+    setFilteredList(filteredData);
+  };
 
-    return (
-      <View style={[styles.container, { backgroundColor: rneTheme.colors.background }]}>
-        <SearchBar onChangeText={searchFilter} />
-        <FlatList
-          contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
-          style={{ width: "100%" }}
-          keyExtractor={(item) => {
-            return item.people_id.toString();
-          }}
-          renderItem={({ item }) => {
-            return <DeathItem data={item} />;
-          }}
-          data={filteredList}
-        />
-      </View>
-    );
+  return (
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <SearchBar onChangeText={searchFilter} />
+      <FlatList
+        contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
+        style={{ width: "100%" }}
+        keyExtractor={(item) => item.people_id.toString()}
+        renderItem={({ item }) => <DeathItem data={item} />}
+        data={filteredList}
+      />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({

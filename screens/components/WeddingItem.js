@@ -2,14 +2,13 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { dateFormater } from "../../helper/string_format";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
-import { useTheme } from '@rneui/themed';
 import { useThemeContext } from "../../ThemeContext";
 
 const WeddingItem = ({ family }) => {
   const navigation = useNavigation();
   const { theme } = useThemeContext();
-
   const isDarkMode = theme.mode === 'dark';
+
   const ItemInfo = ({ isHusband, image, age, isAlive }) => {
     const getImage = () => {
       if (image === null) {
@@ -19,36 +18,28 @@ const WeddingItem = ({ family }) => {
       }
       return { uri: image };
     };
+
     return (
       <View style={styles.itemInfoContainer}>
-        <View
-          style={[styles.imageRow, isHusband ? styles.rowReverse : styles.row]}
-        >
-          <Image style={styles.image} source={getImage()} />
-        </View>
+        <Image style={styles.image} source={getImage()} />
         <Text style={[styles.nameText, isDarkMode && { color: "#FFFFFF" }]} numberOfLines={1} adjustsFontSizeToFit>
           {isHusband ? family.husband.full_name_vn : family.wife.full_name_vn}
         </Text>
-        <Text style={[styles.birthDate, isDarkMode && { color: "#C0C0C0" }]}>
-          {isHusband
-            ? dateFormater(family.husband.birth_date)
-            : dateFormater(family.wife.birth_date)}
-        </Text>
-        <View
-          style={[
-            styles.ageContainer,
-            isHusband ? styles.ageContainerLeft : styles.ageContainerRight,
-          ]}
-        >
-          {isAlive ? (
-            <Image
-              source={require("../../assets/age.png")}
-              style={[styles.ageIcon, { tintColor: theme.colors.text, opacity: 0.7 }]}
-            />
-          ) : null}
-          <Text style={[styles.ageText, isDarkMode && { color: "#C0C0C0" }]}>
-            {isAlive ? age ?? "Chưa rõ" : `${age}`}
+        <View style={styles.birthAndAgeRow}>
+          <Text style={[styles.birthDate, isDarkMode && { color: "#C0C0C0" }]}>
+            {isHusband
+              ? family.husband.is_alive
+                ? dateFormater(family.husband.birth_date)
+                : "Chưa rõ"
+              : family.wife.is_alive
+              ? dateFormater(family.wife.birth_date)
+              : "Chưa rõ"}
           </Text>
+          {isAlive && (
+            <Text style={[styles.ageText, isDarkMode && { color: "#C0C0C0" }]}>
+              {` - Tuổi ${age}`}
+            </Text>
+          )}
         </View>
       </View>
     );
@@ -58,7 +49,7 @@ const WeddingItem = ({ family }) => {
     <TouchableOpacity
       onPress={() => {
         navigation.navigate("DetailWeddingScreen", {
-         data:family,
+          data: family,
         });
       }}
       style={[styles.container, { backgroundColor: theme.colors.card }]}
@@ -71,21 +62,15 @@ const WeddingItem = ({ family }) => {
           isAlive={family.husband.is_alive}
         />
         <View style={styles.centerContainer}>
-          <View style={styles.childrenRow}>
-            {family.total_sons > 0 && <Children isBoy total={family.total_sons} />}
-            {family.total_daughters > 0 && <Children total={family.total_daughters} />}
-          </View>
           <Text style={[styles.anniversaryDateText, isDarkMode && { color: "#C0C0C0" }]}>
             {dateFormater(family.marriage_date)}
           </Text>
-          <Image
-            style={styles.marriedIcon}
-            source={require("../../assets/married.png")}
-          />
-          <View>
-            <Text style={[styles.marriageDurationText, isDarkMode && { color: "#C0C0C0" }]}>
-              {family.marriage_duration}
-            </Text>
+          <Text style={[styles.marriageDurationText, isDarkMode && { color: "#C0C0C0" }]}>
+            {family.marriage_duration}
+          </Text>
+          <View style={styles.childrenRow}>
+            {family.total_sons > 0 && <Children isBoy total={family.total_sons} />}
+            {family.total_daughters > 0 && <Children total={family.total_daughters} />}
           </View>
         </View>
         <ItemInfo
@@ -102,16 +87,11 @@ const WeddingItem = ({ family }) => {
 const Children = ({ isBoy, total }) => {
   return (
     <View style={styles.totalContainer}>
-      <Image
-        style={styles.totalImage}
-        source={
-          isBoy
-            ? require("../../assets/son.png")
-            : require("../../assets/dauther.png")
-        }
-      />
-      <View style={styles.total}>
-        <Text style={styles.totalText}>{total}</Text>
+      <Text style={styles.iconText}>{isBoy ? '👦' : '👧'}</Text>
+      <View style={styles.circleContainer}>
+        <View style={styles.circle}>
+          <Text style={styles.totalText}>{total}</Text>
+        </View>
       </View>
     </View>
   );
@@ -121,45 +101,20 @@ const styles = StyleSheet.create({
   itemInfoContainer: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     gap: 5,
-  },
-  imageRow: {
-    alignItems: "flex-end",
-    flexDirection: "row",
-  },
-  rowReverse: {
-    flexDirection: "row-reverse",
-  },
-  row: {
-    flexDirection: "row",
   },
   image: {
     width: 60,
     height: 60,
     borderRadius: 50,
   },
-  ageContainer: {
-    position: "absolute",
-    flexDirection: "row",
-    gap: 5,
-    alignItems: "center",
-  },
-  ageContainerLeft: {
-    left: 0,
-    top: 10,
-  },
-  ageContainerRight: {
-    right: 0,
-    top: 10,
-  },
-  ageIcon: {
-    width: 15,
-    height: 15,
-    borderRadius: 25,
+  birthAndAgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   ageText: {
-    fontSize: 13,
+    fontSize: 10,
     fontWeight: "bold",
   },
   nameText: {
@@ -167,15 +122,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   birthDate: {
-    fontSize: 14,
+    fontSize: 10,
     fontWeight: "400",
-    fontStyle: "italic",
   },
   container: {
     flex: 1,
     padding: 10,
     justifyContent: "center",
-    marginVertical: 10,
+    marginVertical: 5, // Adjust the margin between items
     gap: 10,
     borderRadius: 20,
     shadowColor: "#000",
@@ -188,12 +142,11 @@ const styles = StyleSheet.create({
   },
   container2: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "space-between",
     flexDirection: "row",
     shadowColor: "#000",
   },
   centerContainer: {
-    gap: 10,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -202,45 +155,42 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 10,
-  },
-  marriedIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 50,
+    marginTop: 5, // Adjust to add space between marriage duration and icons
   },
   marriageDurationText: {
     fontSize: 10,
-    fontWeight: "600",
-    fontStyle: "italic",
+    fontWeight: "bold",
   },
   totalContainer: {
-    gap: 3,
     alignItems: "center",
-    alignSelf: "flex-start",
-    marginTop: 10,
+    marginHorizontal: -5,
   },
-  totalImage: {
-    width: 30,
-    height: 30,
-    borderRadius: 50,
+  iconText: {
+    fontSize: 20, // Adjust the size of the icon
+    marginBottom: -20, // Adjust the spacing between the icon and the circle
   },
-  totalText: {
-    fontSize: 12,
-    fontWeight: "500",
+  circleContainer: {
+    alignItems: "center",
+    justifyContent: "center",
   },
-  total: {
-    position: "absolute",
-    width: 15,
-    height: 15,
+  circle: {
+    width: 11, // Adjust the size of the circle
+    height: 11,
+    borderRadius: 10, // Half of width and height to make it a circle
     backgroundColor: "white",
-    borderRadius: 7.5,
     justifyContent: "center",
     alignItems: "center",
-    bottom: -8,
+    position: "absolute", // Position relative to the icon container
+    bottom: -30, // Adjust to move the circle down
+  },
+  totalText: {
+    fontSize: 9,
+    fontWeight: "500",
   },
   anniversaryDateText: {
     fontSize: 10,
-    fontWeight: "400",
+    fontWeight: "bold",
+    marginVertical: 5,
   },
 });
 

@@ -8,6 +8,7 @@ const DeathItem = ({ ...props }) => {
   const { theme } = useThemeContext();
   const isDarkMode = theme.mode === "dark";
   console.log(props.data);
+  
   return (
     <TouchableOpacity
       onPress={() => {
@@ -26,24 +27,28 @@ const DeathItem = ({ ...props }) => {
           }
           style={styles.image}
         />
-        <Text style={[styles.italicText, { color: theme.colors.text }]}>
-          Hưởng dương
-        </Text>
-        <View style={styles.ageContainer}>
-          <Image
-            source={require("../../assets/age.png")}
-            style={[
-              styles.ageImage,
-              { tintColor: theme.colors.text, opacity: 0.7 },
-            ]}
-          />
-          <Text style={[styles.ageText, { color: theme.colors.text }]}>
-            {props.data.current_age ?? "Chưa rõ"}
-          </Text>
-        </View>
-        <Text style={[styles.totalText, { color: theme.colors.text }]}>
-          {props.data.years_since_death}
-        </Text>
+        {props.data.death_info && (
+          <>
+            <Text style={[styles.italicText, { color: theme.colors.text }]}>
+              {props.data.death_info.life_span.replace(/: \d+/, "")} {/* Remove age number */}
+            </Text>
+            <View style={styles.ageContainer}>
+              <Image
+                source={require("../../assets/age.png")}
+                style={[
+                  styles.ageImage,
+                  { tintColor: theme.colors.text, opacity: 0.7 },
+                ]}
+              />
+              <Text style={[styles.ageText, { color: theme.colors.text }]}>
+                {props.data.death_info.age_at_death ?? "Chưa rõ"}
+              </Text>
+            </View>
+            <Text style={[styles.totalText, { color: theme.colors.text }]}>
+              {props.data.death_info.years_since_death}
+            </Text>
+          </>
+        )}
       </View>
       <View style={styles.infoContainer}>
         <Text style={[styles.name, { color: theme.colors.text }]}>
@@ -52,7 +57,7 @@ const DeathItem = ({ ...props }) => {
         <View style={styles.birthDateContainer}>
           <Text style={[styles.birthDate, { color: theme.colors.text }]}>
             {`${dateFormater(props.data.birth_date)} - ${dateFormater(
-              props.data.death_date
+              props.data.death_info?.death_date
             )}`}
           </Text>
         </View>
@@ -109,8 +114,8 @@ const styles = StyleSheet.create({
     borderRadius: 40,
   },
   italicText: {
-    fontStyle: "italic",
-    fontSize: 12,
+
+    fontSize: 13, // Adjusted font size to match
     fontWeight: "500",
   },
   ageContainer: {
@@ -124,7 +129,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
   ageText: {
-    fontSize: 19,
+    fontSize: 14, // Adjusted font size to match
     fontWeight: "bold",
   },
   totalText: {
@@ -135,7 +140,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   name: {
-    fontSize: 20,
+    fontSize: 14, // Adjusted font size to match
     fontWeight: "bold",
   },
   birthDateContainer: {
@@ -144,9 +149,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   birthDate: {
-    fontSize: 14,
+    fontSize: 14, // Adjusted font size to match
     fontWeight: "400",
-    fontStyle: "italic",
+
   },
   childrenContainer: {
     flexDirection: "row",
@@ -166,27 +171,33 @@ const styles = StyleSheet.create({
   },
   parentText: {
     fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 14, // Adjusted font size to match
   },
   totalContainer: {
-    gap: 5,
     alignItems: "center",
-    alignSelf: "flex-start",
+    marginHorizontal: -1,
   },
-  totalImage: {
-    width: 30,
-    height: 30,
-    borderRadius: 50,
+  iconText: {
+    fontSize: 20, // Adjust the size of the icon
+    color: "yellow", // Change the icon color to yellow
   },
-  total: {
-    position: "absolute",
-    width: 15,
+  circleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  circle: {
+    width: 15, // Adjust the size of the circle
     height: 15,
+    borderRadius: 7.5, // Half of width and height to make it a circle
     backgroundColor: "white",
-    borderRadius: 7.5,
     justifyContent: "center",
     alignItems: "center",
-    bottom: -5,
+    marginLeft: 5, // Space between icon and number
+  },
+  totalText: {
+    fontSize: 10, // Adjusted font size to match
+    fontWeight: "500",
   },
 });
 
@@ -220,18 +231,13 @@ const ItemParent = ({ ...props }) => {
 
 const Children = ({ isBoy, total, theme }) => (
   <View style={styles.totalContainer}>
-    <Image
-      style={styles.totalImage}
-      source={
-        isBoy
-          ? require("../../assets/son.png")
-          : require("../../assets/dauther.png")
-      }
-    />
-    <View style={[styles.total, { backgroundColor: theme.colors.background }]}>
-      <Text style={[styles.totalText, { color: theme.colors.text }]}>
-        {total}
-      </Text>
+    <Text style={styles.iconText}>{isBoy ? '👦' : '👧'}</Text>
+    <View style={styles.circleContainer}>
+      <View style={[styles.circle, { backgroundColor: theme.colors.background }]}>
+        <Text style={[styles.totalText, { color: theme.colors.text }]}>
+          {total}
+        </Text>
+      </View>
     </View>
   </View>
 );
