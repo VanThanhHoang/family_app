@@ -5,35 +5,82 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import AxiosInstance from "../../network/AxiosInstance";
 import AppHeader from "../../components/AppHeader";
 import Icon from "react-native-vector-icons/Ionicons";
+import { LinearGradient } from "expo-linear-gradient";
+import { useThemeContext } from "../../ThemeContext";
 
-const SpouseFamilyScreen = () => {
+const MaternalScreen = () => {
   const navigation = useNavigation();
   const [familyMembers, setFamilyMembers] = useState([]);
+  const { theme } = useThemeContext();
 
   const fetchFamilyData = async () => {
     try {
       const token = await AsyncStorage.getItem("access");
       console.log("Token for fetching family data:", token);
       if (token) {
-        const response = await AxiosInstance().get('https://api.lehungba.com/api/maternal/relationship/', {
+        const response = await AxiosInstance().get('maternal/relationship/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.data && response.data) {
           const data = response.data;
 
-          const parents = [];
-          if (data.spouse_parents) {
-            if (data.spouse_parents.father) {
-              parents.push(data.spouse_parents.father);
+          const groupedMembers = [];
+
+          // Group maternal grandparents
+          if (data.maternal_grandparents) {
+            const grandparents = [];
+            if (data.maternal_grandparents.maternal_grandfather) {
+              grandparents.push({
+                ...data.maternal_grandparents.maternal_grandfather,
+                relationship: data.maternal_grandparents.maternal_grandfather_relationship,
+                relationship_id: data.maternal_grandparents.maternal_grandfather_relationship_id,
+              });
             }
-            if (data.spouse_parents.mother) {
-              parents.push(data.spouse_parents.mother);
+            if (data.maternal_grandparents.maternal_grandmother) {
+              grandparents.push({
+                ...data.maternal_grandparents.maternal_grandmother,
+                relationship: data.maternal_grandparents.maternal_grandmother_relationship,
+                relationship_id: data.maternal_grandparents.maternal_grandmother_relationship_id,
+              });
             }
+            groupedMembers.push(grandparents);
           }
 
-          const siblings = data.spouse_siblings || [];
+          // Group user parents
+          if (data.user_parents) {
+            const parents = [];
+            if (data.user_parents.father) {
+              parents.push({
+                ...data.user_parents.father,
+                relationship: data.user_parents.father_relationship,
+                relationship_id: data.user_parents.father_relationship_id,
+              });
+            }
+            if (data.user_parents.mother) {
+              parents.push({
+                ...data.user_parents.mother,
+                relationship: data.user_parents.mother_relationship,
+                relationship_id: data.user_parents.mother_relationship_id,
+              });
+            }
+            groupedMembers.push(parents);
+          }
 
-          setFamilyMembers([...parents, ...siblings]);
+          // Add siblings
+          const siblings = (data.user_siblings?.siblings || []).map(sibling => ({
+            ...sibling,
+            key: `sibling-${sibling.people_id}`
+          }));
+          groupedMembers.push(siblings);
+
+          // Add mother's siblings
+          const motherSiblings = (data.mother_siblings || []).map(sibling => ({
+            ...sibling,
+            key: `mother-sibling-${sibling.people_id}`
+          }));
+          groupedMembers.push(motherSiblings);
+
+          setFamilyMembers(groupedMembers);
         }
       }
     } catch (error) {
@@ -50,40 +97,57 @@ const SpouseFamilyScreen = () => {
   }, []);
 
   const renderFamilyMember = ({ item }) => {
-    const profilePictureUrl = item.profile_picture
-      ? { uri: item.profile_picture }
-      : item.gender
-      ? require("../../assets/father.png")
-      : require("../../assets/mother.png");
-    console.log("Profile picture:", profilePictureUrl.uri || profilePictureUrl);
-
     return (
-      <TouchableOpacity 
-        style={styles.memberContainer}
-        onPress={() => navigation.navigate('DetailBirthDay', { id: item.people_id })}
-      >
-        <Image source={profilePictureUrl} style={styles.profilePicture} />
-        <View style={styles.textContainer}>
-          <Text style={styles.memberName}>{item.full_name_vn}</Text>
-          {item.relationship && <Text style={styles.relation}>{item.relationship}</Text>}
-          <Text style={styles.birthDate}>{item.birth_date}</Text>
-        </View>
-      </TouchableOpacity>
+      <View style={styles.memberRow}>
+        {item.map(member => {
+          const profilePictureUrl = member.profile_picture
+            ? { uri: member.profile_picture }
+            : member.gender
+            ? require("../../assets/father.png")
+            : require("../../assets/mother.png");
+          console.log("Profile picture:", profilePictureUrl.uri || profilePictureUrl);
+
+          const age = member.birth_date ? new Date().getFullYear() - new Date(member.birth_date).getFullYear() : null;
+
+          return (
+            <TouchableOpacity
+              key={member.people_id}
+              style={styles.memberContainer}
+              onPress={() => navigation.navigate('DetailBirthDay', { id: member.people_id })}
+            >
+              <Image source={profilePictureUrl} style={styles.profilePicture} />
+              <View style={styles.textContainer}>
+                <Text style={[styles.memberName, { color: theme.colors.text }]}>{member.full_name_vn}</Text>
+                {age !== null && <Text style={[styles.age, { color: theme.colors.text }]}>{`Tuổi: ${age}`}</Text>}
+                {member.relationship && <Text style={[styles.relation, { color: theme.colors.text }]}>{member.relationship}</Text>}
+                <Text style={[styles.birthDate, { color: theme.colors.text }]}>{member.birth_date}</Text>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     );
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <AppHeader back title="Thành viên gia đình" />
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => navigation.navigate("AddFamilyMember")}
       >
-        <Icon name="person-add" size={30} color="black" />
+        <LinearGradient
+          colors={["#FFD700", "#FFA500"]}
+          start={[0, 0]}
+          end={[1, 1]}
+          style={styles.addButtonGradient}
+        >
+          <Icon name="person-add" size={20} color="white" />
+        </LinearGradient>
       </TouchableOpacity>
       <FlatList
         data={familyMembers}
-        keyExtractor={(item) => item.people_id.toString()}
+        keyExtractor={(item, index) => index.toString()}
         renderItem={renderFamilyMember}
       />
     </View>
@@ -94,43 +158,59 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  memberContainer: {
+  memberRow: {
     flexDirection: "row",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  memberContainer: {
+    flexBasis: "48%",
+    flexDirection: "column",
     alignItems: "center",
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
   },
   profilePicture: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
+    width: 60, // Increase the size by 20%
+    height: 60, // Increase the size by 20%
+    borderRadius: 30,
+    marginBottom: 5,
   },
   textContainer: {
-    flexDirection: "column",
+    alignItems: "center",
   },
   memberName: {
-    fontSize: 18,
+    fontSize: 16, // Increase the size by 20%
     fontWeight: "bold",
+    textAlign: "center",
+  },
+  age: {
+    fontSize: 14, // Increase the size by 20%
+    textAlign: "center",
   },
   relation: {
-    fontSize: 14,
-    color: "#777",
+    fontSize: 14, // Increase the size by 20%
+    textAlign: "center",
   },
   birthDate: {
-    fontSize: 12,
-    color: "#555",
+    fontSize: 14, // Increase the size by 20%
+    textAlign: "center",
   },
   addButton: {
     position: 'absolute',
     top: 10,
     right: 10,
-    backgroundColor: '#f8f8f8',
     borderRadius: 50,
     padding: 10,
-    elevation: 3, // Tạo bóng để nút nổi bật hơn
+    elevation: 3,
+  },
+  addButtonGradient: {
+    borderRadius: 50,
+    padding: 8,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 
-export default SpouseFamilyScreen;
+export default MaternalScreen;

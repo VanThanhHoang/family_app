@@ -1,18 +1,20 @@
+import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Image, Text, StyleSheet } from "react-native";
+import { Image, Text, StyleSheet, View } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import FamilyScreen from "./FamilyScreen";
 import BirthDayScreen from "./BirthDayScreen";
 import DeathScreen from "./DeathScreen";
 import WeddingScreen from "./WeddingScreen";
 import AuthNavigation from "./AuthStack";
-import React from "react";
 import { AppContext } from "../AppContext";
 import { useThemeContext } from '../ThemeContext';
+
 const Tab = createBottomTabNavigator();
 const screens = [
   {
     name: "Gia đình",
-    component:FamilyScreen,
+    component: FamilyScreen,
     icon: require("../assets/family.png"),
   },
   {
@@ -54,16 +56,16 @@ function CustomBottomTabNavigator() {
         headerStatusBarHeight: 0,
         tabBarStyle: [
           styles.tabBar,
-          { backgroundColor: rneTheme.mode === 'dark' ? '#808080' : rneTheme.colors.card },
+          { backgroundColor: rneTheme.mode === 'dark' ? '#505050' : rneTheme.colors.card },
         ],
-        tabBarActiveTintColor: '#005500',
+        tabBarActiveTintColor: '#FFD700', // Use gold color for active tab
         tabBarInactiveTintColor: rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444',
         tabBarLabel: ({ focused }) => {
           const screen = screens.find(screen => screen.name === route.name);
           return (
             <Text
               style={{
-                color: focused ? '#005500' : (rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444'),
+                color: focused ? '#FFD700' : (rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444'),
                 fontSize: 13,
                 fontWeight: "bold",
               }}
@@ -75,15 +77,35 @@ function CustomBottomTabNavigator() {
         tabBarIcon: ({ focused }) => {
           const screen = screens.find(screen => screen.name === route.name);
           const iconSize = route.name === "Sinh nhật" ? 29 : 25; // Increase size by 4px for "Sinh nhật"
+          const tintColor = focused ? '#FFD700' : (rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444');
+
           return (
-            <Image
-              style={{
-                width: iconSize,
-                height: iconSize,
-                tintColor: focused ? '#005500' : (rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444'),
-              }}
-              source={screen.icon}
-            />
+            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+              {focused ? (
+                <LinearGradient
+                  colors={['#FFD700', '#FFA500']}
+                  style={styles.gradient}
+                >
+                  <Image
+                    style={{
+                      width: iconSize,
+                      height: iconSize,
+                      tintColor: '#FFFFFF',
+                    }}
+                    source={screen.icon}
+                  />
+                </LinearGradient>
+              ) : (
+                <Image
+                  style={{
+                    width: iconSize,
+                    height: iconSize,
+                    tintColor: tintColor,
+                  }}
+                  source={screen.icon}
+                />
+              )}
+            </View>
           );
         },
       })}
@@ -106,6 +128,11 @@ function CustomBottomTabNavigator() {
 const styles = StyleSheet.create({
   tabBar: {
     height: 100,
+    paddingVertical: 5, // Adjust the vertical padding for better spacing
+  },
+  gradient: {
+    borderRadius: 50,
+    padding: 5,
   },
 });
 

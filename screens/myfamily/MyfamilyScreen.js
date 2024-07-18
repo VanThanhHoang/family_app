@@ -76,7 +76,7 @@ const MyfamilyScreen = () => {
       const token = await AsyncStorage.getItem("access");
       const peopleId = await AsyncStorage.getItem("people_id");
       if (token && peopleId) {
-        const response = await AxiosInstance().get("user/myfamily/");
+        const response = await AxiosInstance().get("myfamily/relationship/");
         setUserGender(response.gender);
         setUserMaritalStatus(response.spouse_relationships?.length > 0);
         const parents = response.parent_relationships

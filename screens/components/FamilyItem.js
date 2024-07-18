@@ -29,19 +29,8 @@ const FamilyItem = ({ family }) => {
           {isHusband ? family.husband.full_name_vn : family.wife.full_name_vn}
         </Text>
         <Text style={[styles.textInfo, { color: theme.colors.text }]}>
-          {isHusband ? dateFormater(family.husband.birth_date) : dateFormater(family.wife.birth_date)}
+          {isHusband ? dateFormater(family.husband.birth_date) : dateFormater(family.wife.birth_date)}  Tuổi {age}
         </Text>
-        <View style={[styles.ageContainer, isHusband ? styles.ageContainerLeft : styles.ageContainerRight]}>
-          {isAlive ? (
-            <Image
-              source={require("../../assets/age.png")}
-              style={[styles.ageIcon, { tintColor: theme.colors.text, opacity: 0.7 }]}
-            />
-          ) : null}
-          <Text style={[styles.ageText, { color: theme.colors.text }]}>
-            {isAlive ? age ?? "Chưa rõ" : `${age}`}
-          </Text>
-        </View>
       </View>
     );
   };
@@ -86,22 +75,42 @@ const FamilyItem = ({ family }) => {
 const Children = ({ isBoy, total }) => {
   return (
     <View style={styles.totalContainer}>
-      <Image
-        style={styles.totalImage}
-        source={
-          isBoy
-            ? require("../../assets/son.png")
-            : require("../../assets/dauther.png")
-        }
-      />
-      <View style={styles.total}>
-        <Text style={styles.totalText}>{total}</Text>
+      <Text style={styles.iconText}>{isBoy ? '👦' : '👧'}</Text>
+      <View style={styles.circleContainer}>
+        <View style={styles.circle}>
+          <Text style={styles.totalText}>{total}</Text>
+        </View>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  totalContainer: {
+    alignItems: "center",
+    marginHorizontal: -5,
+  },
+  iconText: {
+    fontSize: 20, // Adjust the size of the icon
+    marginBottom: -1 // Adjust the spacing between the icon and the circle
+  },
+  circleContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  circle: {
+    width: 15, // Adjust the size of the circle
+    height: 15,
+    borderRadius: 7.5, // Half of width and height to make it a circle
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 0, // Space between icon and number
+  },
+  totalText: {
+    fontSize: 10, // Adjusted font size to match
+    fontWeight: "500",
+  },
   itemInfoContainer: {
     flex: 1,
     alignItems: "center",
@@ -158,7 +167,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     justifyContent: "center",
-    marginVertical: 10,
+    marginVertical: 5, // Adjust the margin between items
     gap: 10,
     borderRadius: 20,
     shadowColor: "#000",
@@ -171,61 +180,20 @@ const styles = StyleSheet.create({
   },
   container2: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "space-between",
     flexDirection: "row",
     shadowColor: "#000",
   },
   centerContainer: {
-    gap: 10,
     justifyContent: "center",
     alignItems: "center",
+    gap: 10,
   },
   childrenRow: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     gap: 10,
-  },
-  marriedIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 50,
-  },
-  marriageDurationText: {
-    fontSize: 10,
-    fontWeight: "600",
-    fontStyle: "italic",
-  },
-  totalContainer: {
-    gap: 3,
-    alignItems: "center",
-    alignSelf: "flex-start",
-    marginTop: 10,
-  },
-  totalImage: {
-    width: 30,
-    height: 30,
-    borderRadius: 50,
-    backgroundColor: "white",
-    bottom: 28,
-  },
-  totalText: {
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  total: {
-    position: "absolute",
-    width: 15,
-    height: 15,
-    backgroundColor: "white",
-    borderRadius: 7.5,
-    justifyContent: "center",
-    alignItems: "center",
-    bottom: 21,
-  },
-  anniversaryDateText: {
-    fontSize: 10,
-    fontWeight: "400",
   },
 });
 

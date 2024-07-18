@@ -416,7 +416,7 @@ const Login = () => {
           <Pressable onPress={() => navigation.navigate("ForgotPass")}>
             <Text
               style={{
-                fontSize: 16,
+                fontSize: 8,
                 color: "#198754",
                 fontWeight: "bold",
                 marginLeft: 6,
@@ -447,7 +447,7 @@ const Login = () => {
                 fontWeight: "bold",
               }}
             >
-              Nguyễn Thế Bích
+              Lê Thế Bích
             </Text>
             <Text
               style={{
