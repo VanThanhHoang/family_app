@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Image,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AxiosInstance from "../../network/AxiosInstance";
@@ -13,13 +20,13 @@ const MaternalScreen = () => {
   const navigation = useNavigation();
   const [familyMembers, setFamilyMembers] = useState([]);
   const { theme } = useThemeContext();
-
+  const [isHasGrandMother, setIsHasGrandMother] = useState(false);
   const fetchFamilyData = async () => {
     try {
       const token = await AsyncStorage.getItem("access");
       console.log("Token for fetching family data:", token);
       if (token) {
-        const response = await AxiosInstance().get('maternal/relationship/', {
+        const response = await AxiosInstance().get("maternal/relationship/", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.data && response.data) {
@@ -33,16 +40,25 @@ const MaternalScreen = () => {
             if (data.maternal_grandparents.maternal_grandfather) {
               grandparents.push({
                 ...data.maternal_grandparents.maternal_grandfather,
-                relationship: data.maternal_grandparents.maternal_grandfather_relationship,
-                relationship_id: data.maternal_grandparents.maternal_grandfather_relationship_id,
+                relationship:
+                  data.maternal_grandparents.maternal_grandfather_relationship,
+                relationship_id:
+                  data.maternal_grandparents
+                    .maternal_grandfather_relationship_id,
               });
             }
             if (data.maternal_grandparents.maternal_grandmother) {
               grandparents.push({
                 ...data.maternal_grandparents.maternal_grandmother,
-                relationship: data.maternal_grandparents.maternal_grandmother_relationship,
-                relationship_id: data.maternal_grandparents.maternal_grandmother_relationship_id,
+                relationship:
+                  data.maternal_grandparents.maternal_grandmother_relationship,
+                relationship_id:
+                  data.maternal_grandparents
+                    .maternal_grandmother_relationship_id,
               });
+            }
+            if (grandparents.length > 0) {
+              setIsHasGrandMother(true);
             }
             groupedMembers.push(grandparents);
           }
@@ -68,17 +84,21 @@ const MaternalScreen = () => {
           }
 
           // Add siblings
-          const siblings = (data.user_siblings?.siblings || []).map(sibling => ({
-            ...sibling,
-            key: `sibling-${sibling.people_id}`
-          }));
+          const siblings = (data.user_siblings?.siblings || []).map(
+            (sibling) => ({
+              ...sibling,
+              key: `sibling-${sibling.people_id}`,
+            })
+          );
           groupedMembers.push(siblings);
 
           // Add mother's siblings
-          const motherSiblings = (data.mother_siblings || []).map(sibling => ({
-            ...sibling,
-            key: `mother-sibling-${sibling.people_id}`
-          }));
+          const motherSiblings = (data.mother_siblings || []).map(
+            (sibling) => ({
+              ...sibling,
+              key: `mother-sibling-${sibling.people_id}`,
+            })
+          );
           groupedMembers.push(motherSiblings);
 
           setFamilyMembers(groupedMembers);
@@ -100,56 +120,82 @@ const MaternalScreen = () => {
   const renderFamilyMember = ({ item }) => {
     return (
       <View style={styles.memberRow}>
-        {item.map(member => {
+        {item.map((member) => {
           const profilePictureUrl = member.profile_picture
             ? { uri: member.profile_picture }
             : member.gender
             ? require("../../assets/father.png")
             : require("../../assets/mother.png");
-          console.log("Profile picture:", profilePictureUrl.uri || profilePictureUrl);
+          console.log(
+            "Profile picture:",
+            profilePictureUrl.uri || profilePictureUrl
+          );
 
-          const age = member.birth_date ? new Date().getFullYear() - new Date(member.birth_date).getFullYear() : null;
+          const age = member.birth_date
+            ? new Date().getFullYear() -
+              new Date(member.birth_date).getFullYear()
+            : null;
 
           return (
             <TouchableOpacity
               key={member.people_id}
               style={styles.memberContainer}
-              onPress={() => navigation.navigate('DetailBirthDay', { id: member.people_id })}
+              onPress={() =>
+                navigation.navigate("DetailBirthDay", { id: member.people_id })
+              }
             >
               <Image source={profilePictureUrl} style={styles.profilePicture} />
               <View style={styles.textContainer}>
-                <Text style={[styles.memberName, { color: theme.colors.text }]}>{member.full_name_vn}</Text>
-                {age !== null && <Text style={[styles.age, { color: theme.colors.text }]}>{`Tuổi: ${age}`}</Text>}
-                {member.relationship && <Text style={[styles.relation, { color: theme.colors.text }]}>{member.relationship}</Text>}
-                <Text style={[styles.birthDate, { color: theme.colors.text }]}>{member.birth_date}</Text>
+                <Text style={[styles.memberName, { color: theme.colors.text }]}>
+                  {member.full_name_vn}
+                </Text>
+                {age !== null && (
+                  <Text
+                    style={[styles.age, { color: theme.colors.text }]}
+                  >{`Tuổi: ${age}`}</Text>
+                )}
+                {member.relationship && (
+                  <Text style={[styles.relation, { color: theme.colors.text }]}>
+                    {member.relationship}
+                  </Text>
+                )}
+                <Text style={[styles.birthDate, { color: theme.colors.text }]}>
+                  {member.birth_date}
+                </Text>
               </View>
             </TouchableOpacity>
           );
         })}
       </View>
     );
-  };  
+  };
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <AppHeader back title="Thành viên gia đình" />
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => navigation.navigate("AddFatherMotherScreen",{
-          type:2,
-          father:defaultPeople,
-          mother:defaultPeople,
-          marriageDate:""
-        })}
-      >
-        <LinearGradient
-          colors={["#FFD700", "#FFA500"]}
-          start={[0, 0]}
-          end={[1, 1]}
-          style={styles.addButtonGradient}
+      {!isHasGrandMother && (
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() =>
+            navigation.navigate("AddFatherMotherScreen", {
+              type: 2,
+              father: defaultPeople,
+              mother: defaultPeople,
+              marriageDate: "",
+            })
+          }
         >
-          <Icon name="person-add" size={20} color="white" />
-        </LinearGradient>
-      </TouchableOpacity>
+          <LinearGradient
+            colors={["#FFD700", "#FFA500"]}
+            start={[0, 0]}
+            end={[1, 1]}
+            style={styles.addButtonGradient}
+          >
+            <Icon name="person-add" size={20} color="white" />
+          </LinearGradient>
+        </TouchableOpacity>
+      )}
       <FlatList
         data={familyMembers}
         keyExtractor={(item, index) => index.toString()}
@@ -203,7 +249,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   addButton: {
-    position: 'absolute',
+    position: "absolute",
     top: 10,
     right: 10,
     borderRadius: 50,
