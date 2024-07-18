@@ -1,27 +1,67 @@
 import React from "react";
-import { View, Text, FlatList, Image } from "react-native";
+import { View, Text, FlatList, Image, ScrollView } from "react-native";
 import Svg, { Line } from "react-native-svg";
 import { APP_CONSTANTS } from "../../helper/constant";
+import { useThemeContext } from "../../ThemeContext";
 
-const FamilyTree = ({ data, ...props }) => {
+const FamilyTree = ({
+  data,
+  title = "My Family Tree",
+  titleStyle = {
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  titleColor = "black",
+  nodeStyle = {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f0f0f0",
+    marginBottom: 10,
+  },
+  nodeTitleStyle = {
+    fontSize: 14,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  pathColor = "gray",
+  siblingGap = 50,
+  imageStyle = {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 5,
+  },
+  nodeTitleColor = "#000000",
+  strokeWidth = 2,
+  ...props
+}) => {
+  const { theme } = useThemeContext();
+  const effectivePathColor = theme.mode === "dark" ? "#ffffff" : pathColor;
+
   const hasChildren = (member) => member.children && member.children.length > 0;
+
   const renderMember = (member) => {
     return (
-      <View style={props.nodeStyle}>
+      <View style={[nodeStyle, { backgroundColor: theme.colors.card }]}>
         <Image
-          style={props.imageStyle}
+          style={imageStyle}
           source={{
             uri: member.profile_picture || APP_CONSTANTS.defaultAvatar,
           }}
         />
-        <Text style={{ ...props.nodeTitleStyle, color: props.nodeTitleColor,fontSize:16 }}>
+        <Text style={[nodeTitleStyle, { color: theme.colors.text }]}>
           {member.full_name_vn}
         </Text>
-        <Text style={{ fontSize: 12, color: props.nodeTitleColor,fontWeight:'bold' }}>
+        <Text style={{ fontSize: 12, color: theme.colors.text, fontWeight: 'bold' }}>
           {member.birth_date}
         </Text>
         {member.death_date && (
-          <Text style={{ fontSize: 12, color: props.nodeTitleColor,fontWeight:'bold' }}>
+          <Text style={{ fontSize: 12, color: theme.colors.text, fontWeight: 'bold' }}>
             {member.death_date}
           </Text>
         )}
@@ -32,20 +72,18 @@ const FamilyTree = ({ data, ...props }) => {
   const renderTree = (members, level) => {
     return (
       <FlatList
-      showsHorizontalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         data={members}
         horizontal={true}
         contentContainerStyle={{ padding: 50 }}
-        keyExtractor={(item) => {
-          return new Date().getTime().toString();
-        }}
+        keyExtractor={(item) => item.people_id ? item.people_id.toString() : `${level}-${Math.random()}`}
         renderItem={({ item }) => (
           <View
             style={{
               justifyContent: "center",
               alignItems: "center",
-              paddingLeft: props.siblingGap / 2,
-              paddingRight: props.siblingGap / 2,
+              paddingLeft: siblingGap / 2,
+              paddingRight: siblingGap / 2,
             }}
           >
             {renderMember(item)}
@@ -62,43 +100,43 @@ const FamilyTree = ({ data, ...props }) => {
                   y1="0"
                   x2="50%"
                   y2="150"
-                  stroke={props.pathColor}
-                  strokeWidth={props.strokeWidth}
+                  stroke={effectivePathColor}
+                  strokeWidth={strokeWidth}
                 />
               </Svg>
             )}
             {hasChildren(item) && (
               <View style={{ flexDirection: "row" }}>
                 {item.children.map((child, index) => (
-                  <View key={child.people_id}>
+                  <View key={child.people_id ? child.people_id : `${index}-${Math.random()}`}>
                     <Svg height="50" width="100%">
                       <Line
                         x1="50%"
                         y1="0"
                         x2="50%"
                         y2="100%"
-                        stroke={props.pathColor}
-                        strokeWidth={props.strokeWidth}
+                        stroke={effectivePathColor}
+                        strokeWidth={strokeWidth}
                       />
                       {item.children.length > 1 &&
                         index < item.children.length - 1 && (
                           <Line
                             x1="50%"
-                            y1={props.strokeWidth / 2}
+                            y1={strokeWidth / 2}
                             x2="100%"
-                            y2={props.strokeWidth / 2}
-                            stroke={props.pathColor}
-                            strokeWidth={props.strokeWidth}
+                            y2={strokeWidth / 2}
+                            stroke={effectivePathColor}
+                            strokeWidth={strokeWidth}
                           />
                         )}
                       {index > 0 && (
                         <Line
                           x1="0"
-                          y1={props.strokeWidth / 2}
+                          y1={strokeWidth / 2}
                           x2="50%"
-                          y2={props.strokeWidth / 2}
-                          stroke={props.pathColor}
-                          strokeWidth={props.strokeWidth}
+                          y2={strokeWidth / 2}
+                          stroke={effectivePathColor}
+                          strokeWidth={strokeWidth}
                         />
                       )}
                     </Svg>
@@ -114,45 +152,12 @@ const FamilyTree = ({ data, ...props }) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      {renderTree([data], 1)}
-    </View>
+    <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }} horizontal>
+      <ScrollView>
+        {renderTree([data], 1)}
+      </ScrollView>
+    </ScrollView>
   );
-};
-
-FamilyTree.defaultProps = {
-  title: "My Family Tree",
-  titleStyle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  titleColor: "black",
-  nodeStyle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f0f0f0",
-    marginBottom: 10,
-  },
-  nodeTitleStyle: {
-    fontSize: 14,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  pathColor: "gray",
-  siblingGap: 50,
-  imageStyle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 5,
-  },
-  nodeTitleColor: "#000000",
-  strokeWidth: 2,
 };
 
 export default FamilyTree;

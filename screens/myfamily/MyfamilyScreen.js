@@ -17,6 +17,7 @@ import Modal from "react-native-modal";
 import { AppContext } from "../../AppContext";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Sử dụng thư viện icon
 import ConfirmDelete from "../../components/ComfirmDelete";
+
 const MyfamilyScreen = () => {
   const navigation = useNavigation();
   const { isLoading, setIsLoading } = useContext(AppContext);
@@ -71,6 +72,7 @@ const MyfamilyScreen = () => {
   const handleFatherMotherPress = () => {
     toggleModal();
   };
+
   const fetchFamilyData = async () => {
     try {
       const token = await AsyncStorage.getItem("access");
@@ -80,62 +82,69 @@ const MyfamilyScreen = () => {
         setUserGender(response.gender);
         setUserMaritalStatus(response.spouse_relationships?.length > 0);
         const parents = response.parent_relationships
-          .map((rel) => {
-            return {
-              ...rel.father,
-              relationship_id: rel.relationship_id,
+          ? response.parent_relationships
+              .map((rel) => {
+                return {
+                  ...rel.father,
+                  relationship_id: rel.relationship_id,
+                  relation: "Ba",
+                };
+              })
+              .concat(
+                response.parent_relationships.map((rel) => {
+                  return {
+                    ...rel.mother,
+                    relationship_id: rel.relationship_id,
+                    relation: "Mẹ",
+                  };
+                })
+              )
+          : [];
 
-              relation: "Ba",
-            };
-          })
-          .concat(
-            response.parent_relationships.map((rel) => {
+        const siblings = response.siblings
+          ? [
+              ...(response.siblings.older_brothers || []).map((sibling) => ({
+                ...sibling,
+                relation: "Anh trai",
+              })),
+              ...(response.siblings.younger_brothers || []).map((sibling) => ({
+                ...sibling,
+                relationship_id: sibling.relationship_id,
+                relation: "Em trai",
+              })),
+              ...(response.siblings.older_sisters || []).map((sibling) => ({
+                ...sibling,
+                relationship_id: sibling.relationship_id,
+                relation: "Chị gái",
+              })),
+              ...(response.siblings.younger_sisters || []).map((sibling) => ({
+                ...sibling,
+                relationship_id: sibling.relationship_id,
+                relation: "Em gái",
+              })),
+            ]
+          : [];
+
+        const wife = response.spouse_relationships
+          ? response.spouse_relationships.map((rel) => {
               return {
-                ...rel.mother,
+                ...rel.wife,
                 relationship_id: rel.relationship_id,
-
-                relation: "Mẹ",
+                relation: "Vợ",
               };
             })
-          );
+          : [];
 
-        const siblings = [
-          ...(response.siblings.older_brothers || []).map((sibling) => ({
-            ...sibling,
-            relation: "Anh trai",
-          })),
-          ...(response.siblings.younger_brothers || []).map((sibling) => ({
-            ...sibling,
-            relationship_id: sibling.relationship_id,
+        const child = response.children
+          ? response.children.map((child) => {
+              return {
+                ...child,
+                relationship_id: child.relationship_id,
+                relation: "Con",
+              };
+            })
+          : [];
 
-            relation: "Em trai",
-          })),
-          ...(response.siblings.older_sisters || []).map((sibling) => ({
-            ...sibling,
-            relationship_id: sibling.relationship_id,
-
-            relation: "Chị gái",
-          })),
-          ...(response.siblings.younger_sisters || []).map((sibling) => ({
-            ...sibling,
-            relationship_id: sibling.relationship_id,
-            relation: "Em gái",
-          })),
-        ];
-        const wife = response.spouse_relationships.map((rel) => {
-          return {
-            ...rel.wife,
-            relationship_id: rel.relationship_id,
-            relation: "Vợ",
-          };
-        });
-        const child = response.children.map((child) => {
-          return {
-            ...child,
-            relationship_id: child.relationship_id,
-            relation: "Con",
-          };
-        });
         const familyMembers = [...parents, ...wife, ...siblings, ...child];
         setFamilyMembers(familyMembers);
         if (parents.length === 0) {
@@ -159,6 +168,7 @@ const MyfamilyScreen = () => {
     });
     return unsubscribe;
   }, []);
+
   const addParent = async (data) => {
     delete data.husband.profile_picture;
     delete data.wife.profile_picture;
@@ -178,6 +188,7 @@ const MyfamilyScreen = () => {
       setIsLoading(false);
     }
   };
+
   const RenderFamilyMember = ({ item }) => {
     console.log(item);
     const onDelete = async () => {};

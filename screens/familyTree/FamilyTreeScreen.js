@@ -7,10 +7,29 @@ import AppHeader from "../../components/AppHeader";
 import { useNavigation } from "@react-navigation/native";
 import { APP_CONSTANTS } from "../../helper/constant";
 import { Ionicons } from "@expo/vector-icons";
+import { useThemeContext } from "../../ThemeContext"; // Import theme context
+import { LinearGradient } from "expo-linear-gradient"; // Import LinearGradient
+
+const getGradientColors = (level) => {
+  switch (level) {
+    case 0:
+      return ["#FFD700", "#FFA500"]; // Vàng
+    case 1:
+      return ["#00FF00", "#32CD32"]; // Xanh lá
+    case 2:
+      return ["#0000FF", "#1E90FF"]; // Xanh dương
+    case 3:
+      return ["#FF00FF", "#FF69B4"]; // Hồng
+    default:
+      return ["#FFD700", "#FFA500"]; // Vàng mặc định
+  }
+};
+
 const FamilyTreeNode = ({ person, level, onToggle }) => {
   const navigation = useNavigation();
   const [expanded, setExpanded] = useState(level < 1);
   const [animation] = useState(new Animated.Value(level < 1 ? 1 : 0));
+  const { theme } = useThemeContext(); // Sử dụng context theme
 
   const toggleExpand = () => {
     const newExpanded = !expanded;
@@ -34,15 +53,19 @@ const FamilyTreeNode = ({ person, level, onToggle }) => {
   });
 
   return (
-    <View style={[styles.nodeContainer, { marginLeft: level * 20,
-     
-     }]}>
+    <View style={[styles.nodeContainer, { marginLeft: level * 20, backgroundColor: theme.colors.background }]}>
+      <LinearGradient
+        colors={getGradientColors(level)}
+        start={[0, 0]}
+        end={[1, 1]}
+        style={styles.gradientLine}
+      />
       <TouchableOpacity onPress={toggleExpand} style={styles.nodeHeader}>
         <View style={styles.personInfo}>
-          <Image source={{ uri: person.profile_picture ?? APP_CONSTANTS.defaultAvatar}} style={styles.profileImage} />
+          <Image source={{ uri: person.profile_picture ?? APP_CONSTANTS.defaultAvatar}} style={[styles.profileImage, { borderColor: theme.colors.border }]} />
           <View style={styles.textInfo}>
-            <Text style={styles.personName}>{person.full_name_vn}</Text>
-            <Text style={styles.dateInfo}>
+            <Text style={[styles.personName, { color: theme.colors.text }]}>{person.full_name_vn}</Text>
+            <Text style={[styles.dateInfo, { color: theme.colors.text }]}>
               {formatDate(person.birth_date)} 
               {person.death_date && ` - ${formatDate(person.death_date)}`}
             </Text>
@@ -55,7 +78,7 @@ const FamilyTreeNode = ({ person, level, onToggle }) => {
             }}
             style={styles.detailButton}
           >
-            <Ionicons name="information-circle-outline" size={24} color="#0a3621" />
+            <Ionicons name="information-circle-outline" size={24} color={theme.colors.icon} />
           </TouchableOpacity>
         </View>
         {person.children && person.children.length > 0 && (
@@ -63,7 +86,7 @@ const FamilyTreeNode = ({ person, level, onToggle }) => {
             inputRange: [0, 1],
             outputRange: ['0deg', '90deg']
           }) }] }}>
-            <Ionicons name="chevron-forward" size={24} color="#0a3621" />
+            <Ionicons name="chevron-forward" size={24} color={theme.colors.icon} />
           </Animated.View>
         )}
       </TouchableOpacity>
@@ -92,9 +115,9 @@ const FamilyTree = ({ data }) => {
 
   return (
     <FlatList
-    style={{
-      paddingBottom:100
-    }}
+      style={{
+        paddingBottom:100
+      }}
       data={[data]}
       horizontal
       renderItem={({ item }) => (
@@ -108,6 +131,7 @@ const FamilyTree = ({ data }) => {
 const FamilyTreeScreen = () => {
   const [data, setData] = useState(null);
   const { setIsLoading } = useContext(AppContext);
+  const { theme } = useThemeContext(); // Sử dụng context theme
 
   const getData = async () => {
     setIsLoading(true);
@@ -127,9 +151,8 @@ const FamilyTreeScreen = () => {
   }, []);
   const navigation = useNavigation();
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <AppHeader back title="Gia phả" right={{
-
         icon: "map",
         onPress: () => {
           navigation.navigate("FamilyMap");
@@ -142,7 +165,7 @@ const FamilyTreeScreen = () => {
         {data ? (
           <FamilyTree data={data} />
         ) : (
-          <Text style={styles.loadingText}>Đang tải dữ liệu gia phả...</Text>
+          <Text style={[styles.loadingText, { color: theme.colors.text }]}>Đang tải dữ liệu gia phả...</Text>
         )}
       </ScrollView>
     </View>
@@ -152,7 +175,6 @@ const FamilyTreeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
   },
   scrollView: {
     flex: 1,
@@ -164,12 +186,16 @@ const styles = StyleSheet.create({
   nodeContainer: {
     marginHorizontal: 10,
     marginVertical: 5,
-    backgroundColor: 'white',
-
     borderWidth: 0,
-    borderLeftWidth: 2,
-    borderColor: '#0a3621',
     minWidth: 250,
+    position: 'relative',
+  },
+  gradientLine: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 2,
   },
   nodeHeader: {
     flexDirection: 'row',
@@ -181,7 +207,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    gap: 10
+    gap: 10,
   },
   profileImage: {
     width: 50,
@@ -189,7 +215,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginRight: 10,
     borderWidth: 2,
-    borderColor: '#0a3621',
   },
   textInfo: {
     flex: 1,
@@ -198,22 +223,19 @@ const styles = StyleSheet.create({
     maxWidth: 150,
     fontSize: 16,
     fontWeight: "bold",
-    color: '#0a3621',
   },
   dateInfo: {
     fontSize: 12,
-    color: '#0a3621',
     marginTop: 5,
   },
   detailButton: {
     padding: 5,
     borderRadius: 5,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   loadingText: {
     textAlign: 'center',
-    color: '#0a3621',
     fontSize: 16,
     marginTop: 20,
   },
