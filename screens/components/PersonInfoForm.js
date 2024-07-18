@@ -33,8 +33,24 @@ const PersonInfoForm = ({ title, person, setPerson }) => {
   };
 
   return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
+    <View
+      style={[
+        styles.section,
+        {
+          backgroundColor: theme.colors.background,
+        },
+      ]}
+    >
+      <Text
+        style={[
+          styles.sectionTitle,
+          {
+            color: theme.colors.text,
+          },
+        ]}
+      >
+        {title}
+      </Text>
       <View style={styles.row}>
         <TouchableOpacity>
           <Image
@@ -136,17 +152,18 @@ const PersonInfoForm = ({ title, person, setPerson }) => {
           <View style={{ height: 200 }} />
         </Menu>
       </View>
-      {
-        title == 'Thông tin về chồng' || title == 'Thông tin về vợ' && (
+      {title == "Thông tin về chồng" ||
+        (title == "Thông tin về vợ" && (
           <View style={styles.marriageDateSection}>
-          <AppFormDateInput
-            title={"Ngày cưới"}
-            value={person.marriage_date || ""}
-            onSaveText={(value) => setPerson({ ...person, marriage_date: value })}
-          />
-        </View>
-        )
-      }
+            <AppFormDateInput
+              title={"Ngày cưới"}
+              value={person.marriage_date || ""}
+              onSaveText={(value) =>
+                setPerson({ ...person, marriage_date: value })
+              }
+            />
+          </View>
+        ))}
       {title === "Con" && (
         <Menu
           visible={eduVisible}

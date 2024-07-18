@@ -4,8 +4,8 @@ import { AppContext } from "../../AppContext";
 import FamilyTree from "./FamilyTree";
 import AxiosInstance from "../../network/AxiosInstance";
 import AppHeader from "../../components/AppHeader";
-import * as Print from 'expo-print';
-import * as Sharing from 'expo-sharing';
+import * as Print from "expo-print";
+import * as Sharing from "expo-sharing";
 import { APP_CONSTANTS } from "../../helper/constant";
 
 const FamilyMap = () => {
@@ -31,7 +31,7 @@ const FamilyMap = () => {
     if (data) {
       const html = createFamilyTreeHTML(data);
       try {
-        const { uri } = await Print.printToFileAsync({ 
+        const { uri } = await Print.printToFileAsync({
           html,
           base64: false,
           width: 4000, // Điều chỉnh chiều rộng theo nhu cầu
@@ -46,13 +46,15 @@ const FamilyMap = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <AppHeader right={{
-        icon: "print",
-        onPress: generatePDF,
-      }} back title={"Family Tree"} />
-      <View style={{ flex: 1 }}>
-        {data && <FamilyTree data={data} />}
-      </View>
+      <AppHeader
+        right={{
+          icon: "print",
+          onPress: generatePDF,
+        }}
+        back
+        title={"Family Tree"}
+      />
+      <View style={{ flex: 1 }}>{data && <FamilyTree data={data} />}</View>
     </View>
   );
 };
@@ -60,22 +62,26 @@ const FamilyMap = () => {
 export default FamilyMap;
 const createFamilyTreeHTML = (data) => {
   const renderMember = (member) => {
-    const spouseHtml = member.spouse_name ? `
+    const spouseHtml = member.spouse_name
+      ? `
       <div class="spouse">
-        <img src="${member.spouse_profile_picture || APP_CONSTANTS.defaultAvatar}" 
+        <img src="${
+          member.spouse_profile_picture || APP_CONSTANTS.defaultAvatar
+        }" 
              alt="${member.spouse_name}"
              class="avatar" />
         <div class="name">${member.spouse_name}</div>
       </div>
-    ` : '';
+    `
+      : "";
     const breakName = (name) => {
       if (name.length > 13) {
-        const nameArr = name.split(' ');
+        const nameArr = name.split(" ");
         let result = [];
         for (let i = 0; i < nameArr.length; i += 3) {
-          result.push(nameArr.slice(i, i + 3).join(' '));
+          result.push(nameArr.slice(i, i + 3).join(" "));
         }
-        return result.join('<br>');
+        return result.join("<br>");
       }
       return name;
     };
@@ -86,8 +92,12 @@ const createFamilyTreeHTML = (data) => {
                alt="${member.full_name_vn}"
                class="avatar" />
           <div class="name">${breakName(member.full_name_vn)}</div>
-          <div class="date">${member?.birth_date || ''}</div>
-          ${member.death_date ? `<div class="date">${member.death_date}</div>` : ''}
+          <div class="date">${member?.birth_date || ""}</div>
+          ${
+            member.death_date
+              ? `<div class="date">${member.death_date}</div>`
+              : ""
+          }
         </div>
         ${spouseHtml}
       </div>
@@ -95,16 +105,24 @@ const createFamilyTreeHTML = (data) => {
   };
 
   const renderTree = (members, level = 0) => {
-    if (members.length === 0) return '';
+    if (members.length === 0) return "";
 
     return `
       <ul class="level-${level}">
-        ${members.map((member, index) => `
+        ${members
+          .map(
+            (member, index) => `
           <li>
             ${renderMember(member)}
-            ${member.children && member.children.length > 0 ? renderTree(member.children, level + 1) : ''}
+            ${
+              member.children && member.children.length > 0
+                ? renderTree(member.children, level + 1)
+                : ""
+            }
           </li>
-        `).join('')}
+        `
+          )
+          .join("")}
       </ul>
     `;
   };

@@ -35,8 +35,9 @@ const ProfileScreen = () => {
       const people_id = await AsyncStorage.getItem("people_id");
       const profile_picture = await AsyncStorage.getItem("profile_picture");
       const full_name_vn = await AsyncStorage.getItem("full_name_vn");
-      const marital_status = await AsyncStorage.getItem("marital_status") === 'true';
-      const gender = await AsyncStorage.getItem("gender") === 'true';
+      const marital_status =
+        (await AsyncStorage.getItem("marital_status")) === "true";
+      const gender = (await AsyncStorage.getItem("gender")) === "true";
       console.log("Profile picture:--", profile_picture);
       if (profile_picture) {
         setProfileImage(profile_picture);
@@ -61,19 +62,19 @@ const ProfileScreen = () => {
       if (!image || !image.uri) {
         throw new Error("Invalid image URI");
       }
-  
+
       const compressedImage = await ImageManipulator.manipulateAsync(
         image.uri,
         [{ resize: { height: 586 } }], // Resize only height to maintain aspect ratio
         { compress: 0.9, format: ImageManipulator.SaveFormat.JPEG }
       );
-  
+
       const fileData = {
         uri: compressedImage.uri,
         type: "image/jpeg",
         name: `${new Date().getTime()}.jpg`,
       };
-  
+
       const formData = new FormData();
       formData.append("profile_picture", fileData);
       const people_id = userInfo.people_id; // Ensure people_id is retrieved from userInfo
@@ -82,7 +83,7 @@ const ProfileScreen = () => {
         `people/people-detail/${people_id}/`,
         formData
       );
-  
+
       if (response.data.profile_picture) {
         await AsyncStorage.setItem(
           "profile_picture",
@@ -99,7 +100,6 @@ const ProfileScreen = () => {
       Alert.alert("Error", "Upload image failed");
     }
   };
-  
 
   useEffect(() => {
     getUserInfo();
@@ -165,7 +165,9 @@ const ProfileScreen = () => {
         <View style={styles.imageWrapper}>
           <Image
             source={{
-              uri: profileImage ? profileImage : APP_CONSTANTS.defaultAvatar,
+              uri: `${profileImage}+${new Date().getMilliseconds().toString()}`
+                ? profileImage
+                : APP_CONSTANTS.defaultAvatar,
             }}
             style={styles.profileImage}
             onError={(error) =>

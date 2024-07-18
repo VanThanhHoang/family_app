@@ -7,6 +7,7 @@ import AppHeader from "../../components/AppHeader";
 import Icon from "react-native-vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useThemeContext } from "../../ThemeContext";
+import { defaultPeople } from "../myfamily/Data";
 
 const MaternalScreen = () => {
   const navigation = useNavigation();
@@ -134,7 +135,12 @@ const MaternalScreen = () => {
       <AppHeader back title="Thành viên gia đình" />
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => navigation.navigate("AddFamilyMember")}
+        onPress={() => navigation.navigate("AddFatherMotherScreen",{
+          type:2,
+          father:defaultPeople,
+          mother:defaultPeople,
+          marriageDate:""
+        })}
       >
         <LinearGradient
           colors={["#FFD700", "#FFA500"]}

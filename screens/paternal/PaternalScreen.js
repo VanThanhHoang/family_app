@@ -7,6 +7,7 @@ import AppHeader from "../../components/AppHeader";
 import Icon from "react-native-vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useThemeContext } from "../../ThemeContext";
+import { defaultPeople } from "../myfamily/Data";
 
 const PaternalScreen = () => {
   const navigation = useNavigation();
@@ -105,10 +106,7 @@ const PaternalScreen = () => {
             : member.gender
             ? require("../../assets/father.png")
             : require("../../assets/mother.png");
-          console.log("Profile picture:", profilePictureUrl.uri || profilePictureUrl);
-
           const age = member.birth_date ? new Date().getFullYear() - new Date(member.birth_date).getFullYear() : null;
-
           return (
             <TouchableOpacity
               key={member.people_id}
@@ -134,7 +132,12 @@ const PaternalScreen = () => {
       <AppHeader back title="Thành viên gia đình" />
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => navigation.navigate("AddFamilyMember")}
+        onPress={() => navigation.navigate("AddFatherMotherScreen",{
+          type:3,
+          father:defaultPeople,
+          mother:defaultPeople,
+          marriageDate:""
+        })}
       >
         <LinearGradient
           colors={["#FFD700", "#FFA500"]}

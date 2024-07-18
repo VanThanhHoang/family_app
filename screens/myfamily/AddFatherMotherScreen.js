@@ -9,17 +9,42 @@ import { defaultPeople } from "./Data";
 import AppFormDateInput from "../../components/FormDateInput";
 import { AppContext } from "../../AppContext";
 import AxiosInstance from "../../network/AxiosInstance";
+import { useThemeContext } from "../../ThemeContext";
 const AddFatherMotherScreen = () => {
   const navigation = useNavigation();
+  const { theme } = useThemeContext();
+  const getTittleByType = (type) => {
+    if (type == 1) {
+      return {
+        mother: "Mẹ",
+        father: "Cha",
+        tittle: "Thêm thông tin về cha mẹ",
+        link: "people/motherfather/",
+      };
+    }
+    if (type == 2) {
+      return {
+        mother: "Bà Ngoại",
+        father: "Ông Ngoại",
+        tittle: "Thêm thông tin về ông bà ngoại",
+        link: "people/grandmotherfather/",
+      };
+    }
+    return {
+      mother: "Bà Nội",
+      father: "Ông Nội",
+      tittle: "Thêm thông tin về ông bà nội",
+      link: "people/maternalgrandmotherfather/",
+    };
+  };
   const route = useRoute();
-  const { father, mother, marriageDate } = route?.params ?? {
+  const { father, mother, marriageDate, type } = route?.params ?? {
     father: defaultPeople,
     mother: defaultPeople,
     marriageDate: "",
+    type: 1,
   };
-  const {type}=route.params ?? {
-    type:1
-  };
+  console.log(father);
   const [fatherData, setFather] = useState(father);
   const [motherData, setMother] = useState(mother);
   const [marriageDateData, setMarriageDate] = useState(marriageDate);
@@ -32,19 +57,27 @@ const AddFatherMotherScreen = () => {
     const errors = [];
 
     if (!fatherData.full_name_vn.trim()) {
-      errors.push("Tên của cha không được để trống");
+      errors.push(
+        `Tên của ${getTittleByType(type).father} không được để trống`
+      );
     }
 
     if (!fatherData.birth_date) {
-      errors.push("Ngày sinh của cha không được để trống");
+      errors.push(
+        `Ngày sinh của ${getTittleByType(type).father} không được để trống`
+      );
     }
 
     if (!motherData.full_name_vn.trim()) {
-      errors.push("Tên của mẹ không được để trống");
+      errors.push(
+        `Tên của ${getTittleByType(type).mother} không được để trống`
+      );
     }
 
     if (!motherData.birth_date) {
-      errors.push("Ngày sinh của mẹ không được để trống");
+      errors.push(
+        `Ngày sinh của ${getTittleByType(type).mother} không được để trống`
+      );
     }
 
     if (!marriageDateData) {
@@ -53,6 +86,7 @@ const AddFatherMotherScreen = () => {
 
     return errors;
   };
+
   const { setIsLoading } = useContext(AppContext);
   const handleSubmit = async () => {
     const validationErrors = validateData();
@@ -74,15 +108,16 @@ const AddFatherMotherScreen = () => {
           },
           wife: {
             ...motherData,
+            gender: false,
           },
           marriage_date: marriageDateData,
         };
-        const rs = await AxiosInstance().post("people/motherfather/", data);
+        const rs = await AxiosInstance().post(getTittleByType(type).link, data);
         Alert.alert("Thành công", "Thêm thông tin thành công");
-        navigation.goBack();
-        console.log(rs);
+       navigation.goBack();
       } catch (err) {
         console.log(err);
+        Alert.alert("Lỗi", "Người dùng đã có " + getTittleByType(type).father);
       } finally {
         setIsLoading(false);
       }
@@ -96,15 +131,29 @@ const AddFatherMotherScreen = () => {
           onPress: handleSubmit,
         }}
         back
-        title={"Thêm thông tin về cha mẹ"}
+        title={`${getTittleByType(type).tittle}`}
       />
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.container,
+          {
+            backgroundColor: theme.colors.background,
+          },
+        ]}
+      >
         <PersonInfoForm
-          title={"Thông tin về ba"}
+          title={`Thông tin về ${getTittleByType(type).father}`}
           person={fatherData}
           setPerson={setFather}
         />
-        <View style={styles.marriageDateSection}>
+        <View
+          style={[
+            styles.marriageDateSection,
+            {
+              backgroundColor: theme.colors.background,
+            },
+          ]}
+        >
           <AppFormDateInput
             title={"Ngày cưới"}
             value={marriageDateData}
@@ -113,7 +162,7 @@ const AddFatherMotherScreen = () => {
         </View>
         <PersonInfoForm
           setPerson={setMother}
-          title={"Thông tin về mẹ"}
+          title={`Thông tin về ${getTittleByType(type).mother}`}
           person={motherData}
         />
         <RegisterMemberForm />
