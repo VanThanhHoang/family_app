@@ -94,7 +94,9 @@ const MyfamilyScreen = () => {
             relationship_id: data.user_parents.mother_relationship_id,
           },
         ];
-
+        if (!data.user_parents?.people_id) {
+          setParentsEmpty(true);
+        }
         const spouse = data.user_spouse
           ? [
               {
@@ -262,14 +264,15 @@ const MyfamilyScreen = () => {
   return (
     <View style={styles.container}>
       <AppHeader back title="Thành viên gia đình" />
-
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={handleFatherMotherPress}
-      >
-        <Icon name="add-circle" size={24} color="white" />
-        <Text style={styles.addButtonText}>Father & Mother</Text>
-      </TouchableOpacity>
+      {parentsEmpty && (
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={handleFatherMotherPress}
+        >
+          <Icon name="add-circle" size={24} color="white" />
+          <Text style={styles.addButtonText}>Father & Mother</Text>
+        </TouchableOpacity>
+      )}
       {!userMaritalStatus && (
         <TouchableOpacity
           style={styles.addButton}
