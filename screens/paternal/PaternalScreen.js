@@ -19,9 +19,8 @@ const PaternalScreen = () => {
 
         console.log('Token:', token);
         console.log('People ID:', peopleId);
-
         if (token && peopleId) {
-          const response = await AxiosInstance().get(`user/paternal-detail/?people_id=${peopleId}`);
+          const response = await AxiosInstance().get(`user/paternal-detail/`);
           const familyMembers = [
             ...(response.paternal_grandfather ? [{ ...response.paternal_grandfather, relation: 'Ông nội' }] : []),
             ...(response.paternal_grandmother ? [{ ...response.paternal_grandmother, relation: 'Bà nội' }] : []),

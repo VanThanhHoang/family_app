@@ -16,7 +16,7 @@ import AppHeader from "../../components/AppHeader";
 import Modal from "react-native-modal";
 import { AppContext } from "../../AppContext";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Sử dụng thư viện icon
-import ConfirmDelete from "../../components/ComfirmDelete";
+import ConfirmDelete from "../../components/Com firmDelete";
 const MyfamilyScreen = () => {
   const navigation = useNavigation();
   const { isLoading, setIsLoading } = useContext(AppContext);
