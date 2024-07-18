@@ -20,7 +20,6 @@ const FamilyTree = ({
     borderRadius: 50,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f0f0f0",
     marginBottom: 10,
   },
   nodeTitleStyle = {
@@ -42,12 +41,11 @@ const FamilyTree = ({
 }) => {
   const { theme } = useThemeContext();
   const effectivePathColor = theme.mode === "dark" ? "#ffffff" : pathColor;
-
   const hasChildren = (member) => member.children && member.children.length > 0;
 
   const renderMember = (member) => {
     return (
-      <View style={[nodeStyle, { backgroundColor: theme.colors.card }]}>
+      <View style={[nodeStyle]}>
         <Image
           style={imageStyle}
           source={{
@@ -152,11 +150,9 @@ const FamilyTree = ({
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: theme.colors.background }} horizontal>
-      <ScrollView>
-        {renderTree([data], 1)}
-      </ScrollView>
-    </ScrollView>
+    <View style={{ flex: 1 ,backgroundColor:theme.colors.background}}>
+    {renderTree([data], 1)}
+  </View>
   );
 };
 
