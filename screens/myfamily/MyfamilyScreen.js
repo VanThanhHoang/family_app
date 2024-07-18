@@ -151,11 +151,11 @@ const MyfamilyScreen = () => {
         ];
 
         const familyMembers = [
+          ...grandparents,
           ...parents,
           ...spouse,
           ...children,
           ...siblings,
-          ...grandparents,
         ];
         setFamilyMembers(familyMembers);
         setParentsEmpty(parents.length === 0);

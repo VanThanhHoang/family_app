@@ -101,10 +101,10 @@ const Login = () => {
       await AsyncStorage.setItem("refresh", response.refresh);
       await AsyncStorage.setItem("email", response.email);
       await AsyncStorage.setItem("id", response.id.toString());
-      await AsyncStorage.setItem("people_id", response.people_id.toString());
+      await AsyncStorage.setItem("people_id", response.people_id?.toString()||"");
       await AsyncStorage.setItem("profile_picture", response?.profile_picture || APP_CONSTANTS.defaultAvatar);
-      await AsyncStorage.setItem("marital_status", response.marital_status.toString());
-      await AsyncStorage.setItem("gender", response.gender.toString()); 
+      await AsyncStorage.setItem("marital_status", response.marital_status?.toString()||"true");
+      await AsyncStorage.setItem("gender", response.gender?.toString()||"false"); 
       navigation.reset({
         index: 0,
         routes: [{ name: "Profile" }],
