@@ -128,8 +128,7 @@ const MaternalScreen = () => {
         })}
       </View>
     );
-  };
-
+  };  
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <AppHeader back title="Thành viên gia đình" />
