@@ -29,9 +29,9 @@ const PaternalScreen = () => {
         const response = await AxiosInstance().get("paternal-relationship/", {
           headers: { Authorization: `Bearer ${token}` },
         });
+        console.log("Response from fetching family data:", response.data);
         if (response.data && response.data) {
           const data = response.data;
-
           const groupedMembers = [];
 
           // Group paternal grandparents
@@ -170,7 +170,7 @@ const PaternalScreen = () => {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <AppHeader back title="Thành viên gia đình" />
-      {!isHasGrandMother && (
+  
         <TouchableOpacity
           style={styles.addButton}
           onPress={() =>
@@ -191,7 +191,6 @@ const PaternalScreen = () => {
             <Icon name="person-add" size={20} color="white" />
           </LinearGradient>
         </TouchableOpacity>
-      )}
       <FlatList
         data={familyMembers}
         keyExtractor={(item, index) => index.toString()}

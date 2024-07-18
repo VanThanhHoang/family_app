@@ -27,14 +27,14 @@ const AddFatherMotherScreen = () => {
         mother: "Bà Ngoại",
         father: "Ông Ngoại",
         tittle: "Thêm thông tin về ông bà ngoại",
-        link: "people/grandmotherfather/",
+        link: "people/maternalgrandmotherfather/",
       };
     }
     return {
       mother: "Bà Nội",
       father: "Ông Nội",
       tittle: "Thêm thông tin về ông bà nội",
-      link: "people/maternalgrandmotherfather/",
+      link: "people/grandmotherfather/",
     };
   };
   const route = useRoute();
@@ -115,9 +115,10 @@ const AddFatherMotherScreen = () => {
         console.log(getTittleByType(type).link);
         const rs = await AxiosInstance().post(getTittleByType(type).link, data);
         Alert.alert("Thành công", "Thêm thông tin thành công");
-       navigation.goBack();
+        console.log(rs);
+     //  navigation.goBack();
       } catch (err) {
-        console.log({...err});
+        console.log(err);
         Alert.alert("Lỗi", "Người dùng đã có " + getTittleByType(type).father);
       } finally {
         setIsLoading(false);

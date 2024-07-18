@@ -60,7 +60,7 @@ const FamilyScreen = () => {
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}
         style={{ width: "100%" }}
-        keyExtractor={(item) => item.relationship_id.toString()}
+        keyExtractor={(item,index) => item.relationship_id.toString()+index}
         renderItem={({ item }) => {
           return <FamilyItem family={item} />;
         }}

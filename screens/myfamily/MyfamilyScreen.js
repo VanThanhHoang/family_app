@@ -81,7 +81,7 @@ const MyfamilyScreen = () => {
       if (token && peopleId) {
         const response = await AxiosInstance().get("myfamily/relationship/");
         const data = response.data;
-
+        console.log("Family data:", data);
         const parents = [
           {
             ...data.user_parents.father,
@@ -184,7 +184,7 @@ const MyfamilyScreen = () => {
         style={styles.memberContainer}
         onPress={
           () => {}
-          // navigation.navigate("DetailScreen", { id: item.people_id })
+          //navigation.navigate("DetailScreen", { id: item.people_id })
         }
       >
         <Image
@@ -262,15 +262,14 @@ const MyfamilyScreen = () => {
   return (
     <View style={styles.container}>
       <AppHeader back title="Thành viên gia đình" />
-      {parentsEmpty && (
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={handleFatherMotherPress}
-        >
-          <Icon name="add-circle" size={24} color="white" />
-          <Text style={styles.addButtonText}>Father & Mother</Text>
-        </TouchableOpacity>
-      )}
+
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={handleFatherMotherPress}
+      >
+        <Icon name="add-circle" size={24} color="white" />
+        <Text style={styles.addButtonText}>Father & Mother</Text>
+      </TouchableOpacity>
       {!userMaritalStatus && (
         <TouchableOpacity
           style={styles.addButton}
@@ -296,8 +295,14 @@ const MyfamilyScreen = () => {
       </TouchableOpacity>
       <FlatList
         data={familyMembers}
-        keyExtractor={(item) => item.people_id.toString()}
-        renderItem={({ item }) => <RenderFamilyMember item={item} />}
+        keyExtractor={(item, index) =>
+          item?.people_id?.toString() || index + new Date().getTime().toString()
+        }
+        renderItem={({ item }) => {
+          return item.relation && item.relationship_id ? (
+            <RenderFamilyMember item={item} />
+          ) : null;
+        }}
       />
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
