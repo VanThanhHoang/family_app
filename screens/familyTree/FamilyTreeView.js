@@ -86,7 +86,7 @@ const createFamilyTreeHTML = (data) => {
                alt="${member.full_name_vn}"
                class="avatar" />
           <div class="name">${breakName(member.full_name_vn)}</div>
-          <div class="date">${member.birth_date}</div>
+          <div class="date">${member?.birth_date || ''}</div>
           ${member.death_date ? `<div class="date">${member.death_date}</div>` : ''}
         </div>
         ${spouseHtml}
