@@ -112,11 +112,12 @@ const AddFatherMotherScreen = () => {
           },
           marriage_date: marriageDateData,
         };
+        console.log(getTittleByType(type).link);
         const rs = await AxiosInstance().post(getTittleByType(type).link, data);
         Alert.alert("Thành công", "Thêm thông tin thành công");
        navigation.goBack();
       } catch (err) {
-        console.log(err);
+        console.log({...err});
         Alert.alert("Lỗi", "Người dùng đã có " + getTittleByType(type).father);
       } finally {
         setIsLoading(false);

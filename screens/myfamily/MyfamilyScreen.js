@@ -24,7 +24,7 @@ const MyfamilyScreen = () => {
   const [familyMembers, setFamilyMembers] = useState([]);
   const [parentsEmpty, setParentsEmpty] = useState(false);
   const [userGender, setUserGender] = useState(null);
-  const [userMaritalStatus, setUserMaritalStatus] = useState(false);
+  const [userMaritalStatus, setUserMaritalStatus] = useState(true);
   const [isModalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -65,6 +65,7 @@ const MyfamilyScreen = () => {
       father,
       mother,
       marriageDate,
+      type: 1,
     });
     toggleModal();
   };
@@ -79,79 +80,85 @@ const MyfamilyScreen = () => {
       const peopleId = await AsyncStorage.getItem("people_id");
       if (token && peopleId) {
         const response = await AxiosInstance().get("myfamily/relationship/");
-        setUserGender(response.gender);
-        setUserMaritalStatus(response.spouse_relationships?.length > 0);
-        const parents = response.parent_relationships
-          ? response.parent_relationships
-              .map((rel) => {
-                return {
-                  ...rel.father,
-                  relationship_id: rel.relationship_id,
-                  relation: "Ba",
-                };
-              })
-              .concat(
-                response.parent_relationships.map((rel) => {
-                  return {
-                    ...rel.mother,
-                    relationship_id: rel.relationship_id,
-                    relation: "Mẹ",
-                  };
-                })
-              )
-          : [];
+        const data = response.data;
 
-        const siblings = response.siblings
+        const parents = [
+          {
+            ...data.user_parents.father,
+            relation: data.user_parents.father_relationship,
+            relationship_id: data.user_parents.father_relationship_id,
+          },
+          {
+            ...data.user_parents.mother,
+            relation: data.user_parents.mother_relationship,
+            relationship_id: data.user_parents.mother_relationship_id,
+          },
+        ];
+
+        const spouse = data.user_spouse
           ? [
-              ...(response.siblings.older_brothers || []).map((sibling) => ({
-                ...sibling,
-                relation: "Anh trai",
-              })),
-              ...(response.siblings.younger_brothers || []).map((sibling) => ({
-                ...sibling,
-                relationship_id: sibling.relationship_id,
-                relation: "Em trai",
-              })),
-              ...(response.siblings.older_sisters || []).map((sibling) => ({
-                ...sibling,
-                relationship_id: sibling.relationship_id,
-                relation: "Chị gái",
-              })),
-              ...(response.siblings.younger_sisters || []).map((sibling) => ({
-                ...sibling,
-                relationship_id: sibling.relationship_id,
-                relation: "Em gái",
-              })),
+              {
+                ...data.user_spouse.spouse,
+                relation: data.user_spouse.relationship,
+                relationship_id: data.user_spouse.relationship_id,
+              },
             ]
           : [];
-
-        const wife = response.spouse_relationships
-          ? response.spouse_relationships.map((rel) => {
-              return {
-                ...rel.wife,
-                relationship_id: rel.relationship_id,
-                relation: "Vợ",
-              };
-            })
-          : [];
-
-        const child = response.children
-          ? response.children.map((child) => {
-              return {
-                ...child,
-                relationship_id: child.relationship_id,
-                relation: "Con",
-              };
-            })
-          : [];
-
-        const familyMembers = [...parents, ...wife, ...siblings, ...child];
-        setFamilyMembers(familyMembers);
-        if (parents.length === 0) {
-          setParentsEmpty(true);
-        } else {
-          setParentsEmpty(false);
+        if (spouse.length == 0) {
+          setUserMaritalStatus(false);
         }
+        const children = data.user_children.children.map((child) => ({
+          ...child,
+          relation: "Con",
+          relationship_id: child.relationship_id,
+        }));
+
+        const siblings = data.user_siblings.siblings.map((sibling) => ({
+          ...sibling,
+          relation: sibling.relationship,
+          relationship_id: sibling.relationship_id,
+        }));
+
+        const grandparents = [
+          {
+            ...data.maternal_grandparents.maternal_grandfather,
+            relation:
+              data.maternal_grandparents.maternal_grandfather_relationship,
+            relationship_id:
+              data.maternal_grandparents.maternal_grandfather_relationship_id,
+          },
+          {
+            ...data.maternal_grandparents.maternal_grandmother,
+            relation:
+              data.maternal_grandparents.maternal_grandmother_relationship,
+            relationship_id:
+              data.maternal_grandparents.maternal_grandmother_relationship_id,
+          },
+          {
+            ...data.paternal_grandparents.paternal_grandfather,
+            relation:
+              data.paternal_grandparents.paternal_grandfather_relationship,
+            relationship_id:
+              data.paternal_grandparents.paternal_grandfather_relationship_id,
+          },
+          {
+            ...data.paternal_grandparents.paternal_grandmother,
+            relation:
+              data.paternal_grandparents.paternal_grandmother_relationship,
+            relationship_id:
+              data.paternal_grandparents.paternal_grandmother_relationship_id,
+          },
+        ];
+
+        const familyMembers = [
+          ...parents,
+          ...spouse,
+          ...children,
+          ...siblings,
+          ...grandparents,
+        ];
+        setFamilyMembers(familyMembers);
+        setParentsEmpty(parents.length === 0);
       }
     } catch (error) {
       console.error("Error fetching family data:", error);
@@ -168,27 +175,6 @@ const MyfamilyScreen = () => {
     });
     return unsubscribe;
   }, []);
-
-  const addParent = async (data) => {
-    delete data.husband.profile_picture;
-    delete data.wife.profile_picture;
-    delete data.husband.status;
-    delete data.wife.status;
-    console.log(data);
-    try {
-      setIsLoading(true);
-      const response = await AxiosInstance().post("people/motherfather/", data);
-      if (response) {
-        Alert.alert("Thành công", "Thông tin đã được lưu");
-      }
-      fetchFamilyData();
-    } catch (error) {
-      console.error({ ...error });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const RenderFamilyMember = ({ item }) => {
     console.log(item);
     const onDelete = async () => {};
@@ -335,7 +321,9 @@ const MyfamilyScreen = () => {
                 style={styles.addButton}
                 onPress={() => {
                   toggleModal();
-                  navigation.navigate("AddFatherMotherScreen");
+                  navigation.navigate("AddFatherMotherScreen", {
+                    type: 1,
+                  });
                 }}
               >
                 <Text style={styles.addButtonText}>TẠO MỚI</Text>
