@@ -60,14 +60,36 @@ const FamilyMap = () => {
 export default FamilyMap;
 const createFamilyTreeHTML = (data) => {
   const renderMember = (member) => {
-    return `
-      <div class="member">
-        <img src="${member.profile_picture || APP_CONSTANTS.defaultAvatar}" 
-             alt="${member.full_name_vn}"
+    const spouseHtml = member.spouse_name ? `
+      <div class="spouse">
+        <img src="${member.spouse_profile_picture || APP_CONSTANTS.defaultAvatar}" 
+             alt="${member.spouse_name}"
              class="avatar" />
-        <div class="name">${member.full_name_vn}</div>
-        <div class="date">${member.birth_date}</div>
-        ${member.death_date ? `<div class="date">${member.death_date}</div>` : ''}
+        <div class="name">${member.spouse_name}</div>
+      </div>
+    ` : '';
+    const breakName = (name) => {
+      if (name.length > 13) {
+        const nameArr = name.split(' ');
+        let result = [];
+        for (let i = 0; i < nameArr.length; i += 3) {
+          result.push(nameArr.slice(i, i + 3).join(' '));
+        }
+        return result.join('<br>');
+      }
+      return name;
+    };
+    return `
+      <div class="member-container">
+        <div class="member">
+          <img src="${member.profile_picture || APP_CONSTANTS.defaultAvatar}" 
+               alt="${member.full_name_vn}"
+               class="avatar" />
+          <div class="name">${breakName(member.full_name_vn)}</div>
+          <div class="date">${member.birth_date}</div>
+          ${member.death_date ? `<div class="date">${member.death_date}</div>` : ''}
+        </div>
+        ${spouseHtml}
       </div>
     `;
   };
@@ -153,13 +175,21 @@ const createFamilyTreeHTML = (data) => {
       width: 0;
       height: 20px;
     }
-    .member {
+    .member-container {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .member, .spouse {
       border: 2px solid #ccc;
-      padding: 5px 10px;
+      padding: 5px;
       text-decoration: none;
       display: inline-block;
       border-radius: 5px;
-      min-width: 100px;
+      width: 120px;
+      height: 180px;
+      margin: 0 5px;
+      overflow: hidden;
     }
     .avatar {
       width: 80px;
@@ -170,6 +200,14 @@ const createFamilyTreeHTML = (data) => {
     .name {
       font-size: 14px;
       font-weight: bold;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+      max-height: 42px;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
     .date {
       font-size: 12px;

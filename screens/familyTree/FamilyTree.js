@@ -1,19 +1,11 @@
 import React from "react";
-import { View, Text, FlatList, Image, ScrollView } from "react-native";
+import { View, Text, FlatList, Image } from "react-native";
 import Svg, { Line } from "react-native-svg";
 import { APP_CONSTANTS } from "../../helper/constant";
 import { useThemeContext } from "../../ThemeContext";
 
 const FamilyTree = ({
   data,
-  title = "My Family Tree",
-  titleStyle = {
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  titleColor = "black",
   nodeStyle = {
     width: 100,
     height: 100,
@@ -35,7 +27,6 @@ const FamilyTree = ({
     borderRadius: 40,
     marginBottom: 5,
   },
-  nodeTitleColor = "#000000",
   strokeWidth = 2,
   ...props
 }) => {
@@ -43,25 +34,52 @@ const FamilyTree = ({
   const effectivePathColor = theme.mode === "dark" ? "#ffffff" : pathColor;
   const hasChildren = (member) => member.children && member.children.length > 0;
 
-  const renderMember = (member) => {
+  const renderMemberWithSpouse = (member) => {
     return (
-      <View style={[nodeStyle]}>
-        <Image
-          style={imageStyle}
-          source={{
-            uri: member.profile_picture || APP_CONSTANTS.defaultAvatar,
-          }}
-        />
-        <Text style={[nodeTitleStyle, { color: theme.colors.text }]}>
-          {member.full_name_vn}
-        </Text>
-        <Text style={{ fontSize: 12, color: theme.colors.text, fontWeight: 'bold' }}>
-          {member.birth_date}
-        </Text>
-        {member.death_date && (
-          <Text style={{ fontSize: 12, color: theme.colors.text, fontWeight: 'bold' }}>
-            {member.death_date}
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+        <View style={[nodeStyle]}>
+          <Image
+            style={imageStyle}
+            source={{
+              uri: member.profile_picture || APP_CONSTANTS.defaultAvatar,
+            }}
+          />
+          <Text style={[nodeTitleStyle, { color: theme.colors.text }]}>
+            {member.full_name_vn}
           </Text>
+          <Text style={{ fontSize: 12, color: theme.colors.text, fontWeight: 'bold' }}>
+            {member.birth_date}
+          </Text>
+          {member.death_date && (
+            <Text style={{ fontSize: 12, color: theme.colors.text, fontWeight: 'bold' }}>
+              {member.death_date}
+            </Text>
+          )}
+        </View>
+        {member.spouse_name && (
+          <>
+            <Svg height="200%" width="50">
+              <Line
+                x1="0"
+                y1="50%"
+                x2="100%"
+                y2="50%"
+                stroke={effectivePathColor}
+                strokeWidth={strokeWidth}
+              />
+            </Svg>
+            <View style={[nodeStyle]}>
+              <Image
+                style={imageStyle}
+                source={{
+                  uri: member.spouse_profile_picture || APP_CONSTANTS.defaultAvatar,
+                }}
+              />
+              <Text style={[nodeTitleStyle, { color: theme.colors.text }]}>
+                {member.spouse_name}
+              </Text>
+            </View>
+          </>
         )}
       </View>
     );
@@ -84,20 +102,17 @@ const FamilyTree = ({
               paddingRight: siblingGap / 2,
             }}
           >
-            {renderMember(item)}
+            {renderMemberWithSpouse(item)}
             {hasChildren(item) && (
               <Svg
-                style={{
-                  marginTop: 10,
-                }}
                 height="50"
-                width="20"
+                width="100%"
               >
                 <Line
                   x1="50%"
                   y1="0"
                   x2="50%"
-                  y2="150"
+                  y2="100%"
                   stroke={effectivePathColor}
                   strokeWidth={strokeWidth}
                 />
@@ -116,22 +131,11 @@ const FamilyTree = ({
                         stroke={effectivePathColor}
                         strokeWidth={strokeWidth}
                       />
-                      {item.children.length > 1 &&
-                        index < item.children.length - 1 && (
-                          <Line
-                            x1="50%"
-                            y1={strokeWidth / 2}
-                            x2="100%"
-                            y2={strokeWidth / 2}
-                            stroke={effectivePathColor}
-                            strokeWidth={strokeWidth}
-                          />
-                        )}
-                      {index > 0 && (
+                      {item.children.length > 1 && (
                         <Line
-                          x1="0"
+                          x1={index === 0 ? "50%" : "0"}
                           y1={strokeWidth / 2}
-                          x2="50%"
+                          x2={index === item.children.length - 1 ? "50%" : "100%"}
                           y2={strokeWidth / 2}
                           stroke={effectivePathColor}
                           strokeWidth={strokeWidth}
@@ -150,9 +154,9 @@ const FamilyTree = ({
   };
 
   return (
-    <View style={{ flex: 1 ,backgroundColor:theme.colors.background}}>
-    {renderTree([data], 1)}
-  </View>
+    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      {renderTree([data], 1)}
+    </View>
   );
 };
 
