@@ -81,6 +81,7 @@ const BirthDayItem = ({ ...props }) => {
   );
 };
 
+
 const styles = StyleSheet.create({
   marriImage: {
     width: 30,

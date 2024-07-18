@@ -238,7 +238,7 @@ const ProfileScreen = () => {
         />
         <TouchableOpacity style={styles.crmButton} onPress={() => {}}>
           <LinearGradient
-            colors={["#32CD32", "#3CB371"]}
+            colors={["#FFD700", "#FFA500"]} // Change to yellow gradient
             start={[0, 0]}
             end={[1, 1]}
             style={styles.crmButtonGradient}

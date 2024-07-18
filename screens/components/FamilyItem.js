@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   iconText: {
     fontSize: 20, // Adjust the size of the icon
-    marginBottom: -10, // Adjust the spacing between the icon and the circle
+    marginBottom: -1 // Adjust the spacing between the icon and the circle
   },
   circleContainer: {
     alignItems: "center",
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
-    marginLeft: 5, // Space between icon and number
+    marginLeft: 0, // Space between icon and number
   },
   totalText: {
     fontSize: 10, // Adjusted font size to match
