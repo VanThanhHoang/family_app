@@ -146,7 +146,10 @@ const AddFamilyCenterScreen = () => {
                 style={styles.addButton}
                 onPress={() => {
                   toggleModal();
-                  navigation.navigate("AddFatherMotherScreen");
+                  navigation.navigate("AddFatherMotherScreen",{
+                    type:1,
+                    marriage_date:""
+                  });
                 }}
               >
                 <Text style={styles.addButtonText}>Tạo mới cha mẹ</Text>
