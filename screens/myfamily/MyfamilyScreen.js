@@ -273,22 +273,20 @@ const MyfamilyScreen = () => {
           <Text style={styles.addButtonText}>Father & Mother</Text>
         </TouchableOpacity>
       )}
-      {!userMaritalStatus && (
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() =>
-            navigation.navigate("AddspouseScreen", {
-              gender: userGender ? false : true, // Giới tính ngược lại của người dùng
-              nationality: "Việt Nam ",
-            })
-          }
-        >
-          <Icon name="add-circle" size={24} color="white" />
-          <Text style={styles.addButtonText}>
-            {userGender ? "Add Wife" : "Add Husband"}
-          </Text>
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() =>
+          navigation.navigate("AddspouseScreen", {
+            gender: userGender ? false : true, // Giới tính ngược lại của người dùng
+            nationality: "Việt Nam ",
+          })
+        }
+      >
+        <Icon name="add-circle" size={24} color="white" />
+        <Text style={styles.addButtonText}>
+          {userGender ? "Add Wife" : "Add Husband"}
+        </Text>
+      </TouchableOpacity>
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => navigation.navigate("AddChildScreen")}

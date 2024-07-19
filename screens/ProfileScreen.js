@@ -77,13 +77,14 @@ const ProfileScreen = () => {
 
       const formData = new FormData();
       formData.append("profile_picture", fileData);
-      const people_id = userInfo.people_id; // Ensure people_id is retrieved from userInfo
+      const people_id = userInfo.people_id;
+      console.log(people_id)
+       // Ensure people_id is retrieved from userInfo
       const axiosInstance = AxiosInstance("multipart/form-data"); // Create Axios instance
       const response = await axiosInstance.put(
         `people/people-detail/${people_id}/`,
         formData
       );
-
       if (response.data.profile_picture) {
         await AsyncStorage.setItem(
           "profile_picture",
