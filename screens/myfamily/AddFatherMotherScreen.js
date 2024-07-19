@@ -107,7 +107,8 @@ const AddFatherMotherScreen = () => {
           marriage_date: marriageDateData,
         };
         const rs = await AxiosInstance().post(getTittleByType(type).link, data);
-        if (rs.husband) {
+        console.log(rs);
+        if (rs?.spouse_relationship?.husband) {
           navigation.navigate("UploadImageScreen3", {
             title1: `Ảnh ${getTittleByType(type).father}`,
             id1: rs.spouse_relationship.husband.people_id,
