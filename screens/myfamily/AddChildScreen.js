@@ -40,8 +40,12 @@ const AddChildScreen = ({ navigation }) => {
       const data = await AxiosInstance().post("people/fatherchild/", {
         child: childInfo,
       });
-      console.log(data);
-      navigation.goBack();
+      setChildInfo(defaultPeople);
+ 
+      navigation.navigate("UploadImageScreen2", {
+        id:data.data.child.people_id,
+        title:"Thêm ảnh đại diện cho con",
+      })
       Alert.alert("Thành công", "Thêm thông tin con thành công");
     } catch (err) {
       console.log({ ...err });

@@ -40,8 +40,11 @@ const AddspouseScreen = ({navigation}) => {
           wife:personInfo,
           marriage_date:personInfo.marriage_date
         });
-        console.log(data);
-        navigation.goBack();
+        setPersonInfo(defaultPeople)
+        navigation.navigate("UploadImageScreen2", {
+          id:data.data.wife.people_id,
+          title:"Thêm ảnh đại diện vợ",
+        })
         Alert.alert("Thành công", "Thêm thông tin thành công");
       } catch (err) {
         console.log({ ...err });

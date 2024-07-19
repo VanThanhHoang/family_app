@@ -36,6 +36,7 @@ import SpouseFamilyScreen from "./screens/spousefamily/SpouseFamilyScreen";
 
 import FamilyTree from "./web-view/FMLTree";
 import FamilyMap from "./screens/familyTree/FamilyTreeView";
+import UploadImageScreen2 from "./screens/myfamily/AddImage";
 const AppNavigation = () => {
   const AppStack = createStackNavigator();
   const { isLoading } = useContext(AppContext);
@@ -99,6 +100,10 @@ const AppNavigation = () => {
           component={UploadImageScreen}
         />
         <AppStack.Screen
+          name="UploadImageScreen2"
+          component={UploadImageScreen2}
+        />
+        <AppStack.Screen
           name="PeopleUpdateSrceen"
           component={PeopleUpdateSrceen}
         />
@@ -107,6 +112,7 @@ const AppNavigation = () => {
         <AppStack.Screen name="AddGrandFatherMotherScreen" component={AddGrandFatherMotherScreen} />   
         <AppStack.Screen name="AddspouseScreen" component={AddspouseScreen} />  
         <AppStack.Screen name="AddChildScreen" component={AddChildScreen} />  
+        
         <AppStack.Screen name="AddFatherMotherScreen" component={AddFatherMotherScreen} />
         <AppStack.Screen name="SpouseFamilyScreen" component={SpouseFamilyScreen} />
         <AppStack.Screen name="FamilyMap" component={FamilyMap} />     
