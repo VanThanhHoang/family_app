@@ -106,15 +106,14 @@ const AddFatherMotherScreen = () => {
           },
           marriage_date: marriageDateData,
         };
-        console.log(getTittleByType(type).link);
         const rs = await AxiosInstance().post(getTittleByType(type).link, data);
-        console.log(data);
-        navigation.navigate("UploadImageScreen2", {
-          id: rs
-        })
+        navigation.navigate('UploadImageScreen3', {
+          title1: `Ảnh ${getTittleByType(type).father}`,
+          id1:rs.spouse_relationship.husband.people_id,
+          title2: `Ảnh ${getTittleByType(type).mother}`,
+          id2: rs.spouse_relationship.wife.people_id
+        });
         Alert.alert("Thành công", "Thêm thông tin thành công");
-        console.log(rs);
-     //  navigation.goBack();
       } catch (err) {
         console.log({
           ...err

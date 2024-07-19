@@ -15,14 +15,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useThemeContext } from "../../ThemeContext";
 import { AppContext } from "../../AppContext";
 
-const UploadImageScreen2 = () => {
+const UploadImageScreen3 = () => {
   const route = useRoute();
   const { setIsLoading } = useContext(AppContext);
   const navigation = useNavigation();
-  const { id, numberOfImages = 1, title } = route.params;
-  const [selectedImages, setSelectedImages] = useState(
-    Array(numberOfImages).fill(null)
-  );
+  const { title1, id1, title2, id2 } = route.params;
+  const [selectedImages, setSelectedImages] = useState([null, null]);
   const { theme } = useThemeContext();
 
   const pickImage = async (index) => {
@@ -47,23 +45,27 @@ const UploadImageScreen2 = () => {
     }
     setIsLoading(true);
     try {
-      const formData = new FormData();
-      selectedImages.forEach((image, index) => {
+      const uploadPromises = selectedImages.map((image, index) => {
+        const formData = new FormData();
         const fileData = {
           uri: image,
           type: "image/jpeg",
-          name: `image${index + 1}_${new Date().getTime()}.jpg`,
+          name: `image_${new Date().getTime()}.jpg`,
         };
-        formData.append(`image${index + 1}`, fileData);
+        formData.append("profile_picture", fileData);
+
+        return AxiosInstance("multipart/form-data").patch(
+          `people/people-detail/${index === 0 ? id1 : id2}/`,
+          formData
+        );
       });
 
-      const response = await AxiosInstance("multipart/form-data").patch(
-        `people/people-detail/${id}/`,
-        formData
-      );
-      if (response) {
-        Alert.alert("Thành công", "Ảnh đã được cập nhật");
-        navigation.goBack();
+      const responses = await Promise.all(uploadPromises);
+      
+      if (responses.every((response) => response)) {
+        Alert.alert("Thành công", "Các ảnh đã được cập nhật");
+        console.log(responses);
+        // navigation.goBack();
       } else {
         Alert.alert("Lỗi", "Tải lên ảnh thất bại");
       }
@@ -85,27 +87,30 @@ const UploadImageScreen2 = () => {
       >
         <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
       </TouchableOpacity>
-      <Text style={[styles.title, { color: theme.colors.text }]}>{title}</Text>
       <View style={styles.imagesContainer}>
         {selectedImages.map((image, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.imageContainer}
-            onPress={() => pickImage(index)}
-          >
-            {image ? (
-              <Image source={{ uri: image }} style={styles.image} />
-            ) : (
-              <View
-                style={[
-                  styles.placeholderImage,
-                  { backgroundColor: theme.colors.card },
-                ]}
-              >
-                <Ionicons name="camera" size={50} color={theme.colors.text} />
-              </View>
-            )}
-          </TouchableOpacity>
+          <View key={index} style={styles.imageWrapper}>
+            <Text style={[styles.imageTitle, { color: theme.colors.text }]}>
+              {index === 0 ? title1 : title2}
+            </Text>
+            <TouchableOpacity
+              style={styles.imageContainer}
+              onPress={() => pickImage(index)}
+            >
+              {image ? (
+                <Image source={{ uri: image }} style={styles.image} />
+              ) : (
+                <View
+                  style={[
+                    styles.placeholderImage,
+                    { backgroundColor: theme.colors.card },
+                  ]}
+                >
+                  <Ionicons name="camera" size={50} color={theme.colors.text} />
+                </View>
+              )}
+            </TouchableOpacity>
+          </View>
         ))}
       </View>
       <View style={styles.buttonContainer}>
@@ -151,23 +156,26 @@ const styles = StyleSheet.create({
     padding: 10,
     zIndex: 1,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
   imagesContainer: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 30,
+  },
+  imageWrapper: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  imageTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
   imageContainer: {
     width: 150,
     height: 150,
     borderRadius: 75,
     overflow: "hidden",
-    marginHorizontal: 10,
   },
   image: {
     width: "100%",
@@ -207,4 +215,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UploadImageScreen2;
+export default UploadImageScreen3;

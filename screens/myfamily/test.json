@@ -1,0 +1,76 @@
+{
+  "husband": {
+    "birth_date": "2024-7-19",
+    "cause_of_death": "",
+    "death_date": "",
+    "education_level": "",
+    "full_name_vn": "Asdasd",
+    "gender": true,
+    "is_alive": true,
+    "marital_status": true,
+    "nationality": "",
+    "phone_number": "",
+    "place_of_birth": null,
+    "place_of_death":null,
+    "religion": "buddhist",
+    "saint": 2
+  },
+  "marriage_date": "2024-7-18",
+  "wife": {
+    "birth_date": "2024-7-19",
+    "cause_of_death": "",
+    "death_date": "",
+    "full_name_vn": "Asdasd",
+    "gender": false,
+    "is_alive": true,
+    "marital_status": true,
+    "nationality": "",
+    "phone_number": "",
+    "place_of_birth": null,
+    "place_of_death": null,
+    "religion": "buddhist",
+    "saint": 1
+  }
+}
+
+
+{
+    "husband": {
+      "birth_date": "2024-7-18",
+      "cause_of_death": "",
+      "death_date": "",
+      "education_level": {
+        "level": "unknow"
+      },
+      "full_name_vn": "Sdasaaaaad",
+      "gender": true,
+      "is_alive": true,
+      "marital_status": false,
+      "nationality": "Asd",
+      "phone_number": "",
+      "place_of_birth": null,
+      "place_of_death": null,
+      "religion": "other",
+      "saint": ""
+    },
+    "marriage_date": "2024-7-18",
+    "wife": {
+      "birth_date": "2024-7-18",
+      "cause_of_death": "",
+      "death_date": "",
+      "education_level": {
+        "level": "unknow"
+      },
+      "full_name_vn": "Adasd",
+      "gender": false,
+      "is_alive": true,
+      "marital_status": false,
+      "nationality": "",
+      "phone_number": "",
+      "place_of_birth": null,
+      "place_of_death": null,
+      "religion": "catholic",
+      "saint": 3
+    }
+  }
+  
