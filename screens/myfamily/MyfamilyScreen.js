@@ -7,7 +7,6 @@ import {
   FlatList,
   Image,
   TextInput,
-  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -16,7 +15,7 @@ import AppHeader from "../../components/AppHeader";
 import Modal from "react-native-modal";
 import { AppContext } from "../../AppContext";
 import Icon from "react-native-vector-icons/MaterialIcons"; // Sử dụng thư viện icon
-import ConfirmDelete from "../../components/ComfirmDelete";
+import { LinearGradient } from "expo-linear-gradient";
 
 const MyfamilyScreen = () => {
   const navigation = useNavigation();
@@ -67,10 +66,6 @@ const MyfamilyScreen = () => {
       marriageDate,
       type: 1,
     });
-    toggleModal();
-  };
-
-  const handleFatherMotherPress = () => {
     toggleModal();
   };
 
@@ -180,14 +175,11 @@ const MyfamilyScreen = () => {
 
   const RenderFamilyMember = ({ item }) => {
     console.log(item);
-    const onDelete = async () => {};
-    const [visible, setVisible] = useState(false);
     return (
       <TouchableOpacity
         style={styles.memberContainer}
-        onPress={
-          () => {}
-          //navigation.navigate("DetailScreen", { id: item.people_id })
+        onPress={() =>
+          navigation.navigate("DetailBirthDay", { id: item.people_id })
         }
       >
         <Image
@@ -207,25 +199,6 @@ const MyfamilyScreen = () => {
           )}
           <Text style={styles.birthDate}>{item.birth_date}</Text>
         </View>
-        <TouchableOpacity
-          style={styles.editButton}
-          onPress={() => {
-            setVisible(true);
-          }}
-        >
-          <Icon name="delete" size={20} color="gray" />
-        </TouchableOpacity>
-        <ConfirmDelete
-          name={item.full_name_vn}
-          visible={visible}
-          onConfirm={() => {
-            onDelete();
-            setVisible(false);
-          }}
-          onClose={() => {
-            setVisible(false);
-          }}
-        />
       </TouchableOpacity>
     );
   };
@@ -265,37 +238,18 @@ const MyfamilyScreen = () => {
   return (
     <View style={styles.container}>
       <AppHeader back title="Thành viên gia đình" />
-      {parentsEmpty && (
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={handleFatherMotherPress}
-        >
-          <Icon name="add-circle" size={24} color="white" />
-          <Text style={styles.addButtonText}>Father & Mother</Text>
-        </TouchableOpacity>
-      )}
-      {!userMaritalStatus && (
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() =>
-            navigation.navigate("AddspouseScreen", {
-              gender: userGender ? false : true, // Giới tính ngược lại của người dùng
-              nationality: "Việt Nam ",
-            })
-          }
-        >
-          <Icon name="add-circle" size={24} color="white" />
-          <Text style={styles.addButtonText}>
-            {userGender ? "Add Wife" : "Add Husband"}
-          </Text>
-        </TouchableOpacity>
-      )}
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => navigation.navigate("AddChildScreen")}
+        onPress={() => navigation.navigate("AddFamilyCenterScreen")}
       >
-        <Icon name="add-circle" size={24} color="white" />
-        <Text style={styles.addButtonText}>Add Child</Text>
+        <LinearGradient
+          colors={["#FFD700", "#FFA500"]}
+          start={[0, 0]}
+          end={[1, 1]}
+          style={styles.addButtonGradient}
+        >
+          <Icon name="person-add" size={20} color="white" />
+        </LinearGradient>
       </TouchableOpacity>
       <FlatList
         data={familyMembers}
@@ -326,17 +280,6 @@ const MyfamilyScreen = () => {
               <Text style={styles.noResultsText}>
                 Không có ba mẹ phù hợp với từ khoá của bạn
               </Text>
-              <TouchableOpacity
-                style={styles.addButton}
-                onPress={() => {
-                  toggleModal();
-                  navigation.navigate("AddFatherMotherScreen", {
-                    type: 1,
-                  });
-                }}
-              >
-                <Text style={styles.addButtonText}>TẠO MỚI</Text>
-              </TouchableOpacity>
             </View>
           ) : (
             <FlatList
@@ -399,20 +342,18 @@ const styles = StyleSheet.create({
     color: "#555",
   },
   addButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#4CAF50",
-    paddingVertical: 15,
-    paddingHorizontal: 80,
-    padding: 15,
-    borderRadius: 5,
-    margin: 10,
+    position: "absolute",
+    top: 10,
+    right: 10,
+    borderRadius: 50,
+    padding: 10,
+    elevation: 3,
   },
-  addButtonText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 18,
-    marginLeft: 10,
+  addButtonGradient: {
+    borderRadius: 50,
+    padding: 8,
+    alignItems: "center",
+    justifyContent: "center",
   },
   modalContent: {
     backgroundColor: "white",
@@ -476,10 +417,6 @@ const styles = StyleSheet.create({
   closeButtonText: {
     color: "white",
     fontSize: 16,
-  },
-  editButton: {
-    alignSelf: "flex-start",
-    marginHorizontal: 5,
   },
 });
 

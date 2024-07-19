@@ -78,29 +78,31 @@ const AddFamilyCenterScreen = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Icon name="arrow-left" size={24} color="#000" />
-      </TouchableOpacity>
-      <Text style={styles.title}>ADD YOUR FAMILY</Text>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Icon name="arrow-left" size={24} color="#000" />
+        </TouchableOpacity>
+        <Text style={styles.title}>Thêm thành viên gia đình</Text>
+      </View>
       <View style={styles.familyContainer}>
-        <FamilyMember label="GrandFather & GrandMother" onPress={() => navigation.navigate('AddGrandFatherMotherScreen')} />
-        <FamilyMember label="Father & Mother" onPress={handleFatherMotherPress} />
+        <FamilyMember label="Ông bà" onPress={() => navigation.navigate('AddGrandFatherMotherScreen')} />
+        <FamilyMember label="Cha mẹ" onPress={handleFatherMotherPress} />
         <CurrentUser name="Lê Nguyên Kim Sa" birthDate="02-04-1982" />
-        <FamilyMember label="Your Wife" onPress={() => navigation.navigate('AddSpouseScreen')} />
-        <FamilyMember label="Your Child" onPress={() => navigation.navigate('AddChildScreen')} />
+        <FamilyMember label="Vợ" onPress={() => navigation.navigate('AddSpouseScreen')} />
+        <FamilyMember label="Con" onPress={() => navigation.navigate('AddChildScreen')} />
       </View>
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Search Father or Mother</Text>
+          <Text style={styles.modalTitle}>Tìm cha mẹ</Text>
           <TextInput
             style={styles.input}
-            placeholder="Enter name..."
+            placeholder="Nhập tên..."
             value={searchQuery}
             onChangeText={handleSearch}
           />
           {searchQuery.length >= 3 && searchResults.length === 0 && showNoResults ? (
             <View style={styles.noResultsContainer}>
-              <Text style={styles.noResultsText}>Bạn chưa có ba mẹ</Text>
+              <Text style={styles.noResultsText}>Không tìm thấy kết quả</Text>
               <TouchableOpacity
                 style={styles.addButton}
                 onPress={() => {
@@ -108,7 +110,7 @@ const AddFamilyCenterScreen = () => {
                   navigation.navigate('AddFatherMotherScreen');
                 }}
               >
-                <Text style={styles.addButtonText}>Tạo mới ba mẹ</Text>
+                <Text style={styles.addButtonText}>Tạo mới cha mẹ</Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -120,7 +122,7 @@ const AddFamilyCenterScreen = () => {
             />
           )}
           <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
-            <Text style={styles.closeButtonText}>Close</Text>
+            <Text style={styles.closeButtonText}>Đóng</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -149,22 +151,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#E0E0E0',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 50,
+    padding: 15,
+    backgroundColor: '#fff',
+    elevation: 3,
   },
   backButton: {
     position: 'absolute',
-    top: 10,
-    left: 10,
+    left: 15,
   },
   title: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 20,
   },
   familyContainer: {
     width: '100%',
     paddingHorizontal: 20,
+    marginTop: 20,
   },
   familyMember: {
     flexDirection: 'row',
@@ -213,7 +220,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: '80%',
     marginBottom: 10,
-    backgroundColor: '#f8f8f8', // Thêm màu nền cho khung tìm kiếm
+    backgroundColor: '#f8f8f8',
   },
   noResultsContainer: {
     alignItems: 'center',
@@ -250,7 +257,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 50,
-
   },
   nameContainer: {
     flexDirection: 'column',
