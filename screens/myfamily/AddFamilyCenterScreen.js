@@ -55,6 +55,7 @@ const AddFamilyCenterScreen = () => {
       father,
       mother,
       marriageDate,
+      type:1
     });
     toggleModal();
   };

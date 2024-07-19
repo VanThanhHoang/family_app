@@ -54,7 +54,7 @@ const UploadImageScreen2 = () => {
           type: "image/jpeg",
           name: `image${index + 1}_${new Date().getTime()}.jpg`,
         };
-        formData.append('profile_picture', fileData);
+        formData.append(`image${index + 1}`, fileData);
       });
 
       const response = await AxiosInstance("multipart/form-data").patch(
@@ -62,7 +62,6 @@ const UploadImageScreen2 = () => {
         formData
       );
       if (response) {
-        console.log("Upload images successfully", response);
         Alert.alert("Thành công", "Ảnh đã được cập nhật");
         navigation.goBack();
       } else {

@@ -108,11 +108,17 @@ const AddFatherMotherScreen = () => {
         };
         console.log(getTittleByType(type).link);
         const rs = await AxiosInstance().post(getTittleByType(type).link, data);
+        console.log(data);
+        navigation.navigate("UploadImageScreen2", {
+          id: rs
+        })
         Alert.alert("Thành công", "Thêm thông tin thành công");
         console.log(rs);
      //  navigation.goBack();
       } catch (err) {
-        console.log(err);
+        console.log({
+          ...err
+        });
         Alert.alert("Lỗi", "Người dùng đã có " + getTittleByType(type).father);
       } finally {
         setIsLoading(false);
