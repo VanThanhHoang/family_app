@@ -8,8 +8,8 @@ const DeathItem = ({ ...props }) => {
   const { theme } = useThemeContext();
   const isDarkMode = theme.mode === "dark";
   console.log(props.data);
-  
-  return (
+
+  return props.data.full_name_vn ? (
     <TouchableOpacity
       onPress={() => {
         navigation.navigate("DetailBirthDay", {
@@ -30,7 +30,8 @@ const DeathItem = ({ ...props }) => {
         {props.data.death_info && (
           <>
             <Text style={[styles.italicText, { color: theme.colors.text }]}>
-              {props.data.death_info.life_span.replace(/: \d+/, "")} {/* Remove age number */}
+              {props.data.death_info.life_span.replace(/: \d+/, "")}{" "}
+              {/* Remove age number */}
             </Text>
             <View style={styles.ageContainer}>
               <Image
@@ -72,11 +73,11 @@ const DeathItem = ({ ...props }) => {
             <View style={styles.childrenContainer}>
               <Children
                 isBoy
-                total={props.data.spouse_relationships[0].total_sons}
+                total={props?.data.spouse_relationships[0]?.total_sons}
                 theme={theme}
               />
               <Children
-                total={props.data.spouse_relationships[0].total_daughters}
+                total={props.data?.spouse_relationships[0]?.total_daughters}
                 theme={theme}
               />
             </View>
@@ -84,7 +85,7 @@ const DeathItem = ({ ...props }) => {
         )}
       </View>
     </TouchableOpacity>
-  );
+  ) : null;
 };
 
 const styles = StyleSheet.create({
@@ -114,7 +115,6 @@ const styles = StyleSheet.create({
     borderRadius: 40,
   },
   italicText: {
-
     fontSize: 13, // Adjusted font size to match
     fontWeight: "500",
   },
@@ -151,7 +151,6 @@ const styles = StyleSheet.create({
   birthDate: {
     fontSize: 14, // Adjusted font size to match
     fontWeight: "400",
-
   },
   childrenContainer: {
     flexDirection: "row",
@@ -231,9 +230,11 @@ const ItemParent = ({ ...props }) => {
 
 const Children = ({ isBoy, total, theme }) => (
   <View style={styles.totalContainer}>
-    <Text style={styles.iconText}>{isBoy ? '👦' : '👧'}</Text>
+    <Text style={styles.iconText}>{isBoy ? "👦" : "👧"}</Text>
     <View style={styles.circleContainer}>
-      <View style={[styles.circle, { backgroundColor: theme.colors.background }]}>
+      <View
+        style={[styles.circle, { backgroundColor: theme.colors.background }]}
+      >
         <Text style={[styles.totalText, { color: theme.colors.text }]}>
           {total}
         </Text>
