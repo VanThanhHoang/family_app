@@ -203,7 +203,7 @@ const ProfileScreen = () => {
           <SettingItem
             icon={"heart"}
             title="My Wife's Family"
-            onPress={() => navigation.navigate("MyWifeFamilyScreen")}
+            onPress={() => navigation.navigate("SpouseFamilyScreen")}
           />
         )}
         {userInfo.marital_status && !userInfo.gender && (

@@ -177,6 +177,7 @@ const MyfamilyScreen = () => {
     });
     return unsubscribe;
   }, []);
+
   const RenderFamilyMember = ({ item }) => {
     console.log(item);
     const onDelete = async () => {};
