@@ -44,15 +44,9 @@ const AddFatherMotherScreen = () => {
     marriageDate: "",
     type: 1,
   };
-  console.log(father);
-  const [fatherData, setFather] = useState(father);
-  const [motherData, setMother] = useState(mother);
+  const [fatherData, setFather] = useState(father || defaultPeople);
+  const [motherData, setMother] = useState(mother || defaultPeople);
   const [marriageDateData, setMarriageDate] = useState(marriageDate);
-  const defaultEducation = {
-    level: "unknow",
-  };
-  fatherData.education_level = defaultEducation;
-  motherData.education_level = defaultEducation;
   const validateData = () => {
     const errors = [];
 

@@ -1,14 +1,22 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, FlatList, Image } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
-import Modal from 'react-native-modal';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  FlatList,
+  Image,
+} from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import Modal from "react-native-modal";
 
 const AddFamilyCenterScreen = () => {
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showNoResults, setShowNoResults] = useState(false);
 
@@ -22,7 +30,9 @@ const AddFamilyCenterScreen = () => {
     setShowNoResults(false);
     if (query.length >= 3) {
       try {
-        const response = await axios.get(`https://api.lehungba.com/api/people/search-spouse/?search=${query}`);
+        const response = await axios.get(
+          `https://api.lehungba.com/api/people/search-spouse/?search=${query}`
+        );
         setSearchResults(response.data.results.data);
         if (response.data.results.data.length === 0) {
           setTimeout(() => {
@@ -41,7 +51,11 @@ const AddFamilyCenterScreen = () => {
     const father = parent.husband;
     const mother = parent.wife;
     const marriageDate = parent.marriage_date;
-    navigation.navigate('AddFatherMotherScreen', { father, mother, marriageDate });
+    navigation.navigate("AddFatherMotherScreen", {
+      father,
+      mother,
+      marriageDate,
+    });
     toggleModal();
   };
 
@@ -50,13 +64,16 @@ const AddFamilyCenterScreen = () => {
   };
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.resultItem} onPress={() => handleSelectParent(item)}>
+    <TouchableOpacity
+      style={styles.resultItem}
+      onPress={() => handleSelectParent(item)}
+    >
       <View style={styles.resultContent}>
         <Image
           source={
             item.husband.profile_picture
               ? { uri: item.husband.profile_picture }
-              : require('../../assets/father.png')
+              : require("../../assets/father.png")
           }
           style={styles.avatar}
         />
@@ -64,7 +81,7 @@ const AddFamilyCenterScreen = () => {
           source={
             item.wife.profile_picture
               ? { uri: item.wife.profile_picture }
-              : require('../../assets/mother.png')
+              : require("../../assets/mother.png")
           }
           style={styles.avatar}
         />
@@ -79,17 +96,37 @@ const AddFamilyCenterScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
           <Icon name="arrow-left" size={24} color="#000" />
         </TouchableOpacity>
         <Text style={styles.title}>Thêm thành viên gia đình</Text>
       </View>
       <View style={styles.familyContainer}>
-        <FamilyMember label="Ông bà" onPress={() => navigation.navigate('AddGrandFatherMotherScreen')} />
+        <FamilyMember
+          label="Ông bà"
+          onPress={() => navigation.navigate("AddFatherMotherScreen",{
+            type:3,
+            marriage_date:""
+          })}
+        />
         <FamilyMember label="Cha mẹ" onPress={handleFatherMotherPress} />
         <CurrentUser name="Lê Nguyên Kim Sa" birthDate="02-04-1982" />
-        <FamilyMember label="Vợ" onPress={() => navigation.navigate('AddSpouseScreen')} />
-        <FamilyMember label="Con" onPress={() => navigation.navigate('AddChildScreen')} />
+        <FamilyMember
+          label="Vợ"
+          onPress={() =>
+            navigation.navigate("AddspouseScreen", {
+              gender: false,
+              nationally: "Việt Nam",
+            })
+          }
+        />
+        <FamilyMember
+          label="Con"
+          onPress={() => navigation.navigate("AddChildScreen")}
+        />
       </View>
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
@@ -100,14 +137,16 @@ const AddFamilyCenterScreen = () => {
             value={searchQuery}
             onChangeText={handleSearch}
           />
-          {searchQuery.length >= 3 && searchResults.length === 0 && showNoResults ? (
+          {searchQuery.length >= 3 &&
+          searchResults.length === 0 &&
+          showNoResults ? (
             <View style={styles.noResultsContainer}>
               <Text style={styles.noResultsText}>Không tìm thấy kết quả</Text>
               <TouchableOpacity
                 style={styles.addButton}
                 onPress={() => {
                   toggleModal();
-                  navigation.navigate('AddFatherMotherScreen');
+                  navigation.navigate("AddFatherMotherScreen");
                 }}
               >
                 <Text style={styles.addButtonText}>Tạo mới cha mẹ</Text>
@@ -150,33 +189,33 @@ const CurrentUser = ({ name, birthDate }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: "#E0E0E0",
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     padding: 15,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     elevation: 3,
   },
   backButton: {
-    position: 'absolute',
+    position: "absolute",
     left: 15,
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   familyContainer: {
-    width: '100%',
+    width: "100%",
     paddingHorizontal: 20,
     marginTop: 20,
   },
   familyMember: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     padding: 15,
     marginVertical: 5,
     borderRadius: 10,
@@ -186,9 +225,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   currentUser: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.8)",
     padding: 15,
     marginVertical: 5,
     borderRadius: 10,
@@ -200,30 +239,30 @@ const styles = StyleSheet.create({
   birthDate: {
     marginLeft: 15,
     fontSize: 14,
-    color: '#757575',
+    color: "#757575",
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
-    alignItems: 'center',
+    alignItems: "center",
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     padding: 10,
     borderRadius: 5,
-    width: '80%',
+    width: "80%",
     marginBottom: 10,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: "#f8f8f8",
   },
   noResultsContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginVertical: 20,
   },
   noResultsText: {
@@ -231,27 +270,27 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   addButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
     paddingVertical: 15,
     paddingHorizontal: 80,
     borderRadius: 5,
     marginTop: 10,
   },
   addButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
   },
   resultsList: {
-    width: '100%',
+    width: "100%",
   },
   resultItem: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: "#ccc",
   },
   resultContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   avatar: {
     width: 60,
@@ -259,21 +298,21 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   nameContainer: {
-    flexDirection: 'column',
+    flexDirection: "column",
     marginLeft: 10,
   },
   resultText: {
     fontSize: 18,
   },
   closeButton: {
-    backgroundColor: '#f44336',
+    backgroundColor: "#f44336",
     paddingVertical: 15,
     paddingHorizontal: 80,
     borderRadius: 5,
     marginTop: 10,
   },
   closeButtonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
   },
 });

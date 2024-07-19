@@ -61,7 +61,7 @@ const PersonInfoForm = ({ title, person, setPerson }) => {
               marginRight: 10,
             }}
             source={{
-              uri: person.profile_picture || APP_CONSTANTS.defaultAvatar,
+              uri: person?.profile_picture || APP_CONSTANTS.defaultAvatar,
             }}
           />
           <View
