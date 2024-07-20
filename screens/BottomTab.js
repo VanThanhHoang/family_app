@@ -8,7 +8,7 @@ import DeathScreen from "./DeathScreen";
 import WeddingScreen from "./WeddingScreen";
 import AuthNavigation from "./AuthStack";
 import { AppContext } from "../AppContext";
-import { useThemeContext } from '../ThemeContext';
+import { useThemeContext } from "../ThemeContext";
 
 const Tab = createBottomTabNavigator();
 const screens = [
@@ -40,13 +40,26 @@ const screens = [
 ];
 
 function CustomBottomTabNavigator() {
-  const { birhdayData } = React.useContext(AppContext);
   const { theme: rneTheme } = useThemeContext();
-  const getBadge = () => {
-    if (birhdayData.notification?.count > 5) {
-      return birhdayData.notification?.count;
+  const { birthdayData, deathData, weddingData } = React.useContext(AppContext);
+
+  const getBadge = (screenName) => {
+    switch (screenName) {
+      case "Sinh nhật":
+        return birthdayData.notification?.count > 0
+          ? birthdayData.notification.count
+          : undefined;
+      case "Ngày mất":
+        return deathData.notification?.count > 0
+          ? deathData.notification.count
+          : undefined;
+      case "Ngày cưới":
+        return weddingData.notification?.count > 0
+          ? weddingData.notification.count
+          : undefined;
+      default:
+        return undefined;
     }
-    return undefined;
   };
 
   return (
@@ -56,16 +69,24 @@ function CustomBottomTabNavigator() {
         headerStatusBarHeight: 0,
         tabBarStyle: [
           styles.tabBar,
-          { backgroundColor: rneTheme.mode === 'dark' ? '#505050' : rneTheme.colors.card },
+          {
+            backgroundColor:
+              rneTheme.mode === "dark" ? "#505050" : rneTheme.colors.card,
+          },
         ],
-        tabBarActiveTintColor: '#FFD700', // Use gold color for active tab
-        tabBarInactiveTintColor: rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444',
+        tabBarActiveTintColor: "#FFD700", // Use gold color for active tab
+        tabBarInactiveTintColor:
+          rneTheme.mode === "dark" ? "#FFFFFF" : "#444444",
         tabBarLabel: ({ focused }) => {
-          const screen = screens.find(screen => screen.name === route.name);
+          const screen = screens.find((screen) => screen.name === route.name);
           return (
             <Text
               style={{
-                color: focused ? '#FFD700' : (rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444'),
+                color: focused
+                  ? "#FFD700"
+                  : rneTheme.mode === "dark"
+                  ? "#FFFFFF"
+                  : "#444444",
                 fontSize: 13,
                 fontWeight: "bold",
               }}
@@ -75,22 +96,26 @@ function CustomBottomTabNavigator() {
           );
         },
         tabBarIcon: ({ focused }) => {
-          const screen = screens.find(screen => screen.name === route.name);
+          const screen = screens.find((screen) => screen.name === route.name);
           const iconSize = route.name === "Sinh nhật" ? 29 : 25; // Increase size by 4px for "Sinh nhật"
-          const tintColor = focused ? '#FFD700' : (rneTheme.mode === 'dark' ? '#FFFFFF' : '#444444');
+          const tintColor = focused
+            ? "#FFD700"
+            : rneTheme.mode === "dark"
+            ? "#FFFFFF"
+            : "#444444";
 
           return (
-            <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ alignItems: "center", justifyContent: "center" }}>
               {focused ? (
                 <LinearGradient
-                  colors={['#FFD700', '#FFA500']}
+                  colors={["#FFD700", "#FFA500"]}
                   style={styles.gradient}
                 >
                   <Image
                     style={{
                       width: iconSize,
                       height: iconSize,
-                      tintColor: '#FFFFFF',
+                      tintColor: "#FFFFFF",
                     }}
                     source={screen.icon}
                   />
@@ -117,7 +142,7 @@ function CustomBottomTabNavigator() {
           component={component}
           options={{
             tabBarShowLabel: true,
-            tabBarBadge: name === "Sinh nhật" ? getBadge() : undefined,
+            tabBarBadge: getBadge(name),
           }}
         />
       ))}

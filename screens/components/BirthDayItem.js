@@ -8,7 +8,7 @@ const BirthDayItem = ({ ...props }) => {
   const { theme } = useThemeContext();
   const navigation = useNavigation();
   const familyInfo = props.data?.parent_relationships[0];
-  const subTextColor = theme.mode === 'dark' ? '#C0C0C0' : theme.colors.subText;
+  const subTextColor = theme.mode === "dark" ? "#C0C0C0" : theme.colors.subText;
 
   return (
     <TouchableOpacity
@@ -30,13 +30,15 @@ const BirthDayItem = ({ ...props }) => {
         },
         {
           backgroundColor: theme.colors.card,
-        }
+        },
       ]}
     >
       <View style={styles.imageContainer}>
         <Image
           source={
-            props.data.gender
+            props.data.profile_picture
+              ? { uri: props.data.profile_picture }
+              : props.data.gender
               ? require("../../assets/father.png")
               : require("../../assets/mother.png")
           }
@@ -80,7 +82,6 @@ const BirthDayItem = ({ ...props }) => {
     </TouchableOpacity>
   );
 };
-
 
 const styles = StyleSheet.create({
   marriImage: {
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
 
 export const ItemParent = ({ ...props }) => {
   const { theme } = useThemeContext();
-  const subTextColor = theme.mode === 'dark' ? '#C0C0C0' : theme.colors.subText;
+  const subTextColor = theme.mode === "dark" ? "#C0C0C0" : theme.colors.subText;
 
   return (
     <View style={styles.parentContainer}>

@@ -79,6 +79,7 @@ const DetailScreen = () => {
   );
 };
 const HeaderData = ({ data }) => {
+  console.log(data);
   const { theme } = useThemeContext();
   const styles = useStyle(theme);
   return (

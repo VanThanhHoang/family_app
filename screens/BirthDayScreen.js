@@ -7,15 +7,15 @@ import { removeDiacritics } from "../helper/string_format";
 import { useThemeContext } from "../ThemeContext";
 
 const BirthDayScreen = () => {
-  const { birhdayData } = React.useContext(AppContext);
+  const { birthdayData} = React.useContext(AppContext);
   const { theme : rneTheme } = useThemeContext();
-  const [filteredList, setFilteredList] = useState(birhdayData.data);
+  const [filteredList, setFilteredList] = useState(birthdayData.data);
   const [searchText, setSearchText] = useState("");
 
   const searchFilter = (text) => {
     const normalizedText = removeDiacritics(text);
     setSearchText(text);
-    const filteredData = birhdayData.data.filter((item) => {
+    const filteredData = birthdayData.data.filter((item) => {
       const husbandName = item?.full_name_vn || "";
       const normalizedHusbandName = removeDiacritics(husbandName);
       const isMatchHusband = normalizedHusbandName.includes(normalizedText);

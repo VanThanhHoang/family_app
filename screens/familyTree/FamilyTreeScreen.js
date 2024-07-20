@@ -1,5 +1,12 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, StyleSheet, Text, Image, TouchableOpacity, Animated } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  TouchableOpacity,
+  Animated,
+} from "react-native";
 import AxiosInstance from "../../network/AxiosInstance";
 import { AppContext } from "../../AppContext";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
@@ -42,18 +49,18 @@ const FamilyTreeNode = ({ person, level, onToggle }) => {
     onToggle();
   };
 
-  const formatDate = (date) => {
-    if (!date) return '';
-    return new Date(date).toLocaleDateString('vi-VN');
-  };
-
   const maxHeight = animation.interpolate({
     inputRange: [0, 1],
     outputRange: [0, 10000],
   });
 
   return (
-    <View style={[styles.nodeContainer, { marginLeft: level * 20, backgroundColor: theme.colors.background }]}>
+    <View
+      style={[
+        styles.nodeContainer,
+        { marginLeft: level * 20, backgroundColor: theme.colors.background },
+      ]}
+    >
       <LinearGradient
         colors={getGradientColors(level)}
         start={[0, 0]}
@@ -62,12 +69,19 @@ const FamilyTreeNode = ({ person, level, onToggle }) => {
       />
       <TouchableOpacity onPress={toggleExpand} style={styles.nodeHeader}>
         <View style={styles.personInfo}>
-          <Image source={{ uri: person.profile_picture ?? APP_CONSTANTS.defaultAvatar}} style={[styles.profileImage, { borderColor: theme.colors.border }]} />
+          <Image
+            source={{
+              uri: person.profile_picture ?? APP_CONSTANTS.defaultAvatar,
+            }}
+            style={[styles.profileImage, { borderColor: theme.colors.border }]}
+          />
           <View style={styles.textInfo}>
-            <Text style={[styles.personName, { color: theme.colors.text }]}>{person.full_name_vn}</Text>
+            <Text style={[styles.personName, { color: theme.colors.text }]}>
+              {person.full_name_vn}
+            </Text>
             <Text style={[styles.dateInfo, { color: theme.colors.text }]}>
-              {formatDate(person.birth_date)} 
-              {person.death_date && ` - ${formatDate(person.death_date)}`}
+              {person.birth_date}
+              {person.death_date && ` - ${person.death_date}`}
             </Text>
           </View>
           <TouchableOpacity
@@ -78,20 +92,36 @@ const FamilyTreeNode = ({ person, level, onToggle }) => {
             }}
             style={styles.detailButton}
           >
-            <Ionicons name="information-circle-outline" size={24} color={theme.colors.icon} />
+            <Ionicons
+              name="information-circle-outline"
+              size={24}
+              color={theme.colors.icon}
+            />
           </TouchableOpacity>
         </View>
         {person.children && person.children.length > 0 && (
-          <Animated.View style={{ transform: [{ rotate: animation.interpolate({
-            inputRange: [0, 1],
-            outputRange: ['0deg', '90deg']
-          }) }] }}>
-            <Ionicons name="chevron-forward" size={24} color={theme.colors.icon} />
+          <Animated.View
+            style={{
+              transform: [
+                {
+                  rotate: animation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ["0deg", "90deg"],
+                  }),
+                },
+              ],
+            }}
+          >
+            <Ionicons
+              name="chevron-forward"
+              size={24}
+              color={theme.colors.icon}
+            />
           </Animated.View>
         )}
       </TouchableOpacity>
       {person.children && person.children.length > 0 && (
-        <Animated.View style={{ maxHeight, overflow: 'hidden' }}>
+        <Animated.View style={{ maxHeight, overflow: "hidden" }}>
           {person.children.map((child) => (
             <FamilyTreeNode
               key={child.people_id}
@@ -116,7 +146,7 @@ const FamilyTree = ({ data }) => {
   return (
     <FlatList
       style={{
-        paddingBottom:100
+        paddingBottom: 100,
       }}
       data={[data]}
       horizontal
@@ -137,7 +167,7 @@ const FamilyTreeScreen = () => {
     setIsLoading(true);
     try {
       const res = await AxiosInstance().get("/relationships/");
-      console.log(res)
+      console.log(res);
       setData(res);
     } catch (error) {
       console.log(error);
@@ -151,13 +181,19 @@ const FamilyTreeScreen = () => {
   }, []);
   const navigation = useNavigation();
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <AppHeader back title="Gia phả" right={{
-        icon: "map",
-        onPress: () => {
-          navigation.navigate("FamilyMap");
-        },
-      }} />
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
+      <AppHeader
+        back
+        title="Gia phả"
+        right={{
+          icon: "map",
+          onPress: () => {
+            navigation.navigate("FamilyMap");
+          },
+        }}
+      />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollViewContent}
@@ -165,7 +201,9 @@ const FamilyTreeScreen = () => {
         {data ? (
           <FamilyTree data={data} />
         ) : (
-          <Text style={[styles.loadingText, { color: theme.colors.text }]}>Đang tải dữ liệu gia phả...</Text>
+          <Text style={[styles.loadingText, { color: theme.colors.text }]}>
+            Đang tải dữ liệu gia phả...
+          </Text>
         )}
       </ScrollView>
     </View>
@@ -188,24 +226,24 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     borderWidth: 0,
     minWidth: 250,
-    position: 'relative',
+    position: "relative",
   },
   gradientLine: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     top: 0,
     bottom: 0,
     width: 2,
   },
   nodeHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: 10,
   },
   personInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     flex: 1,
     gap: 10,
   },
@@ -231,11 +269,11 @@ const styles = StyleSheet.create({
   detailButton: {
     padding: 5,
     borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   loadingText: {
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 16,
     marginTop: 20,
   },

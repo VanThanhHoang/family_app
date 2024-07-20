@@ -85,6 +85,7 @@ const DetailScreen = () => {
               data.children.map((item, index) => {
                 return (
                   <ItemFamily
+                    image={item.profile_picture}
                     data={item}
                     key={index}
                     name={item.full_name_vn}
