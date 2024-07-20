@@ -7,7 +7,7 @@ import { useThemeContext } from "../../ThemeContext";
 const WeddingItem = ({ family }) => {
   const navigation = useNavigation();
   const { theme } = useThemeContext();
-  const isDarkMode = theme.mode === 'dark';
+  const isDarkMode = theme.mode === "dark";
 
   const ItemInfo = ({ isHusband, image, age, isAlive }) => {
     const getImage = () => {
@@ -21,8 +21,25 @@ const WeddingItem = ({ family }) => {
 
     return (
       <View style={styles.itemInfoContainer}>
-        <Image style={styles.image} source={getImage()} />
-        <Text style={[styles.nameText, isDarkMode && { color: "#FFFFFF" }]} numberOfLines={1} adjustsFontSizeToFit>
+        <TouchableOpacity
+          onPress={() => {
+            if (image) {
+              navigation.navigate("DetailImage", {
+                link: image,
+              });
+            }
+          }}
+        >
+          <Image
+            source={image ? { uri: image } : getImage()}
+            style={styles.image}
+          />
+        </TouchableOpacity>
+        <Text
+          style={[styles.nameText, isDarkMode && { color: "#FFFFFF" }]}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
           {isHusband ? family.husband.full_name_vn : family.wife.full_name_vn}
         </Text>
         <View style={styles.birthAndAgeRow}>
@@ -62,15 +79,29 @@ const WeddingItem = ({ family }) => {
           isAlive={family.husband.is_alive}
         />
         <View style={styles.centerContainer}>
-          <Text style={[styles.anniversaryDateText, isDarkMode && { color: "#C0C0C0" }]}>
+          <Text
+            style={[
+              styles.anniversaryDateText,
+              isDarkMode && { color: "#C0C0C0" },
+            ]}
+          >
             {dateFormater(family.marriage_date)}
           </Text>
-          <Text style={[styles.marriageDurationText, isDarkMode && { color: "#C0C0C0" }]}>
+          <Text
+            style={[
+              styles.marriageDurationText,
+              isDarkMode && { color: "#C0C0C0" },
+            ]}
+          >
             {family.marriage_duration}
           </Text>
           <View style={styles.childrenRow}>
-            {family.total_sons > 0 && <Children isBoy total={family.total_sons} />}
-            {family.total_daughters > 0 && <Children total={family.total_daughters} />}
+            {family.total_sons > 0 && (
+              <Children isBoy total={family.total_sons} />
+            )}
+            {family.total_daughters > 0 && (
+              <Children total={family.total_daughters} />
+            )}
           </View>
         </View>
         <ItemInfo
@@ -87,7 +118,7 @@ const WeddingItem = ({ family }) => {
 const Children = ({ isBoy, total }) => {
   return (
     <View style={styles.totalContainer}>
-      <Text style={styles.iconText}>{isBoy ? '👦' : '👧'}</Text>
+      <Text style={styles.iconText}>{isBoy ? "👦" : "👧"}</Text>
       <View style={styles.circleContainer}>
         <View style={styles.circle}>
           <Text style={styles.totalText}>{total}</Text>
@@ -110,8 +141,8 @@ const styles = StyleSheet.create({
     borderRadius: 50,
   },
   birthAndAgeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   ageText: {
     fontSize: 10,

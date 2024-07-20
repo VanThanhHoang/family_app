@@ -5,7 +5,7 @@ import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
 import WeddingItem from "./components/WeddingItem";
 import { removeDiacritics } from "../helper/string_format";
-import { useTheme } from '@rneui/themed';
+import { useTheme } from "@rneui/themed";
 import { useThemeContext } from "../ThemeContext";
 
 const WeddingScreen = () => {
@@ -48,7 +48,9 @@ const WeddingScreen = () => {
     });
   };
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <SearchBar onChangeText={searchFilter} value={searchText} />
       <FlatList
         contentContainerStyle={{ padding: 10, paddingBottom: 100 }}

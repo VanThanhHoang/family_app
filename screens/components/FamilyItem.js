@@ -23,7 +23,25 @@ const FamilyItem = ({ family }) => {
     return (
       <View style={styles.itemInfoContainer}>
         <View style={[styles.imageRow, isHusband ? styles.rowReverse : styles.row]}>
-          <Image style={styles.image} source={getImage()} />
+        <TouchableOpacity
+          onPress={() => {
+            if (image) {
+              navigation.navigate("DetailImage", {
+                link: image,
+              });
+            }
+          }}
+        >
+          <Image
+            source={
+              image
+                ? { uri: image }
+                : getImage()
+                
+            }
+            style={styles.image}
+          />
+        </TouchableOpacity>
         </View>
         <Text style={[styles.nameText, { color: theme.colors.text }]} numberOfLines={1} adjustsFontSizeToFit>
           {isHusband ? family.husband.full_name_vn : family.wife.full_name_vn}

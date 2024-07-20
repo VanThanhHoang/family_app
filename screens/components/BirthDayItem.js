@@ -34,16 +34,26 @@ const BirthDayItem = ({ ...props }) => {
       ]}
     >
       <View style={styles.imageContainer}>
-        <Image
-          source={
-            props.data.profile_picture
-              ? { uri: props.data.profile_picture }
-              : props.data.gender
-              ? require("../../assets/father.png")
-              : require("../../assets/mother.png")
-          }
-          style={styles.image}
-        />
+        <TouchableOpacity
+          onPress={() => {
+            if (props.data.profile_picture) {
+              navigation.navigate("DetailImage", {
+                link: props.data.profile_picture,
+              });
+            }
+          }}
+        >
+          <Image
+            source={
+              props.data.profile_picture
+                ? { uri: props.data.profile_picture }
+                : props.data.gender
+                ? require("../../assets/father.png")
+                : require("../../assets/mother.png")
+            }
+            style={styles.image}
+          />
+        </TouchableOpacity>
       </View>
       <View style={styles.infoContainer}>
         <Text style={[styles.name, { color: theme.colors.text }]}>
@@ -115,6 +125,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 25,
+    resizeMode: "cover",
   },
   infoContainer: {
     gap: 5,

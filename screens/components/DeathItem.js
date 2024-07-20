@@ -19,14 +19,26 @@ const DeathItem = ({ ...props }) => {
       style={[styles.container, { backgroundColor: theme.colors.card }]}
     >
       <View style={styles.imageContainer}>
-        <Image
-          source={
-            props.data.gender
-              ? require("../../assets/father.png")
-              : require("../../assets/mother.png")
-          }
-          style={styles.image}
-        />
+        <TouchableOpacity
+          onPress={() => {
+            if (props.data.profile_picture) {
+              navigation.navigate("DetailImage", {
+                link: props.data.profile_picture,
+              });
+            }
+          }}
+        >
+          <Image
+            source={
+              props.data.profile_picture
+                ? { uri: props.data.profile_picture }
+                : props.data.gender
+                ? require("../../assets/father.png")
+                : require("../../assets/mother.png")
+            }
+            style={styles.image}
+          />
+        </TouchableOpacity>
         {props.data.death_info && (
           <>
             <Text style={[styles.italicText, { color: theme.colors.text }]}>
