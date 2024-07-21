@@ -251,12 +251,14 @@ const ListInfo = ({ data, familyData }) => {
         horizontal
       >
         {familyData?.siblings?.map((item) => {
+          console.log(item);
           return (
             <ItemFamily
+
               key={item.id}
               title={item.type}
               name={item.name}
-              image={item.image}
+              image={item.profile_picture}
               id={item.id}
             />
           );

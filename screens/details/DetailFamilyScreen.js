@@ -10,11 +10,8 @@ import {
 import { AppContext } from "../../AppContext";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import AxiosInstance from "../../network/AxiosInstance";
-import Icon from "react-native-vector-icons/Ionicons";
-import AppHead from "../../components/AppHeader";
 import AppHeader from "../../components/AppHeader";
 import { ScrollView } from "react-native-gesture-handler";
-import { APP_CONSTANTS } from "../../helper/constant";
 const DetailScreen = () => {
   const { setIsLoading } = useContext(AppContext);
   const { id } = useRoute().params;
@@ -36,6 +33,7 @@ const DetailScreen = () => {
   useEffect(() => {
     getData();
   }, []);
+  console.log(data);
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
       <AppHeader back title={`Gia đình ${data.full_name_vn}`} />
@@ -51,11 +49,13 @@ const DetailScreen = () => {
         >
           <ItemFamily
             isRoot
+            gender={true}
             name={data.full_name_vn}
             id={data.people_id}
             title={"Chồng"}
           />
           <ItemFamily
+            gender={false}
             isRoot
             name={data.spouse_name}
             id={data.people_id}
@@ -83,6 +83,7 @@ const DetailScreen = () => {
           >
             {data?.children &&
               data.children.map((item, index) => {
+                console.log(item.gender);
                 return (
                   <ItemFamily
                     image={item.profile_picture}
@@ -100,7 +101,15 @@ const DetailScreen = () => {
     </View>
   );
 };
-export const ItemFamily = ({ name, id, image, title, data, isRoot }) => {
+export const ItemFamily = ({
+  name,
+  id,
+  image,
+  title,
+  data,
+  isRoot,
+  gender,
+}) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
@@ -124,10 +133,30 @@ export const ItemFamily = ({ name, id, image, title, data, isRoot }) => {
         gap: 5,
       }}
     >
-      <Image
-        source={{ uri: image ?? APP_CONSTANTS.defaultAvatar }}
-        style={{ width: 80, height: 80, borderRadius: 50 }}
-      />
+      <TouchableOpacity
+        onPress={() => {
+          if (image) {
+            navigation.navigate("DetailImage", {
+              link: image,
+            });
+          }
+        }}
+      >
+        <Image
+          source={
+            image
+              ? { uri: image }
+              : gender
+              ? require("../../assets/father.png")
+              : require("../../assets/mother.png")
+          }
+          style={{
+            width: 80,
+            height: 80,
+            borderRadius: 25,
+          }}
+        />
+      </TouchableOpacity>
       <Text
         style={{
           textAlign: "center",

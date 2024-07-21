@@ -1,15 +1,15 @@
-import React from 'react';
+import React from "react";
 import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { dateFormater } from "../../helper/string_format";
-import { useNavigation } from '@react-navigation/native';
-import { useTheme } from '@rneui/themed';
-import { useThemeContext } from '../../ThemeContext';
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "@rneui/themed";
+import { useThemeContext } from "../../ThemeContext";
 
 const FamilyItem = ({ family }) => {
   const navigation = useNavigation();
   const { theme } = useThemeContext();
 
-  const isDarkMode = theme.mode === 'dark';
+  const isDarkMode = theme.mode === "dark";
 
   const ItemInfo = ({ isHusband, image, age, isAlive }) => {
     const getImage = () => {
@@ -22,32 +22,36 @@ const FamilyItem = ({ family }) => {
     };
     return (
       <View style={styles.itemInfoContainer}>
-        <View style={[styles.imageRow, isHusband ? styles.rowReverse : styles.row]}>
-        <TouchableOpacity
-          onPress={() => {
-            if (image) {
-              navigation.navigate("DetailImage", {
-                link: image,
-              });
-            }
-          }}
+        <View
+          style={[styles.imageRow, isHusband ? styles.rowReverse : styles.row]}
         >
-          <Image
-            source={
-              image
-                ? { uri: image }
-                : getImage()
-                
-            }
-            style={styles.image}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              if (image) {
+                navigation.navigate("DetailImage", {
+                  link: image,
+                });
+              }
+            }}
+          >
+            <Image
+              source={image ? { uri: image } : getImage()}
+              style={styles.image}
+            />
+          </TouchableOpacity>
         </View>
-        <Text style={[styles.nameText, { color: theme.colors.text }]} numberOfLines={1} adjustsFontSizeToFit>
+        <Text
+          style={[styles.nameText, { color: theme.colors.text }]}
+          numberOfLines={1}
+          adjustsFontSizeToFit
+        >
           {isHusband ? family.husband.full_name_vn : family.wife.full_name_vn}
         </Text>
         <Text style={[styles.textInfo, { color: theme.colors.text }]}>
-          {isHusband ? dateFormater(family.husband.birth_date) : dateFormater(family.wife.birth_date)}  Tuổi {age}
+          {isHusband
+            ? dateFormater(family.husband.birth_date)
+            : dateFormater(family.wife.birth_date)}{" "}
+          Tuổi {age}
         </Text>
       </View>
     );
@@ -56,8 +60,8 @@ const FamilyItem = ({ family }) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate("DetailFamily", {
-          id: family.relationship_id,
+        navigation.navigate("DetailWeddingScreen", {
+          data: family,
         });
       }}
       style={[styles.container, { backgroundColor: theme.colors.card }]}
@@ -93,7 +97,7 @@ const FamilyItem = ({ family }) => {
 const Children = ({ isBoy, total }) => {
   return (
     <View style={styles.totalContainer}>
-      <Text style={styles.iconText}>{isBoy ? '👦' : '👧'}</Text>
+      <Text style={styles.iconText}>{isBoy ? "👦" : "👧"}</Text>
       <View style={styles.circleContainer}>
         <View style={styles.circle}>
           <Text style={styles.totalText}>{total}</Text>
@@ -110,7 +114,7 @@ const styles = StyleSheet.create({
   },
   iconText: {
     fontSize: 20, // Adjust the size of the icon
-    marginBottom: -1 // Adjust the spacing between the icon and the circle
+    marginBottom: -1, // Adjust the spacing between the icon and the circle
   },
   circleContainer: {
     alignItems: "center",
