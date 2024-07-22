@@ -1,75 +1,28 @@
-import React, { useContext, useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  Image,
-  TextInput,
-} from "react-native";
+import React, { useContext, useEffect, useState, useCallback } from "react";
+import { View, Text, TouchableOpacity, FlatList, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import AxiosInstance from "../../network/AxiosInstance";
 import AppHeader from "../../components/AppHeader";
 import Modal from "react-native-modal";
 import { AppContext } from "../../AppContext";
-import Icon from "react-native-vector-icons/MaterialIcons"; // Sử dụng thư viện icon
+import Icon from "react-native-vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
+import styles from "../components/myfamily/MyfamilyScreenStyles";
+import createMember from "./DataFamily"; // Import the utility function
 
 const MyfamilyScreen = () => {
   const navigation = useNavigation();
-  const { isLoading, setIsLoading } = useContext(AppContext);
+  const { setIsLoading } = useContext(AppContext);
   const [familyMembers, setFamilyMembers] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
-  const handleSelectParent = (parent) => {
-    const father = parent.husband;
-    const mother = parent.wife;
-    const marriageDate = parent.marriage_date;
-    navigation.navigate("AddFatherMotherScreen", {
-      father,
-      mother,
-      marriageDate,
-      type: 1,
-    });
-    toggleModal();
-  };
-
-  const processFamilyData = (data) => {
-    const categories = ["maternal_grandparents", "paternal_grandparents", "user_parents"];
-    let members = [];
-
-    categories.forEach((category) => {
-      if (data[category] && data[category].relationships) {
-        const processedMembers = data[category].relationships.map(person => ({
-          people_id: person.people_id,
-          full_name_vn: person.full_name_vn,
-          profile_picture: person.profile_picture,
-          birth_date: person.birth_date,
-          gender: person.gender,
-          phone_number: person.phone_number,
-          marital_status: person.marital_status,
-          is_alive: person.is_alive,
-          saint: person.saint,
-          religion: person.religion,
-          relationship: person.relationship,
-          title: data[category].title
-        }));
-        members = [...members, ...processedMembers];
-      }
-    });
-
-    return members;
-  };
-
-  const fetchFamilyData = async () => {
+  const fetchFamilyData = useCallback(async () => {
+    setIsLoading(true);
     try {
       const token = await AsyncStorage.getItem("access");
       const peopleId = await AsyncStorage.getItem("people_id");
@@ -77,95 +30,151 @@ const MyfamilyScreen = () => {
         const response = await AxiosInstance().get("myfamily/relationship/");
         const data = response.data;
         console.log("Family data:", data);
-
         const processedData = processFamilyData(data);
         setFamilyMembers(processedData);
       }
     } catch (error) {
       console.error("Error fetching family data:", error);
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [setIsLoading]);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      fetchFamilyData();
-    });
+    const unsubscribe = navigation.addListener("focus", fetchFamilyData);
     return unsubscribe;
-  }, []);
+  }, [fetchFamilyData, navigation]);
 
-  const RenderFamilyMember = ({ item }) => {
-    return (
-      <View style={styles.memberContainer}>
-        <Text style={styles.memberTitle}>{item.title}</Text>
-        <TouchableOpacity
-          style={styles.memberDetailContainer}
-          onPress={() =>
-            navigation.navigate("DetailBirthDay", { id: item.people_id })
-          }
-        >
-          <Image
-            source={
-              item.profile_picture
-                ? { uri: item.profile_picture }
-                : item.gender
-                ? require("../../assets/father.png")
-                : require("../../assets/mother.png")
-            }
-            style={styles.profilePicture}
-          />
-          <View style={styles.textContainer}>
-            <Text style={styles.memberName}>{item.full_name_vn}</Text>
-            <Text style={styles.birthDate}>{item.birth_date}</Text>
-            <Text style={styles.relationship}>{item.relationship}</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    );
-  };
+  const processFamilyData = (data) => {
+    const processedData = [];
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.resultItem}
-      onPress={() => {
-        handleSelectParent(item);
-      }}
-    >
-      <View style={styles.resultContent}>
-        <Image
-          source={
-            item.husband.profile_picture
-              ? { uri: item.husband.profile_picture }
-              : require("../../assets/father.png")
-          }
-          style={styles.avatar}
-        />
-        <Image
-          source={
-            item.wife.profile_picture
-              ? { uri: item.wife.profile_picture }
-              : require("../../assets/mother.png")
-          }
-          style={styles.avatar}
-        />
-        <View style={styles.nameContainer}>
-          <Text style={styles.resultText}>{item.husband.full_name_vn}</Text>
-          <Text style={styles.resultText}>{item.wife.full_name_vn}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-
-  const handleSearch = async (query) => {
-    try {
-      setSearchQuery(query);
-      const response = await AxiosInstance().get(`myfamily/search/?query=${query}`);
-      const results = response.data;
-      setSearchResults(results);
-      setShowNoResults(results.length === 0);
-    } catch (error) {
-      console.error("Error searching:", error);
+    if (data.maternal_grandparents) {
+      const maternalGrandparents = processRelationships(data.maternal_grandparents.relationships, data.maternal_grandparents.title);
+      processedData.push({
+        title: data.maternal_grandparents.title,
+        members: maternalGrandparents,
+      });
     }
+
+    if (data.paternal_grandparents) {
+      const paternalGrandparents = processRelationships(data.paternal_grandparents.relationships, data.paternal_grandparents.title);
+      processedData.push({
+        title: data.paternal_grandparents.title,
+        members: paternalGrandparents,
+      });
+    }
+
+    if (data.user_parents) {
+      const userParents = processRelationships(data.user_parents.relationships, data.user_parents.title);
+      processedData.push({
+        title: data.user_parents.title,
+        members: userParents,
+      });
+    }
+
+    if (data.user_spouse && data.user_spouse.relationships) {
+      const userSpouse = processRelationships([data.user_spouse.relationships], data.user_spouse.title);
+      processedData.push({
+        title: data.user_spouse.title,
+        members: userSpouse,
+      });
+    }
+
+    if (data.user_children) {
+      let children = data.user_children.relationships;
+      children.sort((a, b) => new Date(a.birth_date) - new Date(b.birth_date));
+      const userChildren = processRelationships(children, data.user_children.title);
+      processedData.push({
+        title: data.user_children.title,
+        members: userChildren,
+      });
+    }
+
+    if (data.user_siblings) {
+      let siblings = data.user_siblings.relationships;
+      siblings.sort((a, b) => new Date(a.birth_date) - new Date(b.birth_date));
+      const userSiblings = processRelationships(siblings, data.user_siblings.title);
+      processedData.push({
+        title: data.user_siblings.title,
+        members: userSiblings,
+      });
+    }
+
+    if (data.user_siblings_children) {
+      const userSiblingsChildren = processUserSiblingsChildren(data.user_siblings_children.relationships);
+      processedData.push(...userSiblingsChildren);
+    }
+
+    return processedData;
   };
+
+  const processRelationships = (relationships, title) => {
+    let members = [];
+    let singleMembers = [];
+
+    if (relationships && Array.isArray(relationships)) {
+      relationships.forEach((person) => {
+        const member = createMember(person, title);
+        if (person.spouse) {
+          members.push([member, createMember(person.spouse, title)]);
+        } else {
+          singleMembers.push(member);
+        }
+      });
+    }
+
+    if (singleMembers.length > 0) {
+      while (singleMembers.length > 1) {
+        members.unshift([singleMembers.pop(), singleMembers.pop()]);
+      }
+      if (singleMembers.length === 1) {
+        members.unshift([singleMembers.pop()]);
+      }
+    }
+
+    return members;
+  };
+
+  const calculateAge = (birthDate) => {
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDifference = today.getMonth() - birth.getMonth();
+
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+
+    return age;
+  };
+
+  const processUserSiblingsChildren = (siblingsChildren) => {
+    return siblingsChildren.map((sibling) => {
+      if (sibling.children && sibling.children.length > 0) {
+        const children = sibling.children.map((child) => createMember(child, `${sibling.full_name_vn} và ${sibling.spouse ? sibling.spouse.full_name_vn : ""}`));
+
+        return {
+          title: `${sibling.full_name_vn} và ${sibling.spouse ? sibling.spouse.full_name_vn : ""}`,
+          age: calculateAge(sibling.birth_date),
+          members: [children],
+        };
+      }
+      return null;
+    }).filter(Boolean).sort((a, b) => b.age - a.age);
+  };
+
+  const renderFamilyPairs = ({ item }) => (
+    <View>
+      <Text style={styles.categoryTitle}>{item.title}</Text>
+      {Array.isArray(item.members) && item.members.map((memberPair, index) => (
+        <View style={styles.pairContainer} key={index}>
+          {Array.isArray(memberPair) && memberPair.map((member, idx) => (
+            <FamilyMemberCard key={idx} member={member} />
+          ))}
+        </View>
+      ))}
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -185,30 +194,11 @@ const MyfamilyScreen = () => {
       </TouchableOpacity>
       <FlatList
         data={familyMembers}
-        keyExtractor={(item, index) =>
-          item?.people_id?.toString() || index + new Date().getTime().toString()
-        }
-        renderItem={({ item }) => {
-          return <RenderFamilyMember item={item} />;
-        }}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={renderFamilyPairs}
       />
       <Modal isVisible={isModalVisible}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Nhập Tên Ba Hoặc Mẹ </Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter name..."
-            value={searchQuery}
-            onChangeText={(text) => {
-              handleSearch(text);
-            }}
-          />
-          <FlatList
-            data={searchResults}
-            keyExtractor={(item) => item.husband.people_id.toString()}
-            renderItem={renderItem}
-            style={styles.resultsList}
-          />
           <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
             <Text style={styles.closeButtonText}>Close</Text>
           </TouchableOpacity>
@@ -218,133 +208,35 @@ const MyfamilyScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  header: {
-    position: "absolute",
-    top: 10,
-    left: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginVertical: 20,
-  },
-  memberContainer: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
-  memberTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
-  memberDetailContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  profilePicture: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  textContainer: {
-    flexDirection: "column",
-  },
-  memberName: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  birthDate: {
-    fontSize: 12,
-    color: "#555",
-  },
-  relationship: {
-    fontSize: 14,
-    color: "#777",
-  },
-  addButton: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    borderRadius: 50,
-    padding: 10,
-    elevation: 3,
-  },
-  addButtonGradient: {
-    borderRadius: 50,
-    padding: 8,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    borderRadius: 5,
-    width: "80%",
-    marginBottom: 10,
-    backgroundColor: "#f8f8f8",
-  },
-  noResultsContainer: {
-    alignItems: "center",
-    marginVertical: 20,
-  },
-  noResultsText: {
-    fontSize: 16,
-    marginBottom: 10,
-  },
-  resultsList: {
-    width: "100%",
-  },
-  resultItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
-  resultContent: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 50,
-  },
-  nameContainer: {
-    flexDirection: "column",
-    marginLeft: 10,
-  },
-  resultText: {
-    fontSize: 18,
-  },
-  closeButton: {
-    backgroundColor: "#f44336",
-    paddingVertical: 15,
-    paddingHorizontal: 80,
-    borderRadius: 5,
-    marginTop: 10,
-  },
-  closeButtonText: {
-    color: "white",
-    fontSize: 16,
-  },
-});
+const FamilyMemberCard = ({ member }) => {
+  const navigation = useNavigation();
+
+  return (
+    <View style={styles.memberContainer}>
+      <TouchableOpacity
+        style={styles.memberDetailContainer}
+        onPress={() => navigation.navigate("DetailBirthDay", { id: member.people_id })}
+      >
+        <Image
+          source={
+            member.profile_picture
+              ? { uri: member.profile_picture }
+              : member.gender
+              ? require("../../assets/father.png")
+              : require("../../assets/mother.png")
+          }
+          style={styles.profilePicture}
+        />
+        <View style={styles.textContainer}>
+          <Text style={styles.memberName} numberOfLines={1} adjustsFontSizeToFit>
+            {member.full_name_vn}
+          </Text>
+          <Text style={styles.birthDate}>{member.birth_date}</Text>
+          <Text style={styles.relationship}>{member.relationship}</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 export default MyfamilyScreen;
