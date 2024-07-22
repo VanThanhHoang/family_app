@@ -178,25 +178,6 @@ export const ItemFamily = ({
         {name}
       </Text>
       {data?.spouse_name != null && !isRoot && <Text>Đã lập gia đình</Text>}
-
-      <TouchableOpacity
-        onPress={() => {
-          navigation.push("DetailBirthDay", {
-            id: id,
-          });
-        }}
-      >
-        <Text
-          style={{
-            color: "#198754",
-            fontSize: 16,
-            fontWeight: "bold",
-            marginTop: 5,
-          }}
-        >
-          Xem chi tiết
-        </Text>
-      </TouchableOpacity>
     </TouchableOpacity>
   );
 };

@@ -100,28 +100,6 @@ const HeaderData = ({ data }) => {
       />
       <Text style={styles.textName}>{data.full_name_vn}</Text>
       <View style={styles.line} />
-      <TouchableOpacity
-        style={{
-          flexDirection: "row",
-          gap: 10,
-          width: "100%",
-          justifyContent: "space-between",
-        }}
-      >
-        <Text style={styles.detail}>Thông tin chi tiết</Text>
-        <Text
-          style={[
-            styles.detail,
-            {
-              color: "#198754",
-              fontWeight: "700",
-              fontSize: 16,
-            },
-          ]}
-        >
-          Xem chi tiết
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 };
