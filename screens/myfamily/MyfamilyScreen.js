@@ -1,5 +1,3 @@
-// /Users/macm1/Code/FamilyApp/family/screens/myfamily/MyfamilyScreen.js
-
 import React, { useContext, useEffect, useState, useCallback } from "react";
 import { View, Text, TouchableOpacity, FlatList, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -14,6 +12,7 @@ import { useThemeContext } from "../../ThemeContext";
 import createMember from "./DataFamily"; // Import the utility function
 import styles from "../components/myfamily/MyfamilyScreenStyles";
 import FamilyMemberCard from "../components/Avata/FamilyMemberCard"; // Import FamilyMemberCard
+import { MaterialIcons } from '@expo/vector-icons'; // Import MaterialIcons from @expo/vector-icons
 
 const MyfamilyScreen = () => {
   const navigation = useNavigation();
@@ -52,7 +51,6 @@ const MyfamilyScreen = () => {
 
   const processFamilyData = (data) => {
     const processedData = [];
-
 
     if (data.user_parents) {
       const userParents = processRelationships(data.user_parents.relationships, data.user_parents.title);
@@ -137,28 +135,43 @@ const MyfamilyScreen = () => {
 
     return age;
   };
+  
   const processUserSiblingsChildren = (siblingsChildren) => {
     return siblingsChildren.map((sibling) => {
-        if (sibling.children && sibling.children.length > 0) {
-            const children = sibling.children.map((child) => {
-                const member = createMember(child, `${sibling.full_name_vn} và ${sibling.spouse ? sibling.spouse.full_name_vn : ""}`);
-                return member;
-            });
+      if (sibling.children && sibling.children.length > 0) {
+        const children = sibling.children.map((child) => {
+          const member = createMember(
+            child,
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={styles.titleText}>{sibling.full_name_vn}</Text>
+              <MaterialIcons name="home" style={styles.icon} />
+              <Text style={styles.titleText}>{sibling.spouse ? sibling.spouse.full_name_vn : ""}</Text>
+            </View>
+          );
+          return member;
+        });
 
-            return {
-                title: `${sibling.full_name_vn} & ${sibling.spouse ? sibling.spouse.full_name_vn : ""}`,
-                age: calculateAge(sibling.birth_date),
-                members: pairChildren(children),
-                parentAvatars: {
-                    father: sibling.profile_picture ? sibling.profile_picture : null,
-                    mother: sibling.spouse ? (sibling.spouse.profile_picture ? sibling.spouse.profile_picture : null) : null
-                }
-            };
-        }
-        return null;
-    }).filter(Boolean).sort((a, b) => b.age - a.age);
+        return {
+          title: (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text style={styles.titleText}>{sibling.full_name_vn}</Text>
+              <MaterialIcons name="home" style={styles.icon} />
+              <Text style={styles.titleText}>{sibling.spouse ? sibling.spouse.full_name_vn : ""}</Text>
+            </View>
+          ),
+          age: calculateAge(sibling.birth_date),
+          members: pairChildren(children),
+          parentAvatars: {
+            father: sibling.profile_picture ? sibling.profile_picture : null,
+            mother: sibling.spouse ? (sibling.spouse.profile_picture ? sibling.spouse.profile_picture : null) : null,
+          },
+        };
+      }
+      return null;
+    })
+      .filter(Boolean)
+      .sort((a, b) => b.age - a.age);
   };
-
 
   const pairChildren = (children) => {
     const paired = [];
@@ -167,72 +180,45 @@ const MyfamilyScreen = () => {
     }
     return paired;
   };
+
   const renderFamilyPairs = ({ item }) => {
-    const names = item.title.split('&').map(name => name.trim());
-  
     return (
       <View>
         <View style={styles.parentHighlightContainer}>
-          <Text style={[styles.parentTitle, { color: rneTheme.colors.text }]}>
-            {names[0]}
-          </Text>
+          <Text style={[styles.parentTitle, { color: rneTheme.colors.text }]}>{item.title}</Text>
           {item.parentAvatars && (
             <View style={styles.parentAvatarsContainer}>
               {item.parentAvatars.father && (
-                <Image
-                  source={{ uri: item.parentAvatars.father }}
-                  style={styles.parentAvatar}
-                />
+                <Image source={{ uri: item.parentAvatars.father }} style={styles.parentAvatar} />
               )}
               {item.parentAvatars.mother && (
-                <Image
-                  source={{ uri: item.parentAvatars.mother }}
-                  style={styles.parentAvatar}
-                />
+                <Image source={{ uri: item.parentAvatars.mother }} style={styles.parentAvatar} />
               )}
             </View>
           )}
-          <Text style={[styles.parentTitle, { color: rneTheme.colors.text }]}>
-            {names[1]}
-          </Text>
         </View>
         <View style={[styles.divider, { borderBottomColor: rneTheme.colors.dividerColor }]} />
-        {Array.isArray(item.members) && item.members.map((memberGroup, index) => (
-          <View style={styles.pairContainer} key={index}>
-            {Array.isArray(memberGroup) ? (
-              memberGroup.map((member, idx) => (
-                <FamilyMemberCard key={idx} member={member} />
-              ))
-            ) : (
-              <FamilyMemberCard key={index} member={memberGroup} />
-            )}
-          </View>
-        ))}
+        {Array.isArray(item.members) &&
+          item.members.map((memberGroup, index) => (
+            <View style={styles.pairContainer} key={index}>
+              {Array.isArray(memberGroup)
+                ? memberGroup.map((member, idx) => <FamilyMemberCard key={idx} member={member} />)
+                : <FamilyMemberCard key={index} member={memberGroup} />}
+            </View>
+          ))}
       </View>
     );
   };
-  
+
   return (
     <View style={[styles.container, { backgroundColor: rneTheme.colors.background }]}>
       <AppHeader back title="Thành viên gia đình" />
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => navigation.navigate("AddFamilyCenterScreen")}
-      >
-        <LinearGradient
-          colors={["#FFD700", "#FFA500"]}
-          start={[0, 0]}
-          end={[1, 1]}
-          style={styles.addButtonGradient}
-        >
+      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate("AddFamilyCenterScreen")}>
+        <LinearGradient colors={["#FFD700", "#FFA500"]} start={[0, 0]} end={[1, 1]} style={styles.addButtonGradient}>
           <Icon name="person-add" size={20} color="white" />
         </LinearGradient>
       </TouchableOpacity>
-      <FlatList
-        data={familyMembers}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={renderFamilyPairs}
-      />
+      <FlatList data={familyMembers} keyExtractor={(item, index) => index.toString()} renderItem={renderFamilyPairs} />
       <Modal isVisible={isModalVisible}>
         <View style={[styles.modalContent, { backgroundColor: rneTheme.colors.card }]}>
           <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>

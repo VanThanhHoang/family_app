@@ -12,14 +12,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
     textAlign: "center",
     marginVertical: 20,
     color: '#333',
   },
   categoryTitle: {
     fontSize: 15,
-    fontWeight: "700",
     color: "#333",
     paddingHorizontal: 15,
     paddingVertical: 10,
@@ -216,7 +214,17 @@ const styles = StyleSheet.create({
     width: "100%",
     alignSelf: 'center', // Đường chỉ mỏng ở giữa
   },
-
+  // New styles for icon and title
+  icon: {
+    fontSize: 20, // Adjust the icon size here
+    marginHorizontal: 5,
+  },
+  titleText: {
+    fontSize: 16, // Adjust the title text size here
+    color: '#333', // Customize the title text color
+    fontWeight: '300', // Adjust the font weight to be lighter
+    fontFamily: 'System', // Use the default system font
+  },
 });
 
 export default styles;
