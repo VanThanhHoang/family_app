@@ -53,21 +53,6 @@ const MyfamilyScreen = () => {
   const processFamilyData = (data) => {
     const processedData = [];
 
-    if (data.maternal_grandparents) {
-      const maternalGrandparents = processRelationships(data.maternal_grandparents.relationships, data.maternal_grandparents.title);
-      processedData.push({
-        title: data.maternal_grandparents.title,
-        members: maternalGrandparents,
-      });
-    }
-
-    if (data.paternal_grandparents) {
-      const paternalGrandparents = processRelationships(data.paternal_grandparents.relationships, data.paternal_grandparents.title);
-      processedData.push({
-        title: data.paternal_grandparents.title,
-        members: paternalGrandparents,
-      });
-    }
 
     if (data.user_parents) {
       const userParents = processRelationships(data.user_parents.relationships, data.user_parents.title);
@@ -152,21 +137,28 @@ const MyfamilyScreen = () => {
 
     return age;
   };
-
   const processUserSiblingsChildren = (siblingsChildren) => {
     return siblingsChildren.map((sibling) => {
-      if (sibling.children && sibling.children.length > 0) {
-        const children = sibling.children.map((child) => createMember(child, `${sibling.full_name_vn} và ${sibling.spouse ? sibling.spouse.full_name_vn : ""}`));
-  
-        return {
-          title: `${sibling.full_name_vn} và ${sibling.spouse ? sibling.spouse.full_name_vn : ""}`,
-          age: calculateAge(sibling.birth_date),
-          members: pairChildren(children),
-        };
-      }
-      return null;
+        if (sibling.children && sibling.children.length > 0) {
+            const children = sibling.children.map((child) => {
+                const member = createMember(child, `${sibling.full_name_vn} và ${sibling.spouse ? sibling.spouse.full_name_vn : ""}`);
+                return member;
+            });
+
+            return {
+                title: `${sibling.full_name_vn} & ${sibling.spouse ? sibling.spouse.full_name_vn : ""}`,
+                age: calculateAge(sibling.birth_date),
+                members: pairChildren(children),
+                parentAvatars: {
+                    father: sibling.profile_picture ? sibling.profile_picture : null,
+                    mother: sibling.spouse ? (sibling.spouse.profile_picture ? sibling.spouse.profile_picture : null) : null
+                }
+            };
+        }
+        return null;
     }).filter(Boolean).sort((a, b) => b.age - a.age);
   };
+
 
   const pairChildren = (children) => {
     const paired = [];
@@ -175,24 +167,51 @@ const MyfamilyScreen = () => {
     }
     return paired;
   };
-
-  const renderFamilyPairs = ({ item }) => (
-    <View>
-      <Text style={[styles.categoryTitle, { color: rneTheme.colors.text }]}>{item.title}</Text>
-      {Array.isArray(item.members) && item.members.map((memberGroup, index) => (
-        <View style={styles.pairContainer} key={index}>
-          {Array.isArray(memberGroup) ? (
-            memberGroup.map((member, idx) => (
-              <FamilyMemberCard key={idx} member={member} />
-            ))
-          ) : (
-            <FamilyMemberCard key={index} member={memberGroup} />
+  const renderFamilyPairs = ({ item }) => {
+    const names = item.title.split('&').map(name => name.trim());
+  
+    return (
+      <View>
+        <View style={styles.parentHighlightContainer}>
+          <Text style={[styles.parentTitle, { color: rneTheme.colors.text }]}>
+            {names[0]}
+          </Text>
+          {item.parentAvatars && (
+            <View style={styles.parentAvatarsContainer}>
+              {item.parentAvatars.father && (
+                <Image
+                  source={{ uri: item.parentAvatars.father }}
+                  style={styles.parentAvatar}
+                />
+              )}
+              {item.parentAvatars.mother && (
+                <Image
+                  source={{ uri: item.parentAvatars.mother }}
+                  style={styles.parentAvatar}
+                />
+              )}
+            </View>
           )}
+          <Text style={[styles.parentTitle, { color: rneTheme.colors.text }]}>
+            {names[1]}
+          </Text>
         </View>
-      ))}
-    </View>
-  );
-
+        <View style={[styles.divider, { borderBottomColor: rneTheme.colors.dividerColor }]} />
+        {Array.isArray(item.members) && item.members.map((memberGroup, index) => (
+          <View style={styles.pairContainer} key={index}>
+            {Array.isArray(memberGroup) ? (
+              memberGroup.map((member, idx) => (
+                <FamilyMemberCard key={idx} member={member} />
+              ))
+            ) : (
+              <FamilyMemberCard key={index} member={memberGroup} />
+            )}
+          </View>
+        ))}
+      </View>
+    );
+  };
+  
   return (
     <View style={[styles.container, { backgroundColor: rneTheme.colors.background }]}>
       <AppHeader back title="Thành viên gia đình" />

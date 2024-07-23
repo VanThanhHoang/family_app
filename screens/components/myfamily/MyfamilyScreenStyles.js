@@ -190,6 +190,33 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
   },
+  parentHighlightContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 10,
+    paddingBottom: 10,
+  },
+  parentTitle: {
+    fontSize: 16, // Giảm kích thước phông chữ
+    fontWeight: 'bold',
+  },
+  parentAvatarsContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 5,
+  },
+  // parentAvatar: {
+  //   width: 40,
+  //   height: 40,
+  //   borderRadius: 20,
+  //   marginHorizontal: 2,
+  // },
+  divider: {
+    borderBottomWidth: 1,
+    width: "100%",
+    alignSelf: 'center', // Đường chỉ mỏng ở giữa
+  },
+
 });
 
 export default styles;
