@@ -1,3 +1,5 @@
+// /Users/macm1/Code/FamilyApp/family/screens/myfamily/MyfamilyScreen.js
+
 import React, { useContext, useEffect, useState, useCallback } from "react";
 import { View, Text, TouchableOpacity, FlatList, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -8,12 +10,15 @@ import Modal from "react-native-modal";
 import { AppContext } from "../../AppContext";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
-import styles from "../components/myfamily/MyfamilyScreenStyles";
+import { useThemeContext } from "../../ThemeContext";
 import createMember from "./DataFamily"; // Import the utility function
+import styles from "../components/myfamily/MyfamilyScreenStyles";
+import FamilyMemberCard from "../components/Avata/FamilyMemberCard"; // Import FamilyMemberCard
 
 const MyfamilyScreen = () => {
   const navigation = useNavigation();
   const { setIsLoading } = useContext(AppContext);
+  const { theme: rneTheme } = useThemeContext();
   const [familyMembers, setFamilyMembers] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -152,32 +157,44 @@ const MyfamilyScreen = () => {
     return siblingsChildren.map((sibling) => {
       if (sibling.children && sibling.children.length > 0) {
         const children = sibling.children.map((child) => createMember(child, `${sibling.full_name_vn} và ${sibling.spouse ? sibling.spouse.full_name_vn : ""}`));
-
+  
         return {
           title: `${sibling.full_name_vn} và ${sibling.spouse ? sibling.spouse.full_name_vn : ""}`,
           age: calculateAge(sibling.birth_date),
-          members: [children],
+          members: pairChildren(children),
         };
       }
       return null;
     }).filter(Boolean).sort((a, b) => b.age - a.age);
   };
 
+  const pairChildren = (children) => {
+    const paired = [];
+    for (let i = 0; i < children.length; i += 2) {
+      paired.push(children.slice(i, i + 2));
+    }
+    return paired;
+  };
+
   const renderFamilyPairs = ({ item }) => (
     <View>
-      <Text style={styles.categoryTitle}>{item.title}</Text>
-      {Array.isArray(item.members) && item.members.map((memberPair, index) => (
+      <Text style={[styles.categoryTitle, { color: rneTheme.colors.text }]}>{item.title}</Text>
+      {Array.isArray(item.members) && item.members.map((memberGroup, index) => (
         <View style={styles.pairContainer} key={index}>
-          {Array.isArray(memberPair) && memberPair.map((member, idx) => (
-            <FamilyMemberCard key={idx} member={member} />
-          ))}
+          {Array.isArray(memberGroup) ? (
+            memberGroup.map((member, idx) => (
+              <FamilyMemberCard key={idx} member={member} />
+            ))
+          ) : (
+            <FamilyMemberCard key={index} member={memberGroup} />
+          )}
         </View>
       ))}
     </View>
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: rneTheme.colors.background }]}>
       <AppHeader back title="Thành viên gia đình" />
       <TouchableOpacity
         style={styles.addButton}
@@ -198,43 +215,12 @@ const MyfamilyScreen = () => {
         renderItem={renderFamilyPairs}
       />
       <Modal isVisible={isModalVisible}>
-        <View style={styles.modalContent}>
+        <View style={[styles.modalContent, { backgroundColor: rneTheme.colors.card }]}>
           <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
             <Text style={styles.closeButtonText}>Close</Text>
           </TouchableOpacity>
         </View>
       </Modal>
-    </View>
-  );
-};
-
-const FamilyMemberCard = ({ member }) => {
-  const navigation = useNavigation();
-
-  return (
-    <View style={styles.memberContainer}>
-      <TouchableOpacity
-        style={styles.memberDetailContainer}
-        onPress={() => navigation.navigate("DetailBirthDay", { id: member.people_id })}
-      >
-        <Image
-          source={
-            member.profile_picture
-              ? { uri: member.profile_picture }
-              : member.gender
-              ? require("../../assets/father.png")
-              : require("../../assets/mother.png")
-          }
-          style={styles.profilePicture}
-        />
-        <View style={styles.textContainer}>
-          <Text style={styles.memberName} numberOfLines={1} adjustsFontSizeToFit>
-            {member.full_name_vn}
-          </Text>
-          <Text style={styles.birthDate}>{member.birth_date}</Text>
-          <Text style={styles.relationship}>{member.relationship}</Text>
-        </View>
-      </TouchableOpacity>
     </View>
   );
 };

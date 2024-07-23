@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff', // Nền trắng để dễ nhìn
+    backgroundColor: '#fff',
   },
   header: {
     position: "absolute",
@@ -15,15 +15,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginVertical: 20,
-    color: '#333', // Màu chữ đậm
+    color: '#333',
   },
   categoryTitle: {
-    fontSize: 16, // Giảm kích thước phông chữ
-    fontWeight: "600",
+    fontSize: 15,
+    fontWeight: "700",
     color: "#333",
     paddingHorizontal: 15,
     paddingVertical: 10,
-    backgroundColor: "#f2f2f2",
     borderRadius: 10,
     marginVertical: 10,
     marginHorizontal: 10,
@@ -33,7 +32,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 15,
     padding: 10,
-    backgroundColor: '#fafafa',
     borderRadius: 10,
     marginHorizontal: 10,
   },
@@ -49,7 +47,7 @@ const styles = StyleSheet.create({
   },
   memberContainer: {
     width: '48%',
-    backgroundColor: '#fff',
+    backgroundColor: '#fafafa', // Light background for items
     borderRadius: 10,
     padding: 10,
     elevation: 2,
@@ -84,28 +82,32 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   memberNameSingle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     color: '#333',
     flexShrink: 1,
   },
   birthDate: {
-    fontSize: 12,
+    fontSize: 14,
     color: "#888",
     textAlign: "center",
+    fontWeight: "600",
   },
   birthDateSingle: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#888",
+    fontWeight: "600",
   },
   relationship: {
-    fontSize: 14,
+    fontSize: 10,
     color: "#777",
     textAlign: "center",
+    fontWeight: "600",
   },
   relationshipSingle: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#777",
+    fontWeight: "600",
   },
   addButton: {
     position: "absolute",
@@ -117,7 +119,8 @@ const styles = StyleSheet.create({
   },
   addButtonGradient: {
     borderRadius: 50,
-    padding: 12,
+    padding: 10,
+    bottom: 15,
     alignItems: "center",
     justifyContent: "center",
   },
