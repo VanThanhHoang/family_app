@@ -9,10 +9,10 @@ import { AppContext } from "../../AppContext";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useThemeContext } from "../../ThemeContext";
-import createMember from "./DataFamily"; // Import the utility function
+import createMember from "./DataFamily";
 import styles from "../components/myfamily/MyfamilyScreenStyles";
-import FamilyMemberCard from "../components/Avata/FamilyMemberCard"; // Import FamilyMemberCard
-import { MaterialIcons } from '@expo/vector-icons'; // Import MaterialIcons from @expo/vector-icons
+import FamilyMemberCard from "../components/Avata/FamilyMemberCard";
+import { MaterialIcons } from '@expo/vector-icons';
 
 const MyfamilyScreen = () => {
   const navigation = useNavigation();
@@ -21,9 +21,7 @@ const MyfamilyScreen = () => {
   const [familyMembers, setFamilyMembers] = useState([]);
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
+  const toggleModal = () => setModalVisible(!isModalVisible);
 
   const fetchFamilyData = useCallback(async () => {
     setIsLoading(true);
@@ -33,9 +31,8 @@ const MyfamilyScreen = () => {
       if (token && peopleId) {
         const response = await AxiosInstance().get("myfamily/relationship/");
         const data = response.data;
-        console.log("Family data:", data);
-        const processedData = processFamilyData(data);
-        setFamilyMembers(processedData);
+        console.log("Fetched family data:", data);  // Add logging here
+        setFamilyMembers(processFamilyData(data));
       }
     } catch (error) {
       console.error("Error fetching family data:", error);
@@ -52,72 +49,55 @@ const MyfamilyScreen = () => {
   const processFamilyData = (data) => {
     const processedData = [];
 
-    if (data.user_parents) {
-      const userParents = processRelationships(data.user_parents.relationships, data.user_parents.title);
-      processedData.push({
-        title: data.user_parents.title,
-        members: userParents,
-      });
-    }
+    const processSection = (section, title) => {
+      if (section && Array.isArray(section.relationships)) {
+        const members = processRelationships(section.relationships, title);
+        processedData.push({ title, members });
+      } else {
+        console.warn(`Expected an array for relationships in section ${title}, but got:`, section.relationships);
+      }
+    };
 
-    if (data.user_spouse && data.user_spouse.relationships) {
-      const userSpouse = processRelationships([data.user_spouse.relationships], data.user_spouse.title);
-      processedData.push({
-        title: data.user_spouse.title,
-        members: userSpouse,
-      });
-    }
+    processSection(data.user_parents, data.user_parents?.title);
+    processSection(data.user_spouse, data.user_spouse?.title);
 
     if (data.user_children) {
-      let children = data.user_children.relationships;
-      children.sort((a, b) => new Date(a.birth_date) - new Date(b.birth_date));
+      const children = [...data.user_children.relationships].sort((a, b) => new Date(a.birth_date) - new Date(b.birth_date));
       const userChildren = processRelationships(children, data.user_children.title);
-      processedData.push({
-        title: data.user_children.title,
-        members: userChildren,
-      });
+      processedData.push({ title: data.user_children.title, members: userChildren });
     }
 
     if (data.user_siblings) {
-      let siblings = data.user_siblings.relationships;
-      siblings.sort((a, b) => new Date(a.birth_date) - new Date(b.birth_date));
+      const siblings = [...data.user_siblings.relationships].sort((a, b) => new Date(a.birth_date) - new Date(b.birth_date));
       const userSiblings = processRelationships(siblings, data.user_siblings.title);
-      processedData.push({
-        title: data.user_siblings.title,
-        members: userSiblings,
-      });
+      processedData.push({ title: data.user_siblings.title, members: userSiblings });
     }
 
     if (data.user_siblings_children) {
-      const userSiblingsChildren = processUserSiblingsChildren(data.user_siblings_children.relationships);
-      processedData.push(...userSiblingsChildren);
+      processedData.push(...processUserSiblingsChildren(data.user_siblings_children.relationships));
     }
 
     return processedData;
   };
 
   const processRelationships = (relationships, title) => {
-    let members = [];
-    let singleMembers = [];
+    const members = [];
+    const singleMembers = [];
 
-    if (relationships && Array.isArray(relationships)) {
-      relationships.forEach((person) => {
-        const member = createMember(person, title);
-        if (person.spouse) {
-          members.push([member, createMember(person.spouse, title)]);
-        } else {
-          singleMembers.push(member);
-        }
-      });
+    relationships.forEach(person => {
+      const member = createMember(person, title);
+      if (person.spouse) {
+        members.push([member, createMember(person.spouse, title)]);
+      } else {
+        singleMembers.push(member);
+      }
+    });
+
+    while (singleMembers.length > 1) {
+      members.unshift([singleMembers.pop(), singleMembers.pop()]);
     }
-
-    if (singleMembers.length > 0) {
-      while (singleMembers.length > 1) {
-        members.unshift([singleMembers.pop(), singleMembers.pop()]);
-      }
-      if (singleMembers.length === 1) {
-        members.unshift([singleMembers.pop()]);
-      }
+    if (singleMembers.length === 1) {
+      members.unshift([singleMembers.pop()]);
     }
 
     return members;
@@ -127,51 +107,29 @@ const MyfamilyScreen = () => {
     const birth = new Date(birthDate);
     const today = new Date();
     let age = today.getFullYear() - birth.getFullYear();
-    const monthDifference = today.getMonth() - birth.getMonth();
-
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birth.getDate())) {
+    if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) {
       age--;
     }
-
     return age;
   };
-  
-  const processUserSiblingsChildren = (siblingsChildren) => {
-    return siblingsChildren.map((sibling) => {
-      if (sibling.children && sibling.children.length > 0) {
-        const children = sibling.children.map((child) => {
-          const member = createMember(
-            child,
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={styles.titleText}>{sibling.full_name_vn}</Text>
-              <MaterialIcons name="home" style={styles.icon} />
-              <Text style={styles.titleText}>{sibling.spouse ? sibling.spouse.full_name_vn : ""}</Text>
-            </View>
-          );
-          return member;
-        });
 
-        return {
-          title: (
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Text style={styles.titleText}>{sibling.full_name_vn}</Text>
-              <MaterialIcons name="home" style={styles.icon} />
-              <Text style={styles.titleText}>{sibling.spouse ? sibling.spouse.full_name_vn : ""}</Text>
-            </View>
-          ),
-          age: calculateAge(sibling.birth_date),
-          members: pairChildren(children),
-          parentAvatars: {
-            father: sibling.profile_picture ? sibling.profile_picture : null,
-            mother: sibling.spouse ? (sibling.spouse.profile_picture ? sibling.spouse.profile_picture : null) : null,
-          },
-        };
-      }
-      return null;
-    })
-      .filter(Boolean)
-      .sort((a, b) => b.age - a.age);
-  };
+  const processUserSiblingsChildren = (siblingsChildren) => siblingsChildren.map(sibling => {
+    if (sibling.children && sibling.children.length > 0) {
+      const children = sibling.children.map(child => createMember(child, sibling.full_name_vn));
+      return {
+        title: (
+          <View style={styles.titleContainer}>
+            <Text style={[styles.titleText, styles.flexItemRight, { color: rneTheme.colors.text }]}>{sibling.full_name_vn}</Text>
+            <MaterialIcons name="home" style={[styles.icon, { color: rneTheme.colors.text }]} />
+            <Text style={[styles.titleText, styles.flexItemLeft, { color: rneTheme.colors.text }]}>{sibling.spouse?.full_name_vn}</Text>
+          </View>
+        ),
+        age: calculateAge(sibling.birth_date),
+        members: pairChildren(children),
+      };
+    }
+    return null;
+  }).filter(Boolean).sort((a, b) => b.age - a.age);
 
   const pairChildren = (children) => {
     const paired = [];
@@ -181,34 +139,29 @@ const MyfamilyScreen = () => {
     return paired;
   };
 
-  const renderFamilyPairs = ({ item }) => {
-    return (
-      <View>
-        <View style={styles.parentHighlightContainer}>
+  const renderFamilyPairs = ({ item }) => (
+    <View>
+      <View style={[styles.divider, { borderBottomColor: rneTheme.colors.dividerColor }]} />
+      <View style={styles.parentHighlightContainer}>
+        {typeof item.title === 'string' ? (
           <Text style={[styles.parentTitle, { color: rneTheme.colors.text }]}>{item.title}</Text>
-          {item.parentAvatars && (
-            <View style={styles.parentAvatarsContainer}>
-              {item.parentAvatars.father && (
-                <Image source={{ uri: item.parentAvatars.father }} style={styles.parentAvatar} />
-              )}
-              {item.parentAvatars.mother && (
-                <Image source={{ uri: item.parentAvatars.mother }} style={styles.parentAvatar} />
-              )}
-            </View>
-          )}
-        </View>
-        <View style={[styles.divider, { borderBottomColor: rneTheme.colors.dividerColor }]} />
-        {Array.isArray(item.members) &&
-          item.members.map((memberGroup, index) => (
-            <View style={styles.pairContainer} key={index}>
-              {Array.isArray(memberGroup)
-                ? memberGroup.map((member, idx) => <FamilyMemberCard key={idx} member={member} />)
-                : <FamilyMemberCard key={index} member={memberGroup} />}
-            </View>
-          ))}
+        ) : (
+          item.title
+        )}
+        {item.parentAvatars && (
+          <View style={styles.parentAvatarsContainer}>
+            {item.parentAvatars.father && <Image source={{ uri: item.parentAvatars.father }} style={styles.parentAvatar} />}
+            {item.parentAvatars.mother && <Image source={{ uri: item.parentAvatars.mother }} style={styles.parentAvatar} />}
+          </View>
+        )}
       </View>
-    );
-  };
+      {Array.isArray(item.members) && item.members.map((memberGroup, index) => (
+        <View style={styles.pairContainer} key={index}>
+          {Array.isArray(memberGroup) ? memberGroup.map((member, idx) => <FamilyMemberCard key={idx} member={member} />) : <FamilyMemberCard key={index} member={memberGroup} />}
+        </View>
+      ))}
+    </View>
+  );
 
   return (
     <View style={[styles.container, { backgroundColor: rneTheme.colors.background }]}>
