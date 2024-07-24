@@ -112,7 +112,13 @@ const MyfamilyScreen = () => {
 
   const processUserSiblingsChildren = (siblingsChildren) => siblingsChildren.map(sibling => {
     if (sibling.children && sibling.children.length > 0) {
-      const children = sibling.children.map(child => createMember(child, sibling.full_name_vn));
+      const children = sibling.children.flatMap(child => {
+        const childWithSpouse = [createMember(child, sibling.full_name_vn)];
+        if (child.spouse) {
+          childWithSpouse.push(createMember(child.spouse, sibling.full_name_vn));
+        }
+        return childWithSpouse;
+      });
       return {
         title: (
           <View style={styles.titleContainer}>
