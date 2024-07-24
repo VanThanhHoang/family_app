@@ -1,3 +1,4 @@
+//Users/macm1/Code/FamilyApp/family/App.js
 import React from 'react';
 import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';

@@ -79,7 +79,6 @@ const DetailScreen = () => {
   );
 };
 const HeaderData = ({ data }) => {
-  console.log(data);
   const { theme } = useThemeContext();
   const styles = useStyle(theme);
   return (
@@ -230,12 +229,14 @@ const ListInfo = ({ data, familyData }) => {
         horizontal
       >
         {familyData?.siblings?.map((item) => {
+          console.log(item);
           return (
             <ItemFamily
+
               key={item.id}
               title={item.type}
               name={item.name}
-              image={item.image}
+              image={item.profile_picture}
               id={item.id}
             />
           );

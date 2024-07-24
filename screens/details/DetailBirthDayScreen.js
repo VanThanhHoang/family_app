@@ -1,356 +1,304 @@
-import React, { useContext, useEffect, useRef } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
-import { AppContext } from "../../AppContext";
-import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
+import React, { useContext, useState, useCallback, useRef } from "react";
+import { View, Text, FlatList, Image, TouchableOpacity } from "react-native";
+import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import AxiosInstance from "../../network/AxiosInstance";
 import AppHeader from "../../components/AppHeader";
-import { APP_CONSTANTS } from "../../helper/constant";
-import { Ionicons } from "@expo/vector-icons";
+import Modal from "react-native-modal";
+import { AppContext } from "../../AppContext";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import { LinearGradient } from "expo-linear-gradient";
 import { useThemeContext } from "../../ThemeContext";
-function getSiblingsList(siblings) {
-  const types = {
-    older_brothers: "Anh",
-    younger_brothers: "Em trai",
-    older_sisters: "Chị",
-    younger_sisters: "Em gái",
-  };
+import createMember from "../myfamily/DataFamily";
+import styles from "../components/people/PeopleStyles";
+import FamilyMemberCard from "../components/Avata/FamilyMemberCard";
+import { MaterialIcons } from '@expo/vector-icons';
 
-  return Object.entries(siblings).flatMap(([key, value]) =>
-    value.map((sibling) => ({
-      name: sibling.full_name_vn,
-      id: sibling.people_id,
-      type: types[key],
-      profile_picture: sibling.profile_picture,
-    }))
-  );
-}
+const CACHE_EXPIRY_TIME = 86400 * 1000; // 1 day in milliseconds
+
 const DetailScreen = () => {
-  const [data, setData] = React.useState([]);
-  const [family, setFamily] = React.useState([]);
-  const { theme } = useThemeContext();
-  const styles = useStyle(theme);
+  const navigation = useNavigation();
+  const route = useRoute();
+  const { id } = route.params; // Lấy id từ tham số route
   const { setIsLoading } = useContext(AppContext);
-  const [listLoading, setListLoading] = React.useState(false);
-  const { id } = useRoute().params;
-  console.log(id);
-  const getFamily = async () => {
-    try {
-      const res = await AxiosInstance().get(`/people/?people_id=${id}`);
-      const siblings = res.siblings;
-      const siblingsList = getSiblingsList(siblings);
-      setFamily({
-        ...res,
-        siblings: siblingsList,
-      });
-    } catch (error) {
-      console.log(error);
-    } finally {
-    }
-  };
-  const getData = async () => {
+  const { theme: rneTheme } = useThemeContext();
+  const [familyMembers, setFamilyMembers] = useState([]);
+  const [peopleInfo, setPeopleInfo] = useState(null);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const flatListRef = useRef(null); // Thêm useRef để tham chiếu đến FlatList
+
+  const toggleModal = () => setModalVisible(!isModalVisible);
+
+  const fetchFamilyData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res = await AxiosInstance().get("people/" + id + "/");
-      setData(res);
-      getFamily();
+      const token = await AsyncStorage.getItem("access");
+      if (token) {
+        const cacheKey = `people_info_${id}`;
+        const cachedData = await AsyncStorage.getItem(cacheKey);
+        const currentTime = new Date().getTime();
+
+        if (cachedData) {
+          const parsedData = JSON.parse(cachedData);
+          if (currentTime - parsedData.timestamp < CACHE_EXPIRY_TIME) {
+            setPeopleInfo(parsedData.peopleInfo);
+            setFamilyMembers(parsedData.familyMembers);
+            setIsLoading(false);
+            return;
+          }
+        }
+
+        const response = await AxiosInstance().get(`https://api.lehungba.com/api/people/relationship/?people_id=${id}`);
+        const data = response.data;
+        if (data.people_info && data.people_info.relationships) {
+          const peopleInfo = createMember(data.people_info.relationships[0], data.people_info.title);
+          const familyMembers = processFamilyData(data);
+
+          setPeopleInfo(peopleInfo);
+          setFamilyMembers(familyMembers);
+
+          await AsyncStorage.setItem(
+            cacheKey,
+            JSON.stringify({
+              timestamp: currentTime,
+              peopleInfo,
+              familyMembers,
+            })
+          );
+
+          flatListRef.current?.scrollToOffset({ offset: 0, animated: true }); // Cuộn lên trên cùng
+        }
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching family data:", error);
     } finally {
       setIsLoading(false);
     }
+  }, [id, setIsLoading]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchFamilyData();
+    }, [fetchFamilyData])
+  );
+
+  const processFamilyData = (data) => {
+    const processedData = [];
+
+    const processSection = (section, title) => {
+      if (section && section.relationships) {
+        const members = processRelationships(section.relationships, title);
+        processedData.push({ title, members });
+      }
+    };
+
+    processSection(data.maternal_grandparents, data.maternal_grandparents?.title);
+    processSection(data.paternal_grandparents, data.paternal_grandparents?.title);
+    processSection(data.user_parents, data.user_parents?.title);
+    processSection(data.user_children, data.user_children?.title);
+    processSection(data.user_spouse, data.user_spouse?.title);
+    processSection(data.user_siblings, data.user_siblings?.title);
+
+    if (data.user_siblings_children) {
+      processedData.push(...processUserSiblingsChildren(data.user_siblings_children.relationships));
+    }
+
+    return processedData;
   };
-  useEffect(() => {
-    getData();
-  }, []);
-  return (
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <AppHeader title={data.full_name_vn} back />
-      <View style={styles.container}>
-        <ListInfo data={data} familyData={family} />
+
+  const processRelationships = (relationships, title) => {
+    const membersWithSpouses = [];
+    const membersWithoutSpouses = [];
+
+    relationships.forEach(person => {
+      const member = createMember(person, title);
+      if (person.spouse) {
+        membersWithSpouses.push([member, createMember(person.spouse, title)]);
+      } else {
+        membersWithoutSpouses.push(member);
+      }
+    });
+
+    membersWithSpouses.sort((a, b) => calculateAge(b[0].birth_date) - calculateAge(a[0].birth_date));
+    membersWithoutSpouses.sort((a, b) => calculateAge(b.birth_date) - calculateAge(a.birth_date));
+
+    const pairedWithoutSpouses = [];
+    for (let i = 0; i < membersWithoutSpouses.length; i += 2) {
+      pairedWithoutSpouses.push(membersWithoutSpouses.slice(i, i + 2));
+    }
+
+    return [...membersWithSpouses, ...pairedWithoutSpouses];
+  };
+
+  const calculateAge = (birthDate) => {
+    const birth = new Date(birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birth.getFullYear();
+    if (today.getMonth() < birth.getMonth() || (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  const processUserSiblingsChildren = (siblingsChildren) => siblingsChildren.map(sibling => {
+    if (sibling.children && sibling.children.length > 0) {
+      const children = sibling.children.flatMap(child => {
+        const childWithSpouse = [createMember(child, sibling.full_name_vn)];
+        if (child.spouse) {
+          childWithSpouse.push(createMember(child.spouse, sibling.full_name_vn));
+        }
+        return childWithSpouse;
+      });
+      return {
+        title: (
+          <View style={styles.titleContainer}>
+            <Text style={[styles.titleText, styles.flexItemRight, { color: rneTheme.colors.text }]}>{sibling.full_name_vn}</Text>
+            <MaterialIcons name="home" style={[styles.icon, { color: rneTheme.colors.text }]} />
+            <Text style={[styles.titleText, styles.flexItemLeft, { color: rneTheme.colors.text }]}>{sibling.spouse?.full_name_vn}</Text>
+          </View>
+        ),
+        age: calculateAge(sibling.birth_date),
+        members: children,
+      };
+    }
+    return null;
+  }).filter(Boolean).sort((a, b) => b.age - a.age);
+
+  const handleMemberPress = (member) => {
+    navigation.navigate('Detail', { id: member.id }); // Điều hướng đến chi tiết thành viên với id của thành viên đó
+  };
+
+  const renderFamilyPairs = ({ item }) => (
+    <View>
+      <View style={[styles.divider, { borderBottomColor: rneTheme.colors.dividerColor }]} />
+      <View style={styles.parentHighlightContainer}>
+        {typeof item.title === 'string' ? (
+          <Text style={[styles.parentTitle, { color: rneTheme.colors.text }]}>{item.title}</Text>
+        ) : (
+          item.title
+        )}
+        {item.parentAvatars && (
+          <View style={styles.parentAvatarsContainer}>
+            {item.parentAvatars.father && <Image source={{ uri: item.parentAvatars.father }} style={styles.parentAvatar} />}
+            {item.parentAvatars.mother && <Image source={{ uri: item.parentAvatars.mother }} style={styles.parentAvatar} />}
+          </View>
+        )}
       </View>
+      {Array.isArray(item.members) && item.members.map((memberGroup, index) => (
+        <View style={styles.pairContainer} key={index}>
+          {Array.isArray(memberGroup) ? memberGroup.map((member, idx) => (
+            <FamilyMemberCard key={idx} member={member} onPress={() => handleMemberPress(member)} />
+          )) : (
+            <FamilyMemberCard key={index} member={memberGroup} onPress={() => handleMemberPress(memberGroup)} />
+          )}
+        </View>
+      ))}
     </View>
   );
-};
-const HeaderData = ({ data }) => {
-  const { theme } = useThemeContext();
-  const styles = useStyle(theme);
-  return (
-    <View
-      style={{
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-      }}
-    >
-      <Image
-        source={{
-          uri: data.profile_picture
-            ? data.profile_picture
-            : APP_CONSTANTS.defaultAvatar,
-        }}
-        style={styles.image}
-      />
-      <Text style={styles.textName}>{data.full_name_vn}</Text>
-      <View style={styles.line} />
-    </View>
-  );
-};
-const ListInfo = ({ data, familyData }) => {
-  const { theme } = useThemeContext();
-  const styles = useStyle(theme);
-  const isHasSpouse = familyData?.spouse_relationships?.length > 0;
-  let spouse, children, parent;
-  if (isHasSpouse) {
-    spouse = !data.gender
-      ? familyData?.spouse_relationships[0].husband
-      : familyData?.spouse_relationships[0].wife;
-    children = familyData?.spouse_relationships[0]?.children;
-  }
-  const isHasParent = familyData?.parent_relationships?.length > 0;
-  if (isHasParent) {
-    parent = familyData?.parent_relationships[0];
-  }
-  return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      style={{
-        width: "100%",
-      }}
-    >
-      <HeaderData data={data} />
-      {!data.is_alive && (
-        <InfoItem title={"Đã qua đời"} icon="pulse" textColor="#909090" />
-      )}
-      <InfoItem title={data.birth_date} icon="calendar" textColor="#909090" />
-      {data?.place_of_birth?.address_line && (
-        <InfoItem
-          title={data?.place_of_birth?.address_line}
-          icon="location"
-          textColor="#909090"
-        />
-      )}
-      <InfoItem
-        title={data.current_age + " tuổi"}
-        icon="accessibility"
-        textColor="#909090"
-      />
-      <InfoItem
-        title={data.gender ? "Nam" : "Nữ"}
-        icon="transgender"
-        textColor="#909090"
-      />
-      <InfoItem
-        title={data.marital_status ? "Đã kết hôn" : "Chưa kết hôn"}
-        icon="heart-circle"
-        textColor="#909090"
-      />
 
-      {data.social_media_links && (
-        <InfoItem title={data.occupation} icon="link" textColor="#909090" />
-      )}
-      {data.nationality && (
-        <InfoItem
-          title={data.nationality ?? "Chưa chia sẻ"}
-          icon="earth"
-          textColor="#909090"
-        />
-      )}
-      <Text style={styles.detail}>Thành viên trong gia đình</Text>
-
-      <ScrollView
-        style={{
-          flex: 1,
-        }}
-        showsHorizontalScrollIndicator={false}
-        horizontal
-      >
-        {parent && (
-          <>
-            <ItemFamily
-              title={"Cha"}
-              name={parent.father.full_name_vn}
-              image={parent.father.profile_picture}
-              id={parent.father.people_id}
-            />
-            <ItemFamily
-              title={"Mẹ"}
-              name={parent.mother.full_name_vn}
-              image={parent.mother.profile_picture}
-              id={parent.mother.people_id}
-            />
-          </>
-        )}
-        {spouse && (
-          <ItemFamily
-            title={data.gender ? "Vợ" : "Chồng"}
-            name={spouse.full_name_vn}
-            image={spouse.profile_picture}
-            id={spouse.people_id}
+  const renderPeopleInfo = () => (
+    <View style={styles.memberDetailContainer}>
+      {peopleInfo && (
+        <>
+          <Image
+            source={
+              peopleInfo.profile_picture
+                ? { uri: peopleInfo.profile_picture }
+                : peopleInfo.gender
+                ? require("../../assets/father.png")
+                : require("../../assets/mother.png")
+            }
+            style={styles.profilePicture}
           />
-        )}
-        {children &&
-          children.map((item) => {
-            return (
-              <ItemFamily
-                key={item.child.people_id}
-                title="Con"
-                name={item.child.full_name_vn}
-                image={item.child.profile_picture}
-                id={item.child.people_id}
-              />
-            );
-          })}
-      </ScrollView>
-      {familyData?.siblings?.length > 0 && (
-        <Text
-          style={{
-            ...styles.detail,
-            marginTop: 20,
-            fontSize: 14,
-            fontStyle: "italic",
-          }}
-        >
-          Anh chị em ruột
-        </Text>
+          <Text style={[styles.memberName, { color: rneTheme.colors.nameColor }]}>{peopleInfo.full_name_vn}</Text>
+          <View style={styles.infoRow}>
+            <View style={styles.infoColumn}>
+              {peopleInfo.birth_date && (
+                <View style={styles.detailRow}>
+                  <MaterialIcons name="date-range" style={[styles.detailIcon, { color: rneTheme.colors.text }]} />
+                  <Text style={[styles.detailText, { color: rneTheme.colors.text }]}>{peopleInfo.birth_date}</Text>
+                </View>
+              )}
+              {peopleInfo.birth_date && (
+                <View style={styles.detailRow}>
+                  <MaterialIcons name="cake" style={[styles.detailIcon, { color: rneTheme.colors.text }]} />
+                  <Text style={[styles.detailText, { color: rneTheme.colors.text }]}>{calculateAge(peopleInfo.birth_date)} tuổi</Text>
+                </View>
+              )}
+              {peopleInfo.place_of_birth?.address_line && (
+                <View style={styles.detailRow}>
+                  <MaterialIcons name="place" style={[styles.detailIcon, { color: rneTheme.colors.text }]} />
+                  <Text style={[styles.detailText, { color: rneTheme.colors.text }]}>{peopleInfo.place_of_birth.address_line}</Text>
+                </View>
+              )}
+              <View style={styles.detailRow}>
+                <MaterialIcons name="phone" style={[styles.detailIcon, { color: rneTheme.colors.text }]} />
+                <Text style={[styles.detailText, { color: rneTheme.colors.text }]}>{peopleInfo.phone_number}</Text>
+              </View>
+            </View>
+            <View style={styles.infoColumn}>
+              {peopleInfo.religion && (
+                <View style={styles.detailRow}>
+                  <MaterialIcons name="church" style={[styles.detailIcon, { color: rneTheme.colors.text }]} />
+                  <Text style={[styles.detailText, { color: rneTheme.colors.text }]}>{peopleInfo.religion}</Text>
+                </View>
+              )}
+              {peopleInfo.gender && (
+                <View style={styles.detailRow}>
+                  <MaterialIcons name="person" style={[styles.detailIcon, { color: rneTheme.colors.text }]} />
+                  <Text style={[styles.detailText, { color: rneTheme.colors.text }]}>{peopleInfo.gender ? "Nam" : "Nữ"}</Text>
+                </View>
+              )}
+              {peopleInfo.marital_status && (
+                <View style={styles.detailRow}>
+                  <MaterialIcons name="favorite" style={[styles.detailIcon, { color: rneTheme.colors.text }]} />
+                  <Text style={[styles.detailText, { color: rneTheme.colors.text }]}>{peopleInfo.marital_status ? "Đã kết hôn" : "Chưa kết hôn"}</Text>
+                </View>
+              )}
+              {peopleInfo.nationality && (
+                <View style={styles.detailRow}>
+                  <MaterialIcons name="language" style={[styles.detailIcon, { color: rneTheme.colors.text }]} />
+                  <Text style={[styles.detailText, { color: rneTheme.colors.text }]}>{peopleInfo.nationality}</Text>
+                </View>
+              )}
+              {peopleInfo.saint && (
+                <View style={styles.detailRow}>
+                  <MaterialIcons name="account-circle" style={[styles.detailIcon, { color: rneTheme.colors.text }]} />
+                  <Text style={[styles.detailText, { color: rneTheme.colors.text }]}>{peopleInfo.saint}</Text>
+                </View>
+              )}
+              {peopleInfo.education_level && (
+                <View style={styles.detailRow}>
+                  <MaterialIcons name="school" style={[styles.detailIcon, { color: rneTheme.colors.text }]} />
+                  <Text style={[styles.detailText, { color: rneTheme.colors.text }]}>{peopleInfo.education_level}</Text>
+                </View>
+              )}
+            </View>
+          </View>
+        </>
       )}
-      <ScrollView
-        style={{
-          flex: 1,
-          marginTop: 20,
-        }}
-        showsHorizontalScrollIndicator={false}
-        horizontal
-      >
-        {familyData?.siblings?.map((item) => {
-          console.log(item);
-          return (
-            <ItemFamily
+    </View>
+  );
 
-              key={item.id}
-              title={item.type}
-              name={item.name}
-              image={item.profile_picture}
-              id={item.id}
-            />
-          );
-        })}
-      </ScrollView>
-    </ScrollView>
-  );
-};
-const ItemFamily = ({ name, id, image, title }) => {
-  const { theme } = useThemeContext();
-  const styles = useStyle(theme);
-  const navigation = useNavigation();
   return (
-    <TouchableOpacity
-      onPress={() => {
-        navigation.push("DetailBirthDay", {
-          id: id,
-        });
-      }}
-      style={{
-        alignItems: "center",
-        minWidth: 120,
-        marginHorizontal: 10,
-        gap: 5,
-      }}
-    >
-      <Image
-        source={{ uri: image ?? APP_CONSTANTS.defaultAvatar }}
-        style={{ width: 80, height: 80, borderRadius: 50 }}
+    <View style={[styles.container, { backgroundColor: rneTheme.colors.background }]}>
+      <AppHeader back title="Thành viên gia đình" />
+      <FlatList
+        ref={flatListRef} // Thêm ref vào FlatList
+        data={familyMembers}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={renderFamilyPairs}
+        ListHeaderComponent={renderPeopleInfo}
       />
-      <Text
-        style={{
-          textAlign: "center",
-          fontSize: 15,
-          color: theme.colors.placeHolder,
-          fontWeight: "600",
-        }}
-      >
-        {title}
-      </Text>
-      <Text
-        style={{
-          textAlign: "center",
-          fontSize: 16,
-          fontWeight: "bold",
-          marginTop: 5,
-          color: theme.colors.text,
-        }}
-      >
-        {name}
-      </Text>
-    </TouchableOpacity>
-  );
-};
-const useStyle = (theme) =>
-  StyleSheet.create({
-    detail: {
-      fontSize: 18,
-      fontWeight: "bold",
-      marginVertical: 10,
-      textAlign: "left",
-      color: theme.colors.text,
-    },
-    container: {
-      flex: 1,
-      alignItems: "center",
-      padding: 20,
-    },
-    image: {
-      width: 150,
-      height: 150,
-      borderRadius: 100,
-      marginVertical: 20,
-      borderWidth: 1,
-      borderColor: "#f4f4f4",
-    },
-    textName: {
-      fontSize: 20,
-      fontWeight: "bold",
-      color: theme.colors.text,
-    },
-    line: {
-      width: "100%",
-      height: 6,
-      backgroundColor: "#f4f4f4",
-      marginVertical: 10,
-      borderRadius: 3,
-    },
-  });
-export const InfoItem = ({ title, onPress, icon, textColor }) => {
-  const { theme } = useThemeContext();
-  const styles = useStyle(theme);
-  return (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        paddingVertical: 10,
-        width: "100%",
-      }}
-      onPress={onPress}
-    >
-      <Ionicons name={icon} size={20} color={textColor ?? "black"} />
-      <Text
-        style={{
-          fontSize: 16,
-          fontWeight: "500",
-          marginLeft: 15,
-          color: theme.colors.text,
-        }}
-      >
-        {title}
-      </Text>
+      <Modal isVisible={isModalVisible}>
+        <View style={[styles.modalContent, { backgroundColor: rneTheme.colors.card }]}>
+          <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
+            <Text style={styles.closeButtonText}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 };
+
 export default DetailScreen;
