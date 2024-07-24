@@ -31,7 +31,6 @@ const MyfamilyScreen = () => {
       if (token && peopleId) {
         const response = await AxiosInstance().get("myfamily/relationship/");
         const data = response.data;
-        console.log("Fetched family data:", data);  // Add logging here
         setFamilyMembers(processFamilyData(data));
       }
     } catch (error) {
@@ -50,11 +49,9 @@ const MyfamilyScreen = () => {
     const processedData = [];
 
     const processSection = (section, title) => {
-      if (section && Array.isArray(section.relationships)) {
+      if (section && section.relationships) {
         const members = processRelationships(section.relationships, title);
         processedData.push({ title, members });
-      } else {
-        console.warn(`Expected an array for relationships in section ${title}, but got:`, section.relationships);
       }
     };
 
