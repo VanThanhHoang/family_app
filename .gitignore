@@ -33,3 +33,25 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# Android
+android/
+/build/
+
+# Gradle files
+.gradle/
+*.log
+.gradle/
+
+# Android Studio
+*.iml
+.idea/
+
+# Keystore files
+keystore.properties
+
+# iOS
+ios/
+/build/
+*.xcworkspace
+*.xcodeproj/
