@@ -1,0 +1,478 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.thanh2002hcmx.familyapp"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="23"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+11-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:5:3-75
+11-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:5:20-73
+12    <uses-permission android:name="android.permission.INTERNET" />
+12-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:2:3-64
+12-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:2:20-62
+13    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+13-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:3:3-77
+13-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:3:20-75
+14    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+14-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:4:3-68
+14-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:4:20-66
+15    <uses-permission android:name="android.permission.VIBRATE" />
+15-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:6:3-63
+15-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:6:20-61
+16    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+16-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:7:3-78
+16-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:7:20-76
+17
+18    <queries>
+18-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:8:3-14:13
+19        <intent>
+19-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:9:5-13:14
+20            <action android:name="android.intent.action.VIEW" />
+20-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:10:7-58
+20-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:10:15-56
+21
+22            <category android:name="android.intent.category.BROWSABLE" />
+22-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:11:7-67
+22-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:11:17-65
+23
+24            <data android:scheme="https" />
+24-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:12:7-37
+24-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:12:13-35
+25        </intent>
+26        <!-- Query open documents -->
+27        <intent>
+27-->[:expo-file-system] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-file-system/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:15:9-17:18
+28            <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+28-->[:expo-file-system] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-file-system/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:16:13-79
+28-->[:expo-file-system] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-file-system/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:16:21-76
+29        </intent>
+30        <intent>
+30-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:17:9-21:18
+31
+32            <!-- Required for picking images from the camera roll if targeting API 30 -->
+33            <action android:name="android.media.action.IMAGE_CAPTURE" />
+33-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:20:13-73
+33-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:20:21-70
+34        </intent>
+35        <intent>
+35-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:22:9-26:18
+36
+37            <!-- Required for picking images from the camera if targeting API 30 -->
+38            <action android:name="android.media.action.ACTION_VIDEO_CAPTURE" />
+38-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:25:13-80
+38-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:25:21-77
+39        </intent>
+40        <intent>
+40-->[:expo-sharing] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-sharing/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:8:9-14:18
+41
+42            <!-- Required for file sharing if targeting API 30 -->
+43            <action android:name="android.intent.action.SEND" />
+43-->[:expo-sharing] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-sharing/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:11:13-65
+43-->[:expo-sharing] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-sharing/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:11:21-62
+44
+45            <data android:mimeType="*/*" />
+45-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:12:7-37
+46        </intent>
+47        <intent>
+47-->[:expo-web-browser] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-web-browser/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:8:9-12:18
+48
+49            <!-- Required for opening tabs if targeting API 30 -->
+50            <action android:name="android.support.customtabs.action.CustomTabsService" />
+50-->[:expo-web-browser] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-web-browser/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:11:13-90
+50-->[:expo-web-browser] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-web-browser/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:11:21-87
+51        </intent>
+52        <intent>
+52-->[com.github.CanHub:Android-Image-Cropper:4.3.1] /Users/thanh/.gradle/caches/transforms-4/7598e451100d8f3c62ab863cc186c296/transformed/jetified-Android-Image-Cropper-4.3.1/AndroidManifest.xml:10:9-16:18
+53            <action android:name="android.intent.action.GET_CONTENT" />
+53-->[com.github.CanHub:Android-Image-Cropper:4.3.1] /Users/thanh/.gradle/caches/transforms-4/7598e451100d8f3c62ab863cc186c296/transformed/jetified-Android-Image-Cropper-4.3.1/AndroidManifest.xml:11:13-72
+53-->[com.github.CanHub:Android-Image-Cropper:4.3.1] /Users/thanh/.gradle/caches/transforms-4/7598e451100d8f3c62ab863cc186c296/transformed/jetified-Android-Image-Cropper-4.3.1/AndroidManifest.xml:11:21-69
+54
+55            <category android:name="android.intent.category.OPENABLE" />
+55-->[com.github.CanHub:Android-Image-Cropper:4.3.1] /Users/thanh/.gradle/caches/transforms-4/7598e451100d8f3c62ab863cc186c296/transformed/jetified-Android-Image-Cropper-4.3.1/AndroidManifest.xml:13:13-73
+55-->[com.github.CanHub:Android-Image-Cropper:4.3.1] /Users/thanh/.gradle/caches/transforms-4/7598e451100d8f3c62ab863cc186c296/transformed/jetified-Android-Image-Cropper-4.3.1/AndroidManifest.xml:13:23-70
+56
+57            <data android:mimeType="*/*" />
+57-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:12:7-37
+58        </intent>
+59    </queries>
+60    <!--
+61  Allows Glide to monitor connectivity status and restart failed requests if users go from a
+62  a disconnected to a connected network state.
+63    -->
+64    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- Required for picking images from camera directly -->
+64-->[:expo-image] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:12:5-79
+64-->[:expo-image] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:12:22-76
+65    <uses-permission android:name="android.permission.CAMERA" />
+65-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:8:5-65
+65-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:8:22-62
+66    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+66-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:13:5-76
+66-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:13:22-73
+67    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+67-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:14:5-75
+67-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:14:22-72
+68    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+68-->[:expo-media-library] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-media-library/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:5-75
+68-->[:expo-media-library] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-media-library/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:22-72
+69    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
+69-->[:expo-media-library] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-media-library/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:10:5-90
+69-->[:expo-media-library] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-media-library/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:10:22-87
+70
+71    <permission
+71-->[androidx.core:core:1.12.0] /Users/thanh/.gradle/caches/transforms-4/c86d9d1f180fe0343a88fda494f828ef/transformed/core-1.12.0/AndroidManifest.xml:22:5-24:47
+72        android:name="com.thanh2002hcmx.familyapp.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+72-->[androidx.core:core:1.12.0] /Users/thanh/.gradle/caches/transforms-4/c86d9d1f180fe0343a88fda494f828ef/transformed/core-1.12.0/AndroidManifest.xml:23:9-81
+73        android:protectionLevel="signature" />
+73-->[androidx.core:core:1.12.0] /Users/thanh/.gradle/caches/transforms-4/c86d9d1f180fe0343a88fda494f828ef/transformed/core-1.12.0/AndroidManifest.xml:24:9-44
+74
+75    <uses-permission android:name="com.thanh2002hcmx.familyapp.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+75-->[androidx.core:core:1.12.0] /Users/thanh/.gradle/caches/transforms-4/c86d9d1f180fe0343a88fda494f828ef/transformed/core-1.12.0/AndroidManifest.xml:26:5-97
+75-->[androidx.core:core:1.12.0] /Users/thanh/.gradle/caches/transforms-4/c86d9d1f180fe0343a88fda494f828ef/transformed/core-1.12.0/AndroidManifest.xml:26:22-94
+76    <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" />
+76-->[com.android.installreferrer:installreferrer:2.2] /Users/thanh/.gradle/caches/transforms-4/5689e991337de441dc6e31c30cb305a6/transformed/jetified-installreferrer-2.2/AndroidManifest.xml:9:5-110
+76-->[com.android.installreferrer:installreferrer:2.2] /Users/thanh/.gradle/caches/transforms-4/5689e991337de441dc6e31c30cb305a6/transformed/jetified-installreferrer-2.2/AndroidManifest.xml:9:22-107
+77
+78    <application
+78-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:15:3-32:17
+79        android:name="com.thanh2002hcmx.familyapp.MainApplication"
+79-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:15:16-47
+80        android:allowBackup="true"
+80-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:15:162-188
+81        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+81-->[androidx.core:core:1.12.0] /Users/thanh/.gradle/caches/transforms-4/c86d9d1f180fe0343a88fda494f828ef/transformed/core-1.12.0/AndroidManifest.xml:28:18-86
+82        android:debuggable="true"
+83        android:extractNativeLibs="false"
+84        android:icon="@mipmap/ic_launcher"
+84-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:15:81-115
+85        android:label="@string/app_name"
+85-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:15:48-80
+86        android:requestLegacyExternalStorage="true"
+86-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:15:221-264
+87        android:roundIcon="@mipmap/ic_launcher_round"
+87-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:15:116-161
+88        android:theme="@style/AppTheme"
+88-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:15:189-220
+89        android:usesCleartextTraffic="true" >
+89-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/debug/AndroidManifest.xml:6:18-53
+90        <meta-data
+90-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:16:5-83
+91            android:name="expo.modules.updates.ENABLED"
+91-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:16:16-59
+92            android:value="false" />
+92-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:16:60-81
+93        <meta-data
+93-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:17:5-105
+94            android:name="expo.modules.updates.EXPO_UPDATES_CHECK_ON_LAUNCH"
+94-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:17:16-80
+95            android:value="ALWAYS" />
+95-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:17:81-103
+96        <meta-data
+96-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:18:5-99
+97            android:name="expo.modules.updates.EXPO_UPDATES_LAUNCH_WAIT_MS"
+97-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:18:16-79
+98            android:value="0" />
+98-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:18:80-97
+99
+100        <activity
+100-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:19:5-30:16
+101            android:name="com.thanh2002hcmx.familyapp.MainActivity"
+101-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:19:15-43
+102            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|uiMode"
+102-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:19:44-134
+103            android:exported="true"
+103-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:19:256-279
+104            android:launchMode="singleTask"
+104-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:19:135-166
+105            android:screenOrientation="portrait"
+105-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:19:280-316
+106            android:theme="@style/Theme.App.SplashScreen"
+106-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:19:210-255
+107            android:windowSoftInputMode="adjustResize" >
+107-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:19:167-209
+108            <intent-filter>
+108-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:20:7-23:23
+109                <action android:name="android.intent.action.MAIN" />
+109-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:21:9-60
+109-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:21:17-58
+110
+111                <category android:name="android.intent.category.LAUNCHER" />
+111-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:22:9-68
+111-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:22:19-66
+112            </intent-filter>
+113            <intent-filter>
+113-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:24:7-29:23
+114                <action android:name="android.intent.action.VIEW" />
+114-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:10:7-58
+114-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:10:15-56
+115
+116                <category android:name="android.intent.category.DEFAULT" />
+116-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:26:9-67
+116-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:26:19-65
+117                <category android:name="android.intent.category.BROWSABLE" />
+117-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:11:7-67
+117-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:11:17-65
+118
+119                <data android:scheme="com.thanh2002hcmx.familyapp" />
+119-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:12:7-37
+119-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:12:13-35
+120            </intent-filter>
+121        </activity>
+122        <activity
+122-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:31:5-106
+123            android:name="com.facebook.react.devsupport.DevSettingsActivity"
+123-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:31:15-79
+124            android:exported="false" />
+124-->/Users/thanh/Documents/mobile_app/familyapp/android/app/src/main/AndroidManifest.xml:31:80-104
+125
+126        <provider
+126-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:8:9-16:20
+127            android:name="com.imagepicker.ImagePickerProvider"
+127-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:13-63
+128            android:authorities="com.thanh2002hcmx.familyapp.imagepickerprovider"
+128-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:10:13-71
+129            android:exported="false"
+129-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:11:13-37
+130            android:grantUriPermissions="true" >
+130-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:12:13-47
+131            <meta-data
+131-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:13:13-15:70
+132                android:name="android.support.FILE_PROVIDER_PATHS"
+132-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:14:17-67
+133                android:resource="@xml/imagepicker_provider_paths" />
+133-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:15:17-67
+134        </provider>
+135        <provider
+135-->[:expo-file-system] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-file-system/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:21:9-30:20
+136            android:name="expo.modules.filesystem.FileSystemFileProvider"
+136-->[:expo-file-system] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-file-system/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:22:13-74
+137            android:authorities="com.thanh2002hcmx.familyapp.FileSystemFileProvider"
+137-->[:expo-file-system] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-file-system/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:23:13-74
+138            android:exported="false"
+138-->[:expo-file-system] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-file-system/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:24:13-37
+139            android:grantUriPermissions="true" >
+139-->[:expo-file-system] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-file-system/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:25:13-47
+140            <meta-data
+140-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:13:13-15:70
+141                android:name="android.support.FILE_PROVIDER_PATHS"
+141-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:14:17-67
+142                android:resource="@xml/file_system_provider_paths" />
+142-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:15:17-67
+143        </provider>
+144
+145        <service
+145-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:30:9-42:19
+146            android:name="com.google.android.gms.metadata.ModuleDependencies"
+146-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:31:13-78
+147            android:enabled="false"
+147-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:32:13-36
+148            android:exported="false" >
+148-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:33:13-37
+149            <intent-filter>
+149-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:35:13-37:29
+150                <action android:name="com.google.android.gms.metadata.MODULE_DEPENDENCIES" />
+150-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:36:17-94
+150-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:36:25-91
+151            </intent-filter>
+152
+153            <meta-data
+153-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:39:13-41:36
+154                android:name="photopicker_activity:0:required"
+154-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:40:17-63
+155                android:value="" />
+155-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:41:17-33
+156        </service>
+157
+158        <activity
+158-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:44:9-46:59
+159            android:name="com.canhub.cropper.CropImageActivity"
+159-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:45:13-64
+160            android:exported="true"
+160-->[com.github.CanHub:Android-Image-Cropper:4.3.1] /Users/thanh/.gradle/caches/transforms-4/7598e451100d8f3c62ab863cc186c296/transformed/jetified-Android-Image-Cropper-4.3.1/AndroidManifest.xml:35:13-36
+161            android:theme="@style/Base.Theme.AppCompat" /> <!-- https://developer.android.com/guide/topics/manifest/provider-element.html -->
+161-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:46:13-56
+162        <provider
+162-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:48:9-56:20
+163            android:name="expo.modules.imagepicker.fileprovider.ImagePickerFileProvider"
+163-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:49:13-89
+164            android:authorities="com.thanh2002hcmx.familyapp.ImagePickerFileProvider"
+164-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:50:13-75
+165            android:exported="false"
+165-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:51:13-37
+166            android:grantUriPermissions="true" >
+166-->[:expo-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:52:13-47
+167            <meta-data
+167-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:13:13-15:70
+168                android:name="android.support.FILE_PROVIDER_PATHS"
+168-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:14:17-67
+169                android:resource="@xml/image_picker_provider_paths" />
+169-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:15:17-67
+170        </provider>
+171        <provider
+171-->[:expo-sharing] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-sharing/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:18:9-26:20
+172            android:name="expo.modules.sharing.SharingFileProvider"
+172-->[:expo-sharing] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-sharing/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:19:13-68
+173            android:authorities="com.thanh2002hcmx.familyapp.SharingFileProvider"
+173-->[:expo-sharing] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-sharing/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:20:13-71
+174            android:exported="false"
+174-->[:expo-sharing] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-sharing/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:21:13-37
+175            android:grantUriPermissions="true" >
+175-->[:expo-sharing] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-sharing/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:22:13-47
+176            <meta-data
+176-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:13:13-15:70
+177                android:name="android.support.FILE_PROVIDER_PATHS"
+177-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:14:17-67
+178                android:resource="@xml/sharing_provider_paths" />
+178-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:15:17-67
+179        </provider>
+180
+181        <meta-data
+181-->[:expo-modules-core] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-modules-core/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:9:9-11:89
+182            android:name="org.unimodules.core.AppLoader#react-native-headless"
+182-->[:expo-modules-core] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-modules-core/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:10:13-79
+183            android:value="expo.modules.adapters.react.apploader.RNHeadlessAppLoader" />
+183-->[:expo-modules-core] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-modules-core/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:11:13-86
+184        <meta-data
+184-->[:expo-modules-core] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-modules-core/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:12:9-15:45
+185            android:name="com.facebook.soloader.enabled"
+185-->[:expo-modules-core] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-modules-core/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:13:13-57
+186            android:value="true" />
+186-->[:expo-modules-core] /Users/thanh/Documents/mobile_app/familyapp/node_modules/expo-modules-core/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:14:13-33
+187
+188        <provider
+188-->[com.github.CanHub:Android-Image-Cropper:4.3.1] /Users/thanh/.gradle/caches/transforms-4/7598e451100d8f3c62ab863cc186c296/transformed/jetified-Android-Image-Cropper-4.3.1/AndroidManifest.xml:23:9-31:20
+189            android:name="com.canhub.cropper.CropFileProvider"
+189-->[com.github.CanHub:Android-Image-Cropper:4.3.1] /Users/thanh/.gradle/caches/transforms-4/7598e451100d8f3c62ab863cc186c296/transformed/jetified-Android-Image-Cropper-4.3.1/AndroidManifest.xml:24:13-63
+190            android:authorities="com.thanh2002hcmx.familyapp.cropper.fileprovider"
+190-->[com.github.CanHub:Android-Image-Cropper:4.3.1] /Users/thanh/.gradle/caches/transforms-4/7598e451100d8f3c62ab863cc186c296/transformed/jetified-Android-Image-Cropper-4.3.1/AndroidManifest.xml:25:13-72
+191            android:exported="false"
+191-->[com.github.CanHub:Android-Image-Cropper:4.3.1] /Users/thanh/.gradle/caches/transforms-4/7598e451100d8f3c62ab863cc186c296/transformed/jetified-Android-Image-Cropper-4.3.1/AndroidManifest.xml:26:13-37
+192            android:grantUriPermissions="true" >
+192-->[com.github.CanHub:Android-Image-Cropper:4.3.1] /Users/thanh/.gradle/caches/transforms-4/7598e451100d8f3c62ab863cc186c296/transformed/jetified-Android-Image-Cropper-4.3.1/AndroidManifest.xml:27:13-47
+193            <meta-data
+193-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:13:13-15:70
+194                android:name="android.support.FILE_PROVIDER_PATHS"
+194-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:14:17-67
+195                android:resource="@xml/library_file_paths" />
+195-->[:react-native-image-picker] /Users/thanh/Documents/mobile_app/familyapp/node_modules/react-native-image-picker/android/build/intermediates/merged_manifest/debug/AndroidManifest.xml:15:17-67
+196        </provider>
+197
+198        <meta-data
+198-->[com.github.bumptech.glide:okhttp3-integration:4.11.0] /Users/thanh/.gradle/caches/transforms-4/bc7d551e5d63f62c47561d9f2fe51d6a/transformed/jetified-okhttp3-integration-4.11.0/AndroidManifest.xml:11:9-13:43
+199            android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule"
+199-->[com.github.bumptech.glide:okhttp3-integration:4.11.0] /Users/thanh/.gradle/caches/transforms-4/bc7d551e5d63f62c47561d9f2fe51d6a/transformed/jetified-okhttp3-integration-4.11.0/AndroidManifest.xml:12:13-84
+200            android:value="GlideModule" />
+200-->[com.github.bumptech.glide:okhttp3-integration:4.11.0] /Users/thanh/.gradle/caches/transforms-4/bc7d551e5d63f62c47561d9f2fe51d6a/transformed/jetified-okhttp3-integration-4.11.0/AndroidManifest.xml:13:13-40
+201
+202        <activity
+202-->[com.google.android.gms:play-services-auth:21.0.0] /Users/thanh/.gradle/caches/transforms-4/106c581aec76a1c1f793c1b9666c72ca/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:23:9-27:75
+203            android:name="com.google.android.gms.auth.api.signin.internal.SignInHubActivity"
+203-->[com.google.android.gms:play-services-auth:21.0.0] /Users/thanh/.gradle/caches/transforms-4/106c581aec76a1c1f793c1b9666c72ca/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:24:13-93
+204            android:excludeFromRecents="true"
+204-->[com.google.android.gms:play-services-auth:21.0.0] /Users/thanh/.gradle/caches/transforms-4/106c581aec76a1c1f793c1b9666c72ca/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:25:13-46
+205            android:exported="false"
+205-->[com.google.android.gms:play-services-auth:21.0.0] /Users/thanh/.gradle/caches/transforms-4/106c581aec76a1c1f793c1b9666c72ca/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:26:13-37
+206            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+206-->[com.google.android.gms:play-services-auth:21.0.0] /Users/thanh/.gradle/caches/transforms-4/106c581aec76a1c1f793c1b9666c72ca/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:27:13-72
+207        <!--
+208            Service handling Google Sign-In user revocation. For apps that do not integrate with
+209            Google Sign-In, this service will never be started.
+210        -->
+211        <service
+211-->[com.google.android.gms:play-services-auth:21.0.0] /Users/thanh/.gradle/caches/transforms-4/106c581aec76a1c1f793c1b9666c72ca/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:33:9-37:51
+212            android:name="com.google.android.gms.auth.api.signin.RevocationBoundService"
+212-->[com.google.android.gms:play-services-auth:21.0.0] /Users/thanh/.gradle/caches/transforms-4/106c581aec76a1c1f793c1b9666c72ca/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:34:13-89
+213            android:exported="true"
+213-->[com.google.android.gms:play-services-auth:21.0.0] /Users/thanh/.gradle/caches/transforms-4/106c581aec76a1c1f793c1b9666c72ca/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:35:13-36
+214            android:permission="com.google.android.gms.auth.api.signin.permission.REVOCATION_NOTIFICATION"
+214-->[com.google.android.gms:play-services-auth:21.0.0] /Users/thanh/.gradle/caches/transforms-4/106c581aec76a1c1f793c1b9666c72ca/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:36:13-107
+215            android:visibleToInstantApps="true" />
+215-->[com.google.android.gms:play-services-auth:21.0.0] /Users/thanh/.gradle/caches/transforms-4/106c581aec76a1c1f793c1b9666c72ca/transformed/jetified-play-services-auth-21.0.0/AndroidManifest.xml:37:13-48
+216
+217        <activity
+217-->[com.google.android.gms:play-services-base:18.0.1] /Users/thanh/.gradle/caches/transforms-4/d492eaeda72e96494493d16a307eae93/transformed/jetified-play-services-base-18.0.1/AndroidManifest.xml:20:9-22:45
+218            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+218-->[com.google.android.gms:play-services-base:18.0.1] /Users/thanh/.gradle/caches/transforms-4/d492eaeda72e96494493d16a307eae93/transformed/jetified-play-services-base-18.0.1/AndroidManifest.xml:20:19-85
+219            android:exported="false"
+219-->[com.google.android.gms:play-services-base:18.0.1] /Users/thanh/.gradle/caches/transforms-4/d492eaeda72e96494493d16a307eae93/transformed/jetified-play-services-base-18.0.1/AndroidManifest.xml:22:19-43
+220            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+220-->[com.google.android.gms:play-services-base:18.0.1] /Users/thanh/.gradle/caches/transforms-4/d492eaeda72e96494493d16a307eae93/transformed/jetified-play-services-base-18.0.1/AndroidManifest.xml:21:19-78
+221
+222        <meta-data
+222-->[com.google.android.gms:play-services-basement:18.2.0] /Users/thanh/.gradle/caches/transforms-4/756218e4549682261523d342863dac70/transformed/jetified-play-services-basement-18.2.0/AndroidManifest.xml:21:9-23:69
+223            android:name="com.google.android.gms.version"
+223-->[com.google.android.gms:play-services-basement:18.2.0] /Users/thanh/.gradle/caches/transforms-4/756218e4549682261523d342863dac70/transformed/jetified-play-services-basement-18.2.0/AndroidManifest.xml:22:13-58
+224            android:value="@integer/google_play_services_version" />
+224-->[com.google.android.gms:play-services-basement:18.2.0] /Users/thanh/.gradle/caches/transforms-4/756218e4549682261523d342863dac70/transformed/jetified-play-services-basement-18.2.0/AndroidManifest.xml:23:13-66
+225
+226        <provider
+226-->[androidx.emoji2:emoji2:1.2.0] /Users/thanh/.gradle/caches/transforms-4/fc5e80a564e50f7e087f843e40b1b519/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+227            android:name="androidx.startup.InitializationProvider"
+227-->[androidx.emoji2:emoji2:1.2.0] /Users/thanh/.gradle/caches/transforms-4/fc5e80a564e50f7e087f843e40b1b519/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:25:13-67
+228            android:authorities="com.thanh2002hcmx.familyapp.androidx-startup"
+228-->[androidx.emoji2:emoji2:1.2.0] /Users/thanh/.gradle/caches/transforms-4/fc5e80a564e50f7e087f843e40b1b519/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:26:13-68
+229            android:exported="false" >
+229-->[androidx.emoji2:emoji2:1.2.0] /Users/thanh/.gradle/caches/transforms-4/fc5e80a564e50f7e087f843e40b1b519/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:27:13-37
+230            <meta-data
+230-->[androidx.emoji2:emoji2:1.2.0] /Users/thanh/.gradle/caches/transforms-4/fc5e80a564e50f7e087f843e40b1b519/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+231                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+231-->[androidx.emoji2:emoji2:1.2.0] /Users/thanh/.gradle/caches/transforms-4/fc5e80a564e50f7e087f843e40b1b519/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:30:17-75
+232                android:value="androidx.startup" />
+232-->[androidx.emoji2:emoji2:1.2.0] /Users/thanh/.gradle/caches/transforms-4/fc5e80a564e50f7e087f843e40b1b519/transformed/jetified-emoji2-1.2.0/AndroidManifest.xml:31:17-49
+233            <meta-data
+233-->[androidx.lifecycle:lifecycle-process:2.6.1] /Users/thanh/.gradle/caches/transforms-4/0ed387265f908f5f7a4652953c26fb2a/transformed/jetified-lifecycle-process-2.6.1/AndroidManifest.xml:29:13-31:52
+234                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+234-->[androidx.lifecycle:lifecycle-process:2.6.1] /Users/thanh/.gradle/caches/transforms-4/0ed387265f908f5f7a4652953c26fb2a/transformed/jetified-lifecycle-process-2.6.1/AndroidManifest.xml:30:17-78
+235                android:value="androidx.startup" />
+235-->[androidx.lifecycle:lifecycle-process:2.6.1] /Users/thanh/.gradle/caches/transforms-4/0ed387265f908f5f7a4652953c26fb2a/transformed/jetified-lifecycle-process-2.6.1/AndroidManifest.xml:31:17-49
+236            <meta-data
+236-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:29:13-31:52
+237                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+237-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:30:17-85
+238                android:value="androidx.startup" />
+238-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:31:17-49
+239        </provider>
+240
+241        <receiver
+241-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:34:9-52:20
+242            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+242-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:35:13-76
+243            android:directBootAware="false"
+243-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:36:13-44
+244            android:enabled="true"
+244-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:37:13-35
+245            android:exported="true"
+245-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:38:13-36
+246            android:permission="android.permission.DUMP" >
+246-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:39:13-57
+247            <intent-filter>
+247-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:40:13-42:29
+248                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+248-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:41:17-91
+248-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:41:25-88
+249            </intent-filter>
+250            <intent-filter>
+250-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:43:13-45:29
+251                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+251-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:44:17-85
+251-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:44:25-82
+252            </intent-filter>
+253            <intent-filter>
+253-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:46:13-48:29
+254                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+254-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:47:17-88
+254-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:47:25-85
+255            </intent-filter>
+256            <intent-filter>
+256-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:49:13-51:29
+257                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+257-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:50:17-95
+257-->[androidx.profileinstaller:profileinstaller:1.3.0] /Users/thanh/.gradle/caches/transforms-4/2ab03aec8f5accf1741178849314c74a/transformed/jetified-profileinstaller-1.3.0/AndroidManifest.xml:50:25-92
+258            </intent-filter>
+259        </receiver>
+260    </application>
+261
+262</manifest>

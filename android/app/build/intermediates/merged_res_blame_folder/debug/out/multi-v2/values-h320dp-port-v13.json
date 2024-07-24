@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.thanh2002hcmx.familyapp-mergeDebugResources-52:/values-h320dp-port-v13/values-h320dp-port-v13.xml",
+            "map": [
+                {
+                    "source": "/Users/thanh/.gradle/caches/transforms-4/857b23f46bf6724091068241ad9db52e/transformed/material-1.6.1/res/values-h320dp-port-v13/values-h320dp-port-v13.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "75",
+                        "endOffsets": "126"
+                    }
+                }
+            ]
+        }
+    ]
+}

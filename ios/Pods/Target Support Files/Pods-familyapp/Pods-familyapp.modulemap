@@ -1,0 +1,6 @@
+module Pods_familyapp {
+  umbrella header "Pods-familyapp-umbrella.h"
+
+  export *
+  module * { export * }
+}
