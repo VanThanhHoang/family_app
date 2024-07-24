@@ -34,7 +34,6 @@ import AddChildScreen from "./screens/myfamily/AddChildScreen";
 import AddFatherMotherScreen from "./screens/myfamily/AddFatherMotherScreen";
 import SpouseFamilyScreen from "./screens/spousefamily/SpouseFamilyScreen";
 
-import FamilyTree from "./web-view/FMLTree";
 import FamilyMap from "./screens/familyTree/FamilyTreeView";
 import UploadImageScreen2 from "./screens/myfamily/AddImage";
 import UploadImageScreen3 from "./screens/myfamily/AddImage3";
@@ -93,8 +92,6 @@ const AppNavigation = () => {
           name="DetailChildren"
           component={DetailScreenChildren}
         />
-        <AppStack.Screen name="FamilyTreeWeb" component={FamilyTree}/>
-
         <AppStack.Screen name="FamilyTree" component={FamilyTreeScreen} />
         <AppStack.Screen name="AddFriendScreen" component={CRFriendScreen} />
         <AppStack.Screen

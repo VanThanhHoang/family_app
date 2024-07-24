@@ -22,7 +22,8 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { CountryPicker } from "react-native-country-codes-picker";
 import {APP_CONSTANTS} from "../helper/constant"; 
-const Login = () => {
+import {signInGoogle} from '../service/LoginWithGoogle'
+const Login = () =>  {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [isUsePhone, setIsUsePhone] = useState(false);
@@ -363,7 +364,9 @@ const Login = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => console.log("Pressed")}
+              onPress={() => {
+                signInGoogle()
+              }}
               style={{
                 flex: 1,
                 alignItems: "center",

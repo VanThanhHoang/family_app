@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "208601992373",
+    "project_id": "family-app-90c31",
+    "storage_bucket": "family-app-90c31.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:208601992373:android:572172680133abd13602fc",
+        "android_client_info": {
+          "package_name": "com.thanh2002hcmx.familyapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "208601992373-0ktmtbfpjgg819kjssb6nbijvv5sc3ev.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD20oYFytuI9P1cpEI4ldQE7Bfb5bZXnnU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "208601992373-0ktmtbfpjgg819kjssb6nbijvv5sc3ev.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

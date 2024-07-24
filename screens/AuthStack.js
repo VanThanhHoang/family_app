@@ -11,8 +11,10 @@ import UpdateProfileScreen from "./UpdateInfoScreen";
 import UpdateProfileScreenBoolean from "./UpdateInfoScreenBoolean";
 import UpdateProfileDate from "./UpdateInfoDate";
 import ForgotPass from "./ForgotPassword";
+import { GoogleAuthProvider,onAuthStateChanged,signInWithCredential } from "firebase/auth";
+import { auth } from "../firebaseConfig";
+import * as Google from 'expo-auth-session/providers/google';
 const AuthStack = createStackNavigator();
-
 const AuthNavigation = () => {
   const [initialRoute, setInitialRoute] = useState(null); // Initial state is null
   const [isLoading, setIsLoading] = useState(true); // Loading state
