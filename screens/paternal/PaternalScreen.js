@@ -58,7 +58,11 @@ const PaternalScreen = () => {
     processSection(data.great_great_grandparents, data.great_great_grandparents?.title);
     processSection(data.great_grandparents, data.great_grandparents?.title);
     processSection(data.paternal_grandparents, data.paternal_grandparents?.title);
-    processSection(data.father_siblings_children, data.father_siblings_children?.title);
+    processSection(data.father_siblings, data.father_siblings?.title);
+
+    if (data.father_siblings_children) {
+      processedData.push(...processUserSiblingsChildren(data.father_siblings_children.relationships));
+    }
 
     return processedData;
   };
@@ -98,6 +102,54 @@ const PaternalScreen = () => {
     return age;
   };
 
+  const processUserSiblingsChildren = (siblingsChildren) => siblingsChildren.map(sibling => {
+    if (sibling.children && sibling.children.length > 0) {
+      const childrenWithSpouses = sibling.children.filter(child => child.spouse).map(child => createMember(child, sibling.full_name_vn));
+      const childrenWithoutSpouses = sibling.children.filter(child => !child.spouse).map(child => createMember(child, sibling.full_name_vn));
+
+      // Sort children with spouses by age, from oldest to youngest
+      childrenWithSpouses.sort((a, b) => calculateAge(b.birth_date) - calculateAge(a.birth_date));
+      // Sort children without spouses by age, from oldest to youngest
+      childrenWithoutSpouses.sort((a, b) => calculateAge(b.birth_date) - calculateAge(a.birth_date));
+
+      return {
+        title: (
+          <View style={styles.titleContainer}>
+            <Text style={[styles.titleText, styles.flexItemRight, { color: rneTheme.colors.text }]}>{sibling.full_name_vn}</Text>
+            <MaterialIcons name="home" style={[styles.icon, { color: rneTheme.colors.text }]} />
+            <Text style={[styles.titleText, styles.flexItemLeft, { color: rneTheme.colors.text }]}>{sibling.spouse?.full_name_vn}</Text>
+          </View>
+        ),
+        age: calculateAge(sibling.birth_date),
+        members: pairChildrenWithAndWithoutSpouse(childrenWithoutSpouses, childrenWithSpouses),
+      };
+    }
+    return null;
+  }).filter(Boolean).sort((a, b) => b.age - a.age);
+
+  const pairChildrenWithAndWithoutSpouse = (childrenWithoutSpouses, childrenWithSpouses) => {
+    const pairedWithSpouses = childrenWithSpouses.map(child => [
+      child,
+      createMember(child.spouse, child.full_name_vn),
+    ]);
+
+    const pairedWithoutSpouses = [];
+    for (let i = 0; i < childrenWithoutSpouses.length; i += 2) {
+      pairedWithoutSpouses.push(childrenWithoutSpouses.slice(i, i + 2));
+    }
+
+    return [...pairedWithSpouses, ...pairedWithoutSpouses];
+  };
+
+  const createMember = (member, parentName) => ({
+    ...member,
+    parentName,
+    spouse: member.spouse ? {
+      ...member.spouse,
+      parentName: member.full_name_vn,
+    } : null,
+  });
+
   const renderFamilyPairs = ({ item }) => (
     <View>
       <View style={[styles.divider, { borderBottomColor: rneTheme.colors.dividerColor }]} />
@@ -124,7 +176,7 @@ const PaternalScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: rneTheme.colors.background }]}>
-      <AppHeader back title="Gia ĐÌnh Nội" />
+      <AppHeader back title="Thành viên gia đình" />
       <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate("AddFamilyCenterScreen")}>
         <LinearGradient colors={["#FFD700", "#FFA500"]} start={[0, 0]} end={[1, 1]} style={styles.addButtonGradient}>
           <Icon name="person-add" size={20} color="white" />

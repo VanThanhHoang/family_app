@@ -64,10 +64,14 @@ const MyfamilyScreen = () => {
       processedData.push({ title: data.user_children.title, members: userChildren });
     }
 
+    if (data.user_siblings) {
+      const siblings = [...data.user_siblings.relationships].sort((a, b) => new Date(a.birth_date) - new Date(b.birth_date));
+      const userSiblings = processRelationships(siblings, data.user_siblings.title);
+      processedData.push({ title: data.user_siblings.title, members: userSiblings });
+    }
+
     if (data.user_siblings_children) {
-      const siblings = [...data.user_siblings_children.relationships].sort((a, b) => new Date(a.birth_date) - new Date(b.birth_date));
-      const userSiblingsChildren = processRelationships(siblings, data.user_siblings_children.title);
-      processedData.push({ title: data.user_siblings_children.title, members: userSiblingsChildren });
+      processedData.push(...processUserSiblingsChildren(data.user_siblings_children.relationships));
     }
 
     return processedData;
@@ -86,13 +90,11 @@ const MyfamilyScreen = () => {
       }
     });
 
-    singleMembers.sort((a, b) => calculateAge(a.birth_date) - calculateAge(b.birth_date));
-
     while (singleMembers.length > 1) {
-      members.push([singleMembers.pop(), singleMembers.pop()]);
+      members.unshift([singleMembers.pop(), singleMembers.pop()]);
     }
     if (singleMembers.length === 1) {
-      members.push([singleMembers.pop()]);
+      members.unshift([singleMembers.pop()]);
     }
 
     return members;
@@ -106,6 +108,38 @@ const MyfamilyScreen = () => {
       age--;
     }
     return age;
+  };
+
+  const processUserSiblingsChildren = (siblingsChildren) => siblingsChildren.map(sibling => {
+    if (sibling.children && sibling.children.length > 0) {
+      const children = sibling.children.flatMap(child => {
+        const childWithSpouse = [createMember(child, sibling.full_name_vn)];
+        if (child.spouse) {
+          childWithSpouse.push(createMember(child.spouse, sibling.full_name_vn));
+        }
+        return childWithSpouse;
+      });
+      return {
+        title: (
+          <View style={styles.titleContainer}>
+            <Text style={[styles.titleText, styles.flexItemRight, { color: rneTheme.colors.text }]}>{sibling.full_name_vn}</Text>
+            <MaterialIcons name="home" style={[styles.icon, { color: rneTheme.colors.text }]} />
+            <Text style={[styles.titleText, styles.flexItemLeft, { color: rneTheme.colors.text }]}>{sibling.spouse?.full_name_vn}</Text>
+          </View>
+        ),
+        age: calculateAge(sibling.birth_date),
+        members: pairChildren(children),
+      };
+    }
+    return null;
+  }).filter(Boolean).sort((a, b) => b.age - a.age);
+
+  const pairChildren = (children) => {
+    const paired = [];
+    for (let i = 0; i < children.length; i += 2) {
+      paired.push(children.slice(i, i + 2));
+    }
+    return paired;
   };
 
   const renderFamilyPairs = ({ item }) => (
