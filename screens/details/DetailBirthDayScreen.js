@@ -14,8 +14,6 @@ import styles from "../components/people/PeopleStyles";
 import FamilyMemberCard from "../components/Avata/FamilyMemberCard";
 import { MaterialIcons } from '@expo/vector-icons';
 
-const CACHE_EXPIRY_TIME = 86400 * 1000; // 1 day in milliseconds
-
 const DetailScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -34,40 +32,13 @@ const DetailScreen = () => {
     try {
       const token = await AsyncStorage.getItem("access");
       if (token) {
-        const cacheKey = `people_info_${id}`;
-        const cachedData = await AsyncStorage.getItem(cacheKey);
-        const currentTime = new Date().getTime();
-
-        if (cachedData) {
-          const parsedData = JSON.parse(cachedData);
-          if (currentTime - parsedData.timestamp < CACHE_EXPIRY_TIME) {
-            setPeopleInfo(parsedData.peopleInfo);
-            setFamilyMembers(parsedData.familyMembers);
-            setIsLoading(false);
-            return;
-          }
-        }
-
         const response = await AxiosInstance().get(`https://api.lehungba.com/api/people/relationship/?people_id=${id}`);
         const data = response.data;
         if (data.people_info && data.people_info.relationships) {
-          const peopleInfo = createMember(data.people_info.relationships[0], data.people_info.title);
-          const familyMembers = processFamilyData(data);
-
-          setPeopleInfo(peopleInfo);
-          setFamilyMembers(familyMembers);
-
-          await AsyncStorage.setItem(
-            cacheKey,
-            JSON.stringify({
-              timestamp: currentTime,
-              peopleInfo,
-              familyMembers,
-            })
-          );
-
-          flatListRef.current?.scrollToOffset({ offset: 0, animated: true }); // Cuộn lên trên cùng
+          setPeopleInfo(createMember(data.people_info.relationships[0], data.people_info.title));
         }
+        setFamilyMembers(processFamilyData(data));
+        flatListRef.current?.scrollToOffset({ offset: 0, animated: true }); // Cuộn lên trên cùng
       }
     } catch (error) {
       console.error("Error fetching family data:", error);
@@ -95,13 +66,11 @@ const DetailScreen = () => {
     processSection(data.maternal_grandparents, data.maternal_grandparents?.title);
     processSection(data.paternal_grandparents, data.paternal_grandparents?.title);
     processSection(data.user_parents, data.user_parents?.title);
-    processSection(data.user_children, data.user_children?.title);
     processSection(data.user_spouse, data.user_spouse?.title);
+    processSection(data.user_children, data.user_children?.title);
     processSection(data.user_siblings, data.user_siblings?.title);
-
-    if (data.user_siblings_children) {
-      processedData.push(...processUserSiblingsChildren(data.user_siblings_children.relationships));
-    }
+    processSection(data.father_sibling_children, data.father_sibling_children?.title);
+    processSection(data.mother_sibling_children, data.mother_sibling_children?.title);
 
     return processedData;
   };
@@ -139,30 +108,6 @@ const DetailScreen = () => {
     }
     return age;
   };
-
-  const processUserSiblingsChildren = (siblingsChildren) => siblingsChildren.map(sibling => {
-    if (sibling.children && sibling.children.length > 0) {
-      const children = sibling.children.flatMap(child => {
-        const childWithSpouse = [createMember(child, sibling.full_name_vn)];
-        if (child.spouse) {
-          childWithSpouse.push(createMember(child.spouse, sibling.full_name_vn));
-        }
-        return childWithSpouse;
-      });
-      return {
-        title: (
-          <View style={styles.titleContainer}>
-            <Text style={[styles.titleText, styles.flexItemRight, { color: rneTheme.colors.text }]}>{sibling.full_name_vn}</Text>
-            <MaterialIcons name="home" style={[styles.icon, { color: rneTheme.colors.text }]} />
-            <Text style={[styles.titleText, styles.flexItemLeft, { color: rneTheme.colors.text }]}>{sibling.spouse?.full_name_vn}</Text>
-          </View>
-        ),
-        age: calculateAge(sibling.birth_date),
-        members: children,
-      };
-    }
-    return null;
-  }).filter(Boolean).sort((a, b) => b.age - a.age);
 
   const handleMemberPress = (member) => {
     navigation.navigate('Detail', { id: member.id }); // Điều hướng đến chi tiết thành viên với id của thành viên đó
@@ -279,10 +224,11 @@ const DetailScreen = () => {
       )}
     </View>
   );
+  
 
   return (
     <View style={[styles.container, { backgroundColor: rneTheme.colors.background }]}>
-      <AppHeader back title="Thành viên gia đình" />
+      <AppHeader back title="Thông Tin" />
       <FlatList
         ref={flatListRef} // Thêm ref vào FlatList
         data={familyMembers}

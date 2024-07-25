@@ -266,6 +266,7 @@ const styles = StyleSheet.create({
   // Dark mode specific styles
   darkModeTitle: {
     color: '#ffffff', // Dark mode text color
+    
   },
 });
 
