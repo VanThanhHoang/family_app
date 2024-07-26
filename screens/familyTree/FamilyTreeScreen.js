@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import {
   View,
-  StyleSheet,
   Text,
   Image,
   TouchableOpacity,
@@ -16,6 +15,7 @@ import { APP_CONSTANTS } from "../../helper/constant";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemeContext } from "../../ThemeContext"; // Import theme context
 import { LinearGradient } from "expo-linear-gradient"; // Import LinearGradient
+import styles from "../components/familyTree/FamilyTreeStyle"; // Import styles
 
 const getGradientColors = (level) => {
   switch (level) {
@@ -209,74 +209,5 @@ const FamilyTreeScreen = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-    width: "100%",
-  },
-  scrollViewContent: {
-    padding: 10,
-  },
-  nodeContainer: {
-    marginHorizontal: 10,
-    marginVertical: 5,
-    borderWidth: 0,
-    minWidth: 250,
-    position: "relative",
-  },
-  gradientLine: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: 2,
-  },
-  nodeHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 10,
-  },
-  personInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    flex: 1,
-    gap: 10,
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-    borderWidth: 2,
-  },
-  textInfo: {
-    flex: 1,
-  },
-  personName: {
-    maxWidth: 150,
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  dateInfo: {
-    fontSize: 12,
-    marginTop: 5,
-  },
-  detailButton: {
-    padding: 5,
-    borderRadius: 5,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    textAlign: "center",
-    fontSize: 16,
-    marginTop: 20,
-  },
-});
 
 export default FamilyTreeScreen;

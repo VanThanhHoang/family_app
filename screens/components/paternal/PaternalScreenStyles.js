@@ -5,49 +5,78 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  header: {
-    position: "absolute",
-    top: 10,
-    left: 10,
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 20,
+  },
+  infoColumn: {
+    marginLeft: 20,
+    flex: 1,
+  },
+  memberDetailContainer: {
+    padding: 0,
+  },
+  profilePicture: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  memberName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  detailRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 5,
+  },
+  detailIcon: {
+    fontSize: 13,
+    marginRight: 5,
+  },
+  detailText: {
+    fontSize: 13,
   },
   titleContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center", // Ensure the content is centered horizontally
+    justifyContent: "center",
   },
   flexItemRight: {
-    flex: 1, // Take equal space
-    textAlign: 'right', // Align text to the right
-    paddingRight: 10, // Add padding to the right
+    flex: 1,
+    textAlign: 'right',
+    paddingRight: 10,
   },
   flexItemLeft: {
-    flex: 1, // Take equal space
-    textAlign: 'left', // Align text to the left
-    paddingLeft: 10, // Add padding to the left to increase space
+    flex: 1,
+    textAlign: 'left',
+    paddingLeft: 10,
   },
   flexItemCenter: {
-    flex: 0, // Do not take extra space
-    textAlign: 'center', // Center the text within each flex item
+    flex: 0,
+    textAlign: 'center',
   },
   icon: {
-    fontSize: 20, // Adjust the icon size here
-    marginHorizontal: 5,
-    alignSelf: 'center', // Ensure the icon is centered vertically
+    fontSize: 20,
+    marginHorizontal: 2,
+    alignSelf: 'center',
     position: 'absolute',
     left: '49%',
-    transform: [{ translateX: -10 }], // Half of the icon size to perfectly center
+    transform: [{ translateX: -10 }],
   },
   titleText: {
-    fontSize: 16, // Adjust the title text size here
-    fontWeight: '450', // Adjust the font weight to be 450
-    fontFamily: 'System', // Use the default system font
+    fontSize: 16,
+    fontWeight: '450',
+    fontFamily: 'System',
   },
   title: {
     fontSize: 24,
     textAlign: "center",
     marginVertical: 20,
-    fontWeight: '450', // Adjust the font weight to be 450
-    fontFamily: 'System', // Use the default system font
+    fontWeight: '450',
+    fontFamily: 'System',
   },
   categoryTitle: {
     fontSize: 15,
@@ -56,8 +85,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginVertical: 10,
     marginHorizontal: 10,
-    fontWeight: '450', // Adjust the font weight to be 450
-    fontFamily: 'System', // Use the default system font
+    fontWeight: '450',
+    fontFamily: 'System',
   },
   pairContainer: {
     flexDirection: 'row',
@@ -79,67 +108,10 @@ const styles = StyleSheet.create({
   },
   memberContainer: {
     width: '48%',
-    backgroundColor: '#fafafa', // Light background for items
+    backgroundColor: '#fafafa',
     borderRadius: 10,
     padding: 10,
     elevation: 2,
-  },
-  memberDetailContainer: {
-    alignItems: "center",
-  },
-  profilePicture: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    marginBottom: 10,
-  },
-  profilePictureSingle: {
-    width: 65,
-    height: 65,
-    borderRadius: 32.5,
-    marginRight: 10,
-  },
-  textContainer: {
-    alignItems: "center",
-  },
-  textContainerSingle: {
-    justifyContent: 'center',
-    paddingLeft: 10,
-  },
-  memberName: {
-    fontSize: 16,
-    textAlign: "center",
-    flexShrink: 1,
-    fontWeight: '450', // Adjust the font weight to be 450
-    fontFamily: 'System', // Use the default system font
-  },
-  memberNameSingle: {
-    fontSize: 16,
-    flexShrink: 1,
-    fontWeight: '450', // Adjust the font weight to be 450
-    fontFamily: 'System', // Use the default system font
-  },
-  birthDate: {
-    fontSize: 14,
-    textAlign: "center",
-    fontWeight: '450', // Adjust the font weight to be 450
-    fontFamily: 'System', // Use the default system font
-  },
-  birthDateSingle: {
-    fontSize: 16,
-    fontWeight: '450', // Adjust the font weight to be 450
-    fontFamily: 'System', // Use the default system font
-  },
-  relationship: {
-    fontSize: 10,
-    textAlign: "center",
-    fontWeight: '450', // Adjust the font weight to be 450
-    fontFamily: 'System', // Use the default system font
-  },
-  relationshipSingle: {
-    fontSize: 18,
-    fontWeight: '450', // Adjust the font weight to be 450
-    fontFamily: 'System', // Use the default system font
   },
   addButton: {
     position: "absolute",
@@ -164,9 +136,9 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: "450", // Adjust the font weight to be 450
+    fontWeight: "450",
     marginBottom: 10,
-    fontFamily: 'System', // Use the default system font
+    fontFamily: 'System',
   },
   input: {
     borderWidth: 1,
@@ -184,8 +156,8 @@ const styles = StyleSheet.create({
   noResultsText: {
     fontSize: 16,
     marginBottom: 10,
-    fontWeight: '450', // Adjust the font weight to be 450
-    fontFamily: 'System', // Use the default system font
+    fontWeight: '450',
+    fontFamily: 'System',
   },
   resultsList: {
     width: "100%",
@@ -200,9 +172,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
   nameContainer: {
     flexDirection: "column",
@@ -210,8 +182,8 @@ const styles = StyleSheet.create({
   },
   resultText: {
     fontSize: 18,
-    fontWeight: '450', // Adjust the font weight to be 450
-    fontFamily: 'System', // Use the default system font
+    fontWeight: '450',
+    fontFamily: 'System',
   },
   closeButton: {
     backgroundColor: "#f44336",
@@ -232,42 +204,52 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   parentTitle: {
-    fontSize: 16, // Adjust the font size
-    fontWeight: '450', // Adjust the font weight to be 450
-    fontFamily: 'System', // Use the default system font
+    fontSize: 20,
+    fontWeight: 'bold',
+    fontFamily: 'System',
+    marginVertical: 5,
   },
   parentAvatarsContainer: {
     flexDirection: 'row',
     marginHorizontal: 5,
   },
-  // parentAvatar: {
-  //   width: 40,
-  //   height: 40,
-  //   borderRadius: 20,
-  //   marginHorizontal: 2,
-  // },
+  memberRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 10,
+    borderRadius: 10,
+    backgroundColor: '#f0f0f0',
+    marginBottom: 5,
+  },
+  spouseContainer: {
+    paddingLeft: 20,
+  },
   divider: {
     borderBottomWidth: 1,
     width: "100%",
-    alignSelf: 'center', // Align the divider to the center
+    alignSelf: 'center',
   },
   userParentsTitle: {
     fontSize: 16,
-    fontWeight: '450', // Adjust the font weight to be 450
-    fontFamily: 'System', // Use the default system font
-    color: '#000000', // Light mode text color
+    fontWeight: '450',
+    fontFamily: 'System',
+    color: '#000000',
   },
   userSpouseTitle: {
     fontSize: 16,
-    fontWeight: '450', // Adjust the font weight to be 450
-    fontFamily: 'System', // Use the default system font
-    color: '#000000', // Light mode text color
+    fontWeight: '450',
+    fontFamily: 'System',
+    color: '#000000',
   },
-  // Dark mode specific styles
   darkModeTitle: {
-    color: '#ffffff', // Dark mode text color
-    
+    color: '#ffffff',
   },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  }
 });
 
 export default styles;

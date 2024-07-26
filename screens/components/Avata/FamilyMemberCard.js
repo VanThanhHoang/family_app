@@ -1,3 +1,4 @@
+//Users/macm1/Code/FamilyApp/family/screens/components/Avata/FamilyMemberCard.js
 import React from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";

@@ -1,5 +1,4 @@
-
-//Users/macm1/Code/FamilyApp/family/screens/components/Theme.js
+// Users/macm1/Code/FamilyApp/family/screens/components/Theme.js
 import { createTheme } from '@rneui/themed';
 
 export const lightTheme = createTheme({
@@ -17,8 +16,14 @@ export const lightTheme = createTheme({
     birthDateColor: '#888',
     relationshipColor: '#777',
     dividerColor: '#d3d3d3',
-    gradientStart: '#FFD700',  // Add gradient start color
-    gradientEnd: '#FFA500',    // Add gradient end color
+    gradientLevel0Start: '#FFD700',  // Add gradient start color for level 0
+    gradientLevel0End: '#FFA500',    // Add gradient end color for level 0
+    gradientLevel1Start: '#00FF00',  // Add gradient start color for level 1
+    gradientLevel1End: '#32CD32',    // Add gradient end color for level 1
+    gradientLevel2Start: '#0000FF',  // Add gradient start color for level 2
+    gradientLevel2End: '#1E90FF',    // Add gradient end color for level 2
+    gradientLevel3Start: '#FF00FF',  // Add gradient start color for level 3
+    gradientLevel3End: '#FF69B4',    // Add gradient end color for level 3
   },
 });
 
@@ -37,8 +42,13 @@ export const darkTheme = createTheme({
     birthDateColor: '#ccc',
     relationshipColor: '#ccc',
     dividerColor: '#666666',
-    gradientStart: '#FFD700',  // Add gradient start color
-    gradientEnd: '#FFA500',    // Add gradient end color
+    gradientLevel0Start: '#FFD700',  // Add gradient start color for level 0
+    gradientLevel0End: '#FFA500',    // Add gradient end color for level 0
+    gradientLevel1Start: '#00FF00',  // Add gradient start color for level 1
+    gradientLevel1End: '#32CD32',    // Add gradient end color for level 1
+    gradientLevel2Start: '#0000FF',  // Add gradient start color for level 2
+    gradientLevel2End: '#1E90FF',    // Add gradient end color for level 2
+    gradientLevel3Start: '#FF00FF',  // Add gradient start color for level 3
+    gradientLevel3End: '#FF69B4',    // Add gradient end color for level 3
   },
 });
-
