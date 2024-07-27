@@ -41,6 +41,9 @@ const TreeScreen = () => {
         const response = await AxiosInstance().get("https://api.lehungba.com/api/tree/");
         const data = response.data;
 
+        // Kiểm tra và log dữ liệu từ API
+        console.log("API Response Data:", data);
+
         // Set the highest-level ancestors as the initial data
         const combinedFamilyMembers = [
           { title: data.paternal_tree.title, key: 'paternal_tree' },
