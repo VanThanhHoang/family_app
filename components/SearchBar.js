@@ -69,7 +69,7 @@ const SearchBar = ({ onChangeText, value, showFamilyTree }) => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate("FamilyTree");
+              navigation.navigate("TreeScreen");
             }}
           >
             <Image
