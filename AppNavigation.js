@@ -4,6 +4,12 @@ import { useThemeContext } from "./ThemeContext";
 import LoadingDialog from "./components/LoadingDialog";
 import { AppContext } from "./AppContext";
 import HomeTab from "./screens/BottomTab";
+import TasksScreen from "./screens/Crm/Tasks/TasksScreen";
+import ListScreen from "./screens/Crm/Tasks/ListScreen";
+
+
+
+
 import DetailFamilyScreen from "./screens/details/DetailFamilyScreen";
 import DetailBirthDayScreen from "./screens/details/DetailBirthDayScreen";
 import DetailEventScreen from "./screens/details/DetailDeathDayScreen";
@@ -34,6 +40,8 @@ import AddChildScreen from "./screens/myfamily/AddChildScreen";
 import AddFatherMotherScreen from "./screens/myfamily/AddFatherMotherScreen";
 import SpouseFamilyScreen from "./screens/spousefamily/SpouseFamilyScreen";
 import TreeScreen from "./screens/familyTree/TreeScreen";
+import FamilyScreen from "./screens/FamilyScreen";
+
 
 import FamilyTree from "./web-view/FMLTree";
 import FamilyMap from "./screens/familyTree/FamilyTreeView";
@@ -75,6 +83,8 @@ const AppNavigation = () => {
         }}
       >
         <AppStack.Screen name="HomeTab" component={HomeTab} />
+        <AppStack.Screen name="FamilyScreen" component={FamilyScreen} />
+        
         <AppStack.Screen name="DetailFamily" component={DetailFamilyScreen} />
         <AppStack.Screen
           name="DetailBirthDay"
@@ -124,7 +134,11 @@ const AppNavigation = () => {
         <AppStack.Screen name="SpouseFamilyScreen" component={SpouseFamilyScreen} />
         <AppStack.Screen name="FamilyMap" component={FamilyMap} />   
         <AppStack.Screen name="TreeScreen" component={TreeScreen} />    
-        <AppStack.Screen name="DetailImage" component={DetailImage} />     
+        <AppStack.Screen name="DetailImage" component={DetailImage} />  
+        <AppStack.Screen name="CrmScreen" component={CrmScreen} />  
+        <AppStack.Screen name="TasksScreen" component={TasksScreen} /> 
+        <AppStack.Screen name="ListScreen" component={ListScreen} /> 
+           
 
       </AppStack.Navigator>
       <LoadingDialog open={isLoading} />

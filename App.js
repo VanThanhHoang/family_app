@@ -6,10 +6,10 @@ import { ThemeProvider as RNEThemeProvider } from '@rneui/themed';
 import AppProvider from './AppContext';
 import AppNavigation from './AppNavigation';
 import { ThemeProvider, useThemeContext } from './ThemeContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const App = () => {
   const { theme } = useThemeContext();
-
   return (
     <View style={{ flex: 1 }}>
       <AppProvider>

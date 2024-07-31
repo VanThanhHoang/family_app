@@ -13,6 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { AppContext } from "../AppContext";
 import AxiosInstance from "../network/AxiosInstance";
+import axios from "axios"; // Nhập axios từ thư viện axios
 import { APP_CONSTANTS } from "../helper/constant";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from "@rneui/themed";
@@ -57,6 +58,7 @@ const ProfileScreen = () => {
       console.log(e);
     }
   };
+
   const uploadImage = async (image) => {
     try {
       if (!image || !image.uri) {
@@ -80,8 +82,7 @@ const ProfileScreen = () => {
       const people_id = userInfo.people_id;
       console.log(people_id)
        // Ensure people_id is retrieved from userInfo
-      const axiosInstance = AxiosInstance("multipart/form-data"); // Create Axios instance
-      const response = await axiosInstance.put(
+      const response = await AxiosInstance("multipart/form-data").put(
         `people/people-detail/${people_id}/`,
         formData
       );
@@ -127,6 +128,41 @@ const ProfileScreen = () => {
     }
   };
 
+  const getCrmToken = async () => {
+    try {
+      const accessToken = await AsyncStorage.getItem('access');
+      if (!accessToken) {
+        throw new Error('Token không tồn tại');
+      }
+
+      const response = await axios.post(
+        'https://crm.lehungba.com/api/login/', 
+        { access: accessToken }, // Đảm bảo rằng bạn đang gửi token đúng cách trong body
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+
+      const { access: crmToken, refresh: crmRefreshToken, user } = response.data;
+      await AsyncStorage.setItem('CrmToken', crmToken);
+      await AsyncStorage.setItem('CrmRefreshToken', crmRefreshToken);
+      await AsyncStorage.setItem('CrmUserId', user.id.toString());
+      await AsyncStorage.setItem('CrmUserEmail', user.email);
+
+      // Chuyển đến màn hình CrmScreen nếu token được lấy thành công
+      navigation.navigate('CrmScreen');
+    } catch (error) {
+      console.error('Lỗi lấy CRM token:', error);
+      Alert.alert('Tài Khoản Bạn Không Được Phép');
+    }
+  };
+
+  const handleCrmButtonPress = async () => {
+    await getCrmToken();
+  };
+
   return (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
@@ -143,7 +179,7 @@ const ProfileScreen = () => {
             <Ionicons name="key" size={30} color={theme.colors.text} />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate("PeopleUpdateSrceen")}
+            onPress={() => navigation.navigate("PeopleUpdateScreen")}
             style={styles.iconButton}
           >
             <Ionicons name="refresh" size={30} color={theme.colors.text} />
@@ -234,12 +270,10 @@ const ProfileScreen = () => {
           title="My Friend"
           onPress={() => navigation.navigate("FriendScreen")}
         />
-        <SettingItem
-          icon={"business"}
-          title="Business CRM"
-          onPress={() => navigation.navigate("CRMScreen")}
-        />
-        <TouchableOpacity style={styles.crmButton} onPress={() => {}}>
+        <TouchableOpacity
+          style={styles.crmButton}
+          onPress={handleCrmButtonPress}
+        >
           <LinearGradient
             colors={["#FFD700", "#FFA500"]} // Change to yellow gradient
             start={[0, 0]}
